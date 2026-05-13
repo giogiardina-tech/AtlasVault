@@ -275,19 +275,18 @@ FORMAT: NAME A COUNTRY BY CLUE
 
   const roundImageRule = format_type === 'partial-flag'
     ? `ROUND slides (PARTIAL FLAG CHALLENGE — tight zoom on the flag's most iconic feature, filling the frame):
-- The image must look exactly like a flat flag photograph zoomed in — clean, flat, crisp, accurate colours, no fabric texture, no wave, no 3D effects
-- The frame is filled edge-to-edge with the flag — NO dark background, NO padding, NO border. The flag bleeds to all four edges.
+- STYLE: bold flat vector/icon style — think oversized flag emoji or SVG icon. Solid bold colours, simplified clean shapes, zero fabric texture, zero wave, zero 3D
+- The frame is filled edge-to-edge with the flag — NO background, NO padding, NO border. The flag graphic bleeds to all four edges.
 - Each image_prompt must name the country's flag AND the specific iconic feature to zoom into (e.g. "the maple leaf of the Canadian flag", "the golden eagle emblem of the Mexican flag", "the red disc of the Japanese flag"). The zoom level tightens each round per the instructions above.
-- Every colour, stripe, symbol, and fine detail must be sharply and accurately rendered
+- Every colour, stripe, symbol, and fine detail must be crisply rendered in the bold flat icon style
 - NO country names, text, labels, or any non-flag background anywhere in the image`
     : format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
-- Show the country's flag as a clean, flat, precisely proportioned rectangle — flags are ALWAYS wider than they are tall (landscape orientation, roughly 3:2 width-to-height ratio). NEVER show a flag taller than it is wide.
-- The flag must have perfectly straight, sharp edges and correct rectangular shape with no rounding, curving, warping, or distortion of any kind
-- Center the flag in the image with generous padding on all sides (at least 20% of image width as dark space on each side) — the flag should never touch the image edges
-- Keep the flag completely flat and accurate: NO fabric texture, NO wave, NO drape, NO shadows, NO 3D effects, NO perspective tilt
-- Background: a rich, deep dark atmospheric gradient — use a subtle radial glow in the flag's dominant colour fading into near-black, giving the flag a dramatic "spotlight" feel without any text or labels
-- Every colour band, symbol, emblem, coat of arms, and detail must be sharply and accurately rendered
+- STYLE: bold flat vector/icon style — think oversized flag emoji or SVG icon. Solid bold colours, simplified clean shapes, zero fabric texture, zero wave, zero 3D effects
+- Show the flag as a clean flat rectangle, ALWAYS wider than tall (landscape ~3:2 ratio). NEVER taller than wide.
+- Center the flag in the image with generous dark space on all sides (at least 20% padding each side) — flag must not touch the image edges
+- Background: deep dark solid or very subtle gradient behind the flag, with a soft colour glow matching the flag's dominant colour — makes the flag pop without distracting from it
+- Every colour band, symbol, emblem, coat of arms, and detail accurately rendered in the flat icon style
 - NO country names, text, labels, or decorative borders anywhere in the image`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
