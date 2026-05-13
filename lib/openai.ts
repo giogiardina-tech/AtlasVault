@@ -228,6 +228,21 @@ FORMAT: NAME A COUNTRY BY CLUE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
+  const roundImageRule = format_type === 'guess-the-flag'
+    ? `ROUND slides (FLAG GAME — the flag IS the question, show it directly):
+- Show the country's flag as the FULL IMAGE — large, centred, dramatically lit against a dark or atmospheric background
+- The flag must fill most of the frame and be clearly readable — this is what viewers are guessing
+- Photorealistic fabric texture, slight wave or drape, cinematic lighting
+- NO country names, text, or labels anywhere in the image`
+    : `ROUND slides (question slides — do NOT reveal the answer):
+- Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
+- Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
+- Flag rounds: show a dramatic cultural scene, landmark, or landscape associated with the region — NOT the flag itself and NOT anything that makes the country obvious
+- Empire/history rounds: show a dramatic ancient or historical landscape from that era/region WITHOUT showing anything that names the empire
+- Capital rounds: show a city skyline or urban landscape from the general region — NOT the specific capital city
+- Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
+- Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible`;
+
   return `You are an expert TikTok trivia game designer. Create a complete, engaging trivia game in JSON format.
 
 GAME: "${title}"
@@ -287,14 +302,7 @@ IMAGE PROMPT RULES (every slide):
 CRITICAL — IMAGE MUST BE RELEVANT TO THE SLIDE CONTENT:
 Each image_prompt must be written specifically for what that slide is about. Generic prompts are not acceptable.
 
-ROUND slides (question slides — do NOT reveal the answer):
-- Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
-- Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
-- Flag rounds: show a dramatic cultural scene, landmark, or landscape associated with the region — NOT the flag itself and NOT anything that makes the country obvious
-- Empire/history rounds: show a dramatic ancient or historical landscape from that era/region WITHOUT showing anything that names the empire
-- Capital rounds: show a city skyline or urban landscape from the general region — NOT the specific capital city
-- Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
-- Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible
+${roundImageRule}
 
 REVEAL slides (answer slides — now you CAN show the subject directly):
 - Geography reveals: show a vivid satellite or aerial view of the specific country/region
