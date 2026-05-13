@@ -28,17 +28,20 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
 
   const slide = slides[currentIndex];
 
-  // Render a slide off-screen and capture it as a PNG blob (text + image composited)
+  // Render a slide and capture it as a PNG blob (text + image composited).
+  // The container sits at 0,0 with opacity:0 so html2canvas can measure it
+  // correctly — placing it off-screen breaks coordinate detection.
   const captureSlide = (slide: Slide): Promise<Blob | null> =>
     new Promise(async (resolve) => {
       const container = document.createElement('div');
       container.style.cssText =
-        'position:fixed;left:-99999px;top:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;';
+        'position:fixed;left:0;top:0;width:1080px;height:1920px;overflow:hidden;opacity:0;pointer-events:none;z-index:9999;';
       document.body.appendChild(container);
       const root = createRoot(container);
       root.render(<SlideRenderer slide={slide} scale={1} format_type={game.format_type} />);
-      // Wait for React render + image load
-      await new Promise((r) => setTimeout(r, 1200));
+      // Wait for fonts + React paint + background images to load
+      await document.fonts.ready;
+      await new Promise((r) => setTimeout(r, 1500));
       try {
         const canvas = await html2canvas(container, {
           width: 1080,
@@ -48,6 +51,10 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
           allowTaint: false,
           backgroundColor: '#0a0a0a',
           logging: false,
+          x: 0,
+          y: 0,
+          scrollX: 0,
+          scrollY: 0,
         });
         canvas.toBlob((b) => resolve(b), 'image/png');
       } catch {
