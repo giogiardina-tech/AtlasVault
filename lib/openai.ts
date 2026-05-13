@@ -272,11 +272,16 @@ FORMAT: NAME A COUNTRY BY CLUE
     ? `ROUND slides (FLAG GAME — real flag fetched from CDN, no AI image needed):
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
+    : format_type === 'guess-the-empire'
+    ? `ROUND slides (GUESS THE EMPIRE — show the empire's most recognisable visual signature, without naming it):
+- For each empire, choose whichever is MORE iconic between: (A) a territory map or (B) a famous architectural/cultural symbol
+- Territory-famous empires (Mongol, Roman, British, Ottoman, Achaemenid Persian…): show a clean dark historical map with the empire's territory at peak extent glowing in a warm amber/gold colour, surrounding regions in very dark grey. No empire name or labels.
+- Symbol-famous empires (Egyptian → pyramids and sphinx, Greek → Parthenon columns, Aztec → Tenochtitlan pyramid, Viking → longship at sea…): show the iconic architectural or cultural symbol dramatically lit, no text or labels
+- The image must be visually striking and clearly hint at the empire without giving its name
+- Every image_prompt must specify the empire indirectly (e.g. "dark historical map showing a vast territory spanning from Eastern Europe to the Pacific, glowing amber on dark grey" for the Mongol Empire)`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
-- Flag rounds: show a dramatic cultural scene, landmark, or landscape associated with the region — NOT the flag itself and NOT anything that makes the country obvious
-- Empire/history rounds: show a dramatic ancient or historical landscape from that era/region WITHOUT showing anything that names the empire
 - Capital rounds: show a city skyline or urban landscape from the general region — NOT the specific capital city
 - Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
 - Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible`;
