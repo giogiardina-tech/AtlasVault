@@ -221,17 +221,23 @@ FORMAT: GUESS THE CAPITAL CITY
     'partial-flag': {
       revealType: 'difficulty',
       instructions: `
-FORMAT: PARTIAL FLAG CHALLENGE — GUESS THE FLAG FROM A CROP
+FORMAT: PARTIAL FLAG CHALLENGE — GUESS THE FLAG FROM A ZOOMED CROP
 - CRITICAL: Use SOVEREIGN COUNTRIES ONLY — no territories, dependencies, or autonomous regions
-- 5 rounds, each showing a progressively smaller crop of the flag:
-  * Round 1: roughly half the flag — a large section with clearly distinctive design elements — difficulty_tier: "easy"
-  * Round 2: about one-third of the flag — still includes a key identifier — difficulty_tier: "easy"
-  * Round 3: a quarter section — a corner, stripe, or emblem area — difficulty_tier: "medium"
-  * Round 4: a small distinctive strip or symbol only — difficulty_tier: "hard"
-  * Round 5: an extremely small or ambiguous detail that could plausibly belong to multiple flags — difficulty_tier: "impossible"
+- 5 rounds using a DIFFERENT country each round, escalating from well-known to obscure flags:
+  * Round 1: a very famous, instantly recognisable flag (USA, UK, Canada, Japan, Brazil…) — difficulty_tier: "easy"
+  * Round 2: a well-known flag most people would recognise — difficulty_tier: "easy"
+  * Round 3: a moderately known flag — difficulty_tier: "medium"
+  * Round 4: a less common flag most people would struggle with — difficulty_tier: "hard"
+  * Round 5: an obscure flag very few people could identify — difficulty_tier: "impossible"
+- For EACH round, choose the single most iconic/distinctive feature on that flag (e.g. Canada → maple leaf, Mexico → golden eagle and snake, USA → stars cluster, Brazil → globe with stars, UK → union cross pattern, Japan → red disc). The image_prompt must zoom directly into that feature.
+- The crop gets tighter each round:
+  * Round 1: zoom showing the iconic feature plus generous surrounding flag area
+  * Round 2: iconic feature fills about half the frame
+  * Round 3: iconic feature fills most of the frame, edges slightly cropped
+  * Round 4: tightly cropped to just the iconic feature, very little context
+  * Round 5: extreme close-up of a tiny detail of the iconic feature — nearly unrecognisable
 - Question for every round: "Which country does this flag belong to?"
-- Use a different country for each of the 5 rounds
-- Reveal: full country name + a fun_fact about the flag's design or what its symbols represent`,
+- Reveal: full country name + a fun_fact about what the flag's symbols represent`,
     },
 
     'country-by-clue': {
@@ -268,13 +274,12 @@ FORMAT: NAME A COUNTRY BY CLUE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'partial-flag'
-    ? `ROUND slides (PARTIAL FLAG CHALLENGE — zoomed-in crop of the flag, filling the entire frame edge-to-edge):
-- The image must look exactly like a standard flat flag photo (like a Google Images flag result) — clean, flat, accurate colours, no fabric texture, no wave, no 3D
-- The flag is zoomed in so only a PORTION of it fills the frame — the flag extends beyond the frame edges and is cropped, as if you took a flag image and zoomed into one section of it
-- NO background visible at all — the flag colours/pattern fill 100% of the frame edge-to-edge
-- Specify which section of the flag is zoomed into (e.g. "zoomed into the top-left corner of the flag", "zoomed into the central emblem", "zoomed into the right half of the flag") — the crop gets tighter each round
-- Every colour, stripe, symbol, and detail in the visible section must be sharply and accurately rendered
-- NO country names, text, labels, or dark background anywhere in the image`
+    ? `ROUND slides (PARTIAL FLAG CHALLENGE — tight zoom on the flag's most iconic feature, filling the frame):
+- The image must look exactly like a flat flag photograph zoomed in — clean, flat, crisp, accurate colours, no fabric texture, no wave, no 3D effects
+- The frame is filled edge-to-edge with the flag — NO dark background, NO padding, NO border. The flag bleeds to all four edges.
+- Each image_prompt must name the country's flag AND the specific iconic feature to zoom into (e.g. "the maple leaf of the Canadian flag", "the golden eagle emblem of the Mexican flag", "the red disc of the Japanese flag"). The zoom level tightens each round per the instructions above.
+- Every colour, stripe, symbol, and fine detail must be sharply and accurately rendered
+- NO country names, text, labels, or any non-flag background anywhere in the image`
     : format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
 - Show the country's flag as a clean, flat, precisely proportioned rectangle — flags are ALWAYS wider than they are tall (landscape orientation, roughly 3:2 width-to-height ratio). NEVER show a flag taller than it is wide.
