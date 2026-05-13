@@ -7,7 +7,7 @@ import path from 'path';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  const { slide_id, game_id, image_prompt, slide_index } = await req.json();
+  const { slide_id, game_id, image_prompt, slide_index, copy_to_slide_id } = await req.json();
   const openai = getOpenAI();
   const db = getDb();
 
@@ -15,13 +15,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await openai.images.generate({
-      model: 'gpt-image-1' as any,
+      model: 'dall-e-3',
       prompt: image_prompt,
-      size: '1024x1536' as any,
+      size: '1024x1024',
+      quality: 'standard',
+      response_format: 'b64_json',
       n: 1,
     });
 
-    const b64 = (response.data?.[0] as any)?.b64_json;
+    const b64 = response.data?.[0]?.b64_json;
     if (!b64) throw new Error('No image data returned from API');
 
     const buffer = Buffer.from(b64, 'base64');
@@ -38,6 +40,13 @@ export async function POST(req: NextRequest) {
     db.prepare(
       "UPDATE slides SET image_path = ?, image_status = 'ready' WHERE id = ?"
     ).run(imagePath, slide_id);
+
+    // Copy the same image to the paired reveal slide (if provided)
+    if (copy_to_slide_id) {
+      db.prepare(
+        "UPDATE slides SET image_path = ?, image_status = 'ready' WHERE id = ?"
+      ).run(imagePath, copy_to_slide_id);
+    }
 
     db.prepare("UPDATE games SET status = 'ready' WHERE id = ?").run(game_id);
 

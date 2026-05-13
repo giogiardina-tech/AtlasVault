@@ -9,6 +9,12 @@ interface Props {
   onComplete: () => void;
 }
 
+// Only title (index 0) and round slides get generated images.
+// Reveal slides reuse their paired round's image. Score slide uses a gradient.
+function needsGeneration(slide: Slide) {
+  return slide.slide_type === 'title' || slide.slide_type === 'round';
+}
+
 export default function ImageGenerator({ gameId, slides, onProgress, onComplete }: Props) {
   const runningRef = useRef(false);
   const slidesRef = useRef<Slide[]>(slides);
@@ -20,9 +26,19 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
 
     async function generate() {
       const current = [...slidesRef.current];
+
+      // Build index→position map for fast lookup
+      const byIndex = new Map(current.map((s, pos) => [s.slide_index, { slide: s, pos }]));
+
       for (let i = 0; i < current.length; i++) {
         const slide = current[i];
+        if (!needsGeneration(slide)) continue;
         if (slide.image_status === 'ready') continue;
+
+        // For round slides, pair with the next slide (the reveal)
+        const revealEntry = slide.slide_type === 'round'
+          ? byIndex.get(slide.slide_index + 1)
+          : undefined;
 
         try {
           const res = await fetch('/api/generate/image', {
@@ -33,15 +49,25 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
               game_id: gameId,
               image_prompt: slide.image_prompt,
               slide_index: slide.slide_index,
+              copy_to_slide_id: revealEntry?.slide.id ?? null,
             }),
           });
 
           const data = await res.json();
-          current[i] = {
-            ...slide,
-            image_path: data.image_path || null,
-            image_status: data.success ? 'ready' : 'failed',
-          };
+          const imagePath = data.image_path || null;
+          const status = data.success ? 'ready' : 'failed';
+
+          current[i] = { ...slide, image_path: imagePath, image_status: status };
+
+          // Mirror the result onto the reveal slide in local state
+          if (data.success && revealEntry) {
+            current[revealEntry.pos] = {
+              ...revealEntry.slide,
+              image_path: imagePath,
+              image_status: 'ready',
+            };
+          }
+
           onProgress([...current]);
         } catch {
           current[i] = { ...slide, image_status: 'failed' };
@@ -54,12 +80,22 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
     generate();
   }, []);
 
-  const done = slides.filter((s) => s.image_status === 'ready').length;
-  const failed = slides.filter((s) => s.image_status === 'failed').length;
-  const total = slides.length;
-  const pct = Math.round((done / total) * 100);
+  const generatable = slides.filter(needsGeneration);
+  const done = generatable.filter((s) => s.image_status === 'ready').length;
+  const failed = generatable.filter((s) => s.image_status === 'failed').length;
+  const total = generatable.length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   const statusIcon = (s: Slide) => {
+    if (!needsGeneration(s) && s.slide_type === 'score') {
+      return <span className="text-zinc-600">—</span>;
+    }
+    if (!needsGeneration(s)) {
+      // reveal slide — mirrors its round
+      return s.image_status === 'ready'
+        ? <span className="text-emerald-400/60">✓</span>
+        : <span className="text-zinc-600">◷</span>;
+    }
     if (s.image_status === 'ready') return <span className="text-emerald-400">✓</span>;
     if (s.image_status === 'failed') return <span className="text-red-400">✗</span>;
     if (s.image_status === 'generating') return <span className="text-tk-cyan animate-pulse">◌</span>;
@@ -69,11 +105,12 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-white mb-1">Generating Images</h2>
-      <p className="text-zinc-400 mb-6">DALL-E 3 is creating your TikTok slides…</p>
+      <p className="text-zinc-400 mb-1">DALL-E 3 is creating your TikTok slides…</p>
+      <p className="text-zinc-600 text-xs mb-6">Generating {total} images — reveal slides reuse their round's image</p>
 
       <div className="mb-6">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-zinc-400">{done} of {total} slides ready</span>
+          <span className="text-zinc-400">{done} of {total} images ready</span>
           <span className="text-white font-semibold">{pct}%</span>
         </div>
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
@@ -98,6 +135,12 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
             <span className="text-sm text-zinc-300 capitalize">{slide.slide_type}</span>
             {slide.content.round_number && (
               <span className="text-xs text-zinc-600 ml-auto">Round {slide.content.round_number}</span>
+            )}
+            {slide.slide_type === 'reveal' && (
+              <span className="text-xs text-zinc-600 ml-auto">reuses round image</span>
+            )}
+            {slide.slide_type === 'score' && (
+              <span className="text-xs text-zinc-600 ml-auto">gradient</span>
             )}
           </div>
         ))}
