@@ -211,10 +211,22 @@ FORMAT: NAME A COUNTRY BY CLUE
     },
   };
 
+  const scoreSummaryGuide: Record<string, string> = {
+    'bordering-country': `scoring_summary uses POINTLESS scoring — total points across 5 rounds (lower = rarer = better). Example: "0pts = POINTLESS genius | under 150 = geography legend | under 300 = solid | over 300 = study more!"`,
+    'guess-the-flag': `scoring_summary uses correct answers out of 5. Example: "5/5 = flag master | 4/5 = impressive | 3/5 = solid | 2/5 or below = study your flags!"`,
+    'easy-to-impossible': `scoring_summary uses correct answers out of 5. Example: "5/5 = genius | 4/5 = impressive | 3/5 = solid | 2 or below = keep learning!"`,
+    'country-from-map': `scoring_summary uses correct answers out of 5. Example: "5/5 = cartography master | 4/5 = solid geographer | 3/5 = decent | 2 or below = get a map!"`,
+    'guess-the-empire': `scoring_summary uses correct answers out of 5. Example: "5/5 = history master | 4/5 = empire enthusiast | 3/5 = solid | 2 or below = brush up on history!"`,
+    'historical-order': `scoring_summary uses POSITION scoring — 1 point per correct position, 4 per round, 20 total. Example: "20/20 = history genius | 15-19 = impressive | 10-14 = solid | under 10 = study up!"`,
+    'guess-the-capital': `scoring_summary uses correct answers out of 5. Example: "5/5 = capital city expert | 4/5 = sharp | 3/5 = decent | 2 or below = study your capitals!"`,
+    'country-by-clue': `scoring_summary uses correct answers out of 5. Example: "5/5 = world explorer | 4/5 = impressive | 3/5 = solid | 2 or below = keep exploring!"`,
+  };
+
   const format = formatInstructions[format_type];
   const instructions = format?.instructions || `Create 5 trivia rounds about ${category} with increasing difficulty.`;
   const revealType = format?.revealType || 'difficulty';
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
+  const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   return `You are an expert TikTok trivia game designer. Create a complete, engaging trivia game in JSON format.
 
@@ -258,7 +270,7 @@ FULL JSON STRUCTURE (12 slides total):
       "slide_type": "score",
       "content": {
         "title": "How Did You Score?",
-        "scoring_summary": "clear breakdown — e.g. '0pts = POINTLESS genius | under 30 = geography legend | under 60 = solid | over 60 = study more!'"
+        "scoring_summary": "IMPORTANT: ${scoreSummary} Use pipe | to separate score tiers."
       },
       "image_prompt": "..."
     }

@@ -54,19 +54,21 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
         <div style={bgStyle} />
         <div style={overlayStyle} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 80px', textAlign: 'center' }}>
-          <span style={{ background: '#ff2d55', color: 'white', fontSize: 36, fontWeight: 700, padding: '8px 24px', borderRadius: 8, letterSpacing: 3, marginBottom: 60 }}>
-            {content.category?.toUpperCase()}
-          </span>
-          <h1 style={{ color: 'white', fontSize: 96, fontWeight: 900, lineHeight: 1.05, marginBottom: 48, textShadow: '0 4px 40px rgba(0,0,0,0.8)' }}>
-            {content.title}
-          </h1>
-          <p style={{ color: '#00f2ea', fontSize: 52, fontWeight: 500, lineHeight: 1.3, fontStyle: 'italic' }}>
-            {content.hook}
-          </p>
-          {content.subtitle && (
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 36, marginTop: 40 }}>{content.subtitle}</p>
-          )}
-          <div style={{ position: 'absolute', bottom: 80, color: 'rgba(255,255,255,0.3)', fontSize: 28, letterSpacing: 4 }}>
+          <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 32, padding: '80px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, width: '100%' }}>
+            <span style={{ background: '#ff2d55', color: 'white', fontSize: 36, fontWeight: 700, padding: '8px 24px', borderRadius: 8, letterSpacing: 3, marginBottom: 48 }}>
+              {content.category?.toUpperCase()}
+            </span>
+            <h1 style={{ color: 'white', fontSize: 96, fontWeight: 900, lineHeight: 1.05, marginBottom: 48, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
+              {content.title}
+            </h1>
+            <p style={{ color: '#00f2ea', fontSize: 52, fontWeight: 500, lineHeight: 1.3, fontStyle: 'italic' }}>
+              {content.hook}
+            </p>
+            {content.subtitle && (
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 36, marginTop: 36 }}>{content.subtitle}</p>
+            )}
+          </div>
+          <div style={{ position: 'absolute', bottom: 80, color: 'rgba(255,255,255,0.4)', fontSize: 28, letterSpacing: 4 }}>
             ATLASVAULT
           </div>
         </div>
@@ -80,47 +82,49 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
         <div style={bgStyle} />
         <div style={overlayStyle} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 80px', textAlign: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 60 }}>
-            <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
-              ROUND {content.round_number}
-            </span>
-            {content.difficulty && (
-              <span style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', fontSize: 28, padding: '6px 20px', borderRadius: 40, textTransform: 'uppercase', letterSpacing: 2 }}>
-                {content.difficulty}
+          <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 28, padding: '60px 72px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 48 }}>
+              <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
+                ROUND {content.round_number}
               </span>
+              {content.difficulty && (
+                <span style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)', fontSize: 28, padding: '6px 20px', borderRadius: 40, textTransform: 'uppercase', letterSpacing: 2 }}>
+                  {content.difficulty}
+                </span>
+              )}
+            </div>
+
+            <h2 style={{ color: 'white', fontSize: 80, fontWeight: 800, lineHeight: 1.1, marginBottom: content.clues || content.events ? 48 : 0 }}>
+              {content.question}
+            </h2>
+
+            {content.clues && (
+              <div style={{ textAlign: 'left', width: '100%' }}>
+                {content.clues.map((clue, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 20, marginBottom: 20 }}>
+                    <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 700, minWidth: 40 }}>{i + 1}.</span>
+                    <span style={{ color: 'white', fontSize: 36, lineHeight: 1.4 }}>{clue}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {content.events && (
+              <div style={{ textAlign: 'left', width: '100%' }}>
+                {content.events.map((ev, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 20, marginBottom: 24, alignItems: 'flex-start' }}>
+                    <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 700, background: 'rgba(0,242,234,0.15)', borderRadius: 8, padding: '4px 16px' }}>
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span style={{ color: 'white', fontSize: 36, lineHeight: 1.4 }}>{ev}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
-          <h2 style={{ color: 'white', fontSize: 80, fontWeight: 800, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)', marginBottom: 60 }}>
-            {content.question}
-          </h2>
-
-          {content.clues && (
-            <div style={{ textAlign: 'left', width: '100%' }}>
-              {content.clues.map((clue, i) => (
-                <div key={i} style={{ display: 'flex', gap: 20, marginBottom: 20 }}>
-                  <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 700, minWidth: 40 }}>{i + 1}.</span>
-                  <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 36, lineHeight: 1.4 }}>{clue}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {content.events && (
-            <div style={{ textAlign: 'left', width: '100%', marginTop: 20 }}>
-              {content.events.map((ev, i) => (
-                <div key={i} style={{ display: 'flex', gap: 20, marginBottom: 24, alignItems: 'flex-start' }}>
-                  <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 700, background: 'rgba(0,242,234,0.1)', borderRadius: 8, padding: '4px 16px' }}>
-                    {String.fromCharCode(65 + i)}
-                  </span>
-                  <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 36, lineHeight: 1.4 }}>{ev}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
           <div style={{ position: 'absolute', bottom: 100, left: 80, right: 80, display: 'flex', justifyContent: 'center' }}>
-            <div style={{ background: 'rgba(255,45,85,0.2)', border: '2px solid rgba(255,45,85,0.4)', borderRadius: 60, padding: '16px 60px', color: '#ff2d55', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
+            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '18px 60px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
               COMMENT YOUR ANSWER ↓
             </div>
           </div>
@@ -141,16 +145,16 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
     const tier = tierConfig[content.difficulty_tier || 'medium'];
 
     const header = (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 30 }}>
-        <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
+        <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 800, letterSpacing: 4, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
           ROUND {content.round_number}
         </span>
-        <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>REVEAL</span>
+        <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 800, letterSpacing: 4, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>REVEAL</span>
       </div>
     );
 
     const questionLine = (
-      <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 38, marginBottom: 50, lineHeight: 1.3 }}>
+      <p style={{ color: 'white', fontSize: 38, marginBottom: 28, lineHeight: 1.3, fontWeight: 600, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
         {content.question}
       </p>
     );
@@ -165,7 +169,7 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
           <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
             {header}
             {questionLine}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '48px 48px' }}>
               {content.answers.map((ans, i) => {
                 const barWidth = Math.max(4, (ans.points / maxPoints) * 100);
                 return (
@@ -174,18 +178,18 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
                       <span style={{ color: ans.is_pointless ? '#00f2ea' : 'white', fontSize: 40, fontWeight: ans.is_pointless ? 800 : 600 }}>
                         {ans.text}{ans.is_pointless ? ' ★' : ''}
                       </span>
-                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'rgba(255,255,255,0.55)', fontSize: 40, fontWeight: 700 }}>
+                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'rgba(255,255,255,0.7)', fontSize: 40, fontWeight: 700 }}>
                         {ans.is_pointless ? 'POINTLESS' : `${ans.points}pts`}
                       </span>
                     </div>
-                    <div style={{ height: 14, background: 'rgba(255,255,255,0.08)', borderRadius: 7, overflow: 'hidden' }}>
+                    <div style={{ height: 14, background: 'rgba(255,255,255,0.12)', borderRadius: 7, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${barWidth}%`, background: ans.is_pointless ? '#00f2ea' : '#ff2d55', borderRadius: 7 }} />
                     </div>
                   </div>
                 );
               })}
             </div>
-            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 28, textAlign: 'center', marginTop: 40 }}>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 28, textAlign: 'center', marginTop: 28 }}>
               Lower score = rarer answer = better
             </p>
           </div>
@@ -201,8 +205,8 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
           <div style={overlayStyle} />
           <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
             {header}
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 38, marginBottom: 50 }}>Correct chronological order:</p>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 38, marginBottom: 32, fontWeight: 600 }}>Correct chronological order:</p>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '48px 48px' }}>
               {content.correct_order.map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
                   <span style={{ color: '#00f2ea', fontSize: 44, fontWeight: 900, minWidth: 48 }}>{i + 1}</span>
@@ -213,8 +217,8 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 50, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: '36px 40px', textAlign: 'center' }}>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 32, marginBottom: 12 }}>Score yourself — 1 point per correct position</p>
+            <div style={{ marginTop: 36, background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(0,242,234,0.2)', borderRadius: 20, padding: '32px 40px', textAlign: 'center' }}>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 32, marginBottom: 12 }}>Score yourself — 1 point per correct position</p>
               <p style={{ color: '#00f2ea', fontSize: 36, fontWeight: 700 }}>
                 {content.max_points || 4}/{content.max_points || 4} = perfect
               </p>
@@ -232,14 +236,14 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
           {header}
           {questionLine}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 48 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 36, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '60px 60px' }}>
             {tier && (
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                 {Array.from({ length: tier.stars }).map((_, i) => (
                   <span key={i} style={{ fontSize: 52, color: tier.color }}>★</span>
                 ))}
                 {Array.from({ length: 4 - tier.stars }).map((_, i) => (
-                  <span key={i} style={{ fontSize: 52, color: 'rgba(255,255,255,0.15)' }}>★</span>
+                  <span key={i} style={{ fontSize: 52, color: 'rgba(255,255,255,0.2)' }}>★</span>
                 ))}
                 <span style={{ color: tier.color, fontSize: 40, fontWeight: 800, marginLeft: 16, letterSpacing: 3 }}>{tier.label}</span>
               </div>
@@ -248,12 +252,12 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
               {content.correct_answer}
             </div>
             {content.clue_giveaway && (
-              <div style={{ background: 'rgba(255,45,85,0.15)', border: '1px solid rgba(255,45,85,0.3)', borderRadius: 14, padding: '16px 36px' }}>
+              <div style={{ background: 'rgba(255,45,85,0.25)', border: '1px solid rgba(255,45,85,0.5)', borderRadius: 14, padding: '16px 36px' }}>
                 <span style={{ color: '#ff2d55', fontSize: 34, fontWeight: 600 }}>Most people get it from {content.clue_giveaway}</span>
               </div>
             )}
             {content.fun_fact && (
-              <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 38, lineHeight: 1.45, fontStyle: 'italic', maxWidth: 860 }}>
+              <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 38, lineHeight: 1.45, fontStyle: 'italic', maxWidth: 860 }}>
                 "{content.fun_fact}"
               </p>
             )}
@@ -269,17 +273,19 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
         <div style={bgStyle} />
         <div style={overlayStyle} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 80px', textAlign: 'center' }}>
-          <h1 style={{ color: 'white', fontSize: 100, fontWeight: 900, lineHeight: 1, marginBottom: 60 }}>
-            {content.title}
-          </h1>
-          <div style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '60px 60px' }}>
-            {content.scoring_summary?.split('|').map((part, i) => (
-              <p key={i} style={{ color: i === 0 ? '#00f2ea' : 'rgba(255,255,255,0.7)', fontSize: 44, lineHeight: 1.6, fontWeight: i === 0 ? 700 : 400 }}>
-                {part.trim()}
-              </p>
-            ))}
+          <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 32, padding: '80px 72px', width: '100%' }}>
+            <h1 style={{ color: 'white', fontSize: 100, fontWeight: 900, lineHeight: 1, marginBottom: 56 }}>
+              {content.title}
+            </h1>
+            <div style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 20, padding: '48px 52px' }}>
+              {content.scoring_summary?.split('|').map((part, i) => (
+                <p key={i} style={{ color: i === 0 ? '#00f2ea' : 'rgba(255,255,255,0.85)', fontSize: 44, lineHeight: 1.6, fontWeight: i === 0 ? 700 : 400 }}>
+                  {part.trim()}
+                </p>
+              ))}
+            </div>
           </div>
-          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 32, marginTop: 80, letterSpacing: 4 }}>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 32, marginTop: 60, letterSpacing: 4 }}>
             FOLLOW FOR MORE
           </p>
         </div>
