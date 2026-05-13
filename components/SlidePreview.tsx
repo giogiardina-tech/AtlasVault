@@ -12,7 +12,7 @@ interface Props {
   onPrev: () => void;
   onNext: () => void;
   onSlideSelect: (index: number) => void;
-  onRegenerate: (slideId: string, prompt: string) => void;
+  onRegenerate: (slideId: string, prompt: string) => Promise<void>;
   onSlidesChange: (slides: Slide[]) => void;
 }
 
@@ -23,6 +23,8 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
   const [exportProgress, setExportProgress] = useState(0);
   const [editingPrompt, setEditingPrompt] = useState(false);
   const [promptValue, setPromptValue] = useState('');
+  const [regenerating, setRegenerating] = useState(false);
+  const [regenError, setRegenError] = useState<string | null>(null);
   const renderContainerRef = useRef<HTMLDivElement>(null);
 
   const slide = slides[currentIndex];
@@ -80,9 +82,17 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
     setPromptValue(slide.image_prompt);
   };
 
-  const confirmRegenerate = () => {
+  const confirmRegenerate = async () => {
     setEditingPrompt(false);
-    onRegenerate(slide.id, promptValue);
+    setRegenerating(true);
+    setRegenError(null);
+    try {
+      await onRegenerate(slide.id, promptValue);
+    } catch (e: any) {
+      setRegenError(e?.message || 'Generation failed');
+    } finally {
+      setRegenerating(false);
+    }
   };
 
   const readyCount = slides.filter((s) => s.image_status === 'ready').length;
@@ -130,10 +140,17 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
           <div className="rounded-2xl overflow-hidden" style={{ width: '100%', height: '100%' }}>
             <SlideRenderer slide={slide} scale={PREVIEW_SCALE} format_type={game.format_type} />
           </div>
+          {regenerating && (
+            <div className="absolute inset-0 rounded-2xl bg-black/70 flex flex-col items-center justify-center gap-2">
+              <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              <span className="text-white text-xs font-medium">Generating…</span>
+            </div>
+          )}
         </div>
 
         {/* Slide controls */}
         <div className="mt-4 flex flex-col gap-2 w-full max-w-xs">
+          {regenError && <p className="text-red-400 text-xs text-center">{regenError}</p>}
           {editingPrompt ? (
             <div>
               <textarea
@@ -152,7 +169,7 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
               </div>
             </div>
           ) : slide.image_prompt ? (
-            <button onClick={handleRegenerate} className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors">
+            <button onClick={handleRegenerate} disabled={regenerating} className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors disabled:opacity-40">
               Regenerate this slide
             </button>
           ) : (
