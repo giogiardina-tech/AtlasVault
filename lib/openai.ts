@@ -266,11 +266,13 @@ FULL JSON STRUCTURE (12 slides total):
 }
 
 IMAGE PROMPT RULES (every slide):
-- Cinematic, photorealistic, dark atlas/map aesthetic
-- High contrast, dramatic lighting, deep shadows
-- Absolutely NO text or writing visible in the image
-- Vertical 9:16 portrait format
-- Rich colours against very dark background (#000-#1a1a1a)
+- Vivid, cinematic, photorealistic — designed to stop someone mid-scroll on TikTok
+- Bold, saturated colours with dramatic lighting — think blockbuster movie poster energy
+- High visual contrast so the image is immediately striking and readable at a glance
+- The subject should fill the frame boldly — maps should be detailed and colourful, flags should be crisp and vivid, historical scenes should be dramatic and epic
+- Absolutely NO text, labels, or writing visible anywhere in the image
+- Vertical 9:16 portrait format, composition centred for mobile viewing
+- Lighting can be dramatic and moody but the image must NOT be so dark that detail is lost — aim for rich, visible colour throughout
 
 CRITICAL: Return ONLY valid JSON. All 12 slides required. slide_index must be 0 through 11.`;
 }

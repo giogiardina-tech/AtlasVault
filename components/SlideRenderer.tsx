@@ -42,8 +42,10 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
     inset: 0,
     background:
       slide_type === 'title'
-        ? 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.9) 100%)'
-        : 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%)',
+        // Title: stronger centre fade so text pops, but image still vivid top/bottom
+        ? 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.7) 100%)'
+        // Other slides: darken only top strip (header) and bottom strip (CTA), keep middle image visible
+        : 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 25%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.7) 100%)',
   };
 
   if (slide_type === 'title') {
@@ -89,7 +91,7 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
             )}
           </div>
 
-          <h2 style={{ color: 'white', fontSize: 80, fontWeight: 800, lineHeight: 1.1, textShadow: '0 4px 40px rgba(0,0,0,0.9)', marginBottom: 60 }}>
+          <h2 style={{ color: 'white', fontSize: 80, fontWeight: 800, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9)', marginBottom: 60 }}>
             {content.question}
           </h2>
 
