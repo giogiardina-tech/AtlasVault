@@ -268,11 +268,33 @@ FULL JSON STRUCTURE (12 slides total):
 IMAGE PROMPT RULES (every slide):
 - Vivid, cinematic, photorealistic — designed to stop someone mid-scroll on TikTok
 - Bold, saturated colours with dramatic lighting — think blockbuster movie poster energy
-- High visual contrast so the image is immediately striking and readable at a glance
-- The subject should fill the frame boldly — maps should be detailed and colourful, flags should be crisp and vivid, historical scenes should be dramatic and epic
-- Absolutely NO text, labels, or writing visible anywhere in the image
+- Absolutely NO text, labels, country names, flag names, or writing visible anywhere in the image
 - Vertical 9:16 portrait format, composition centred for mobile viewing
-- Lighting can be dramatic and moody but the image must NOT be so dark that detail is lost — aim for rich, visible colour throughout
+- Lighting can be dramatic and moody but must NOT be so dark that detail is lost — rich visible colour throughout
+
+CRITICAL — IMAGE MUST BE RELEVANT TO THE SLIDE CONTENT:
+Each image_prompt must be written specifically for what that slide is about. Generic prompts are not acceptable.
+
+ROUND slides (question slides — do NOT reveal the answer):
+- Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
+- Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
+- Flag rounds: show a dramatic cultural scene, landmark, or landscape associated with the region — NOT the flag itself and NOT anything that makes the country obvious
+- Empire/history rounds: show a dramatic ancient or historical landscape from that era/region WITHOUT showing anything that names the empire
+- Capital rounds: show a city skyline or urban landscape from the general region — NOT the specific capital city
+- Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
+- Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible
+
+REVEAL slides (answer slides — now you CAN show the subject directly):
+- Geography reveals: show a vivid satellite or aerial view of the specific country/region
+- Flag reveals: show the country's most iconic landmark, landscape, or cultural scene
+- Capital reveals: show the actual capital city's skyline or iconic monument
+- Empire reveals: show the empire's most iconic architecture or territory at its peak
+- Clue reveals: show the mystery country's most recognisable feature
+- Order reveals: show a dramatic historical scene related to the events shown
+
+TITLE and SCORE slides:
+- Title: bold, dramatic visual matching the game's theme — a striking globe, atlas, or thematic scene
+- Score: triumphant, dramatic wide shot — world map, globe, or thematic finale image
 
 CRITICAL: Return ONLY valid JSON. All 12 slides required. slide_index must be 0 through 11.`;
 }
