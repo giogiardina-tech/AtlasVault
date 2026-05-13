@@ -128,58 +128,134 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
   }
 
   if (slide_type === 'reveal') {
-    const answers = content.answers || [];
-    const maxPoints = Math.max(...answers.map((a) => a.points), 1);
+    const scoringType = content.scoring_type || (content.answers && content.answers.length > 1 ? 'pointless' : 'difficulty');
 
-    return (
-      <div style={containerStyle}>
-        <div style={bgStyle} />
-        <div style={overlayStyle} />
-        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 30 }}>
-            <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>
-              ROUND {content.round_number}
-            </span>
-            <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>REVEAL</span>
-          </div>
+    const tierConfig: Record<string, { label: string; color: string; stars: number }> = {
+      easy:       { label: 'EASY',       color: '#22c55e', stars: 1 },
+      medium:     { label: 'MEDIUM',     color: '#f59e0b', stars: 2 },
+      hard:       { label: 'HARD',       color: '#f97316', stars: 3 },
+      impossible: { label: 'IMPOSSIBLE', color: '#ef4444', stars: 4 },
+    };
+    const tier = tierConfig[content.difficulty_tier || 'medium'];
 
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 42, marginBottom: 60, lineHeight: 1.3 }}>
-            {content.question}
-          </p>
+    const header = (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 30 }}>
+        <span style={{ color: '#00f2ea', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>
+          ROUND {content.round_number}
+        </span>
+        <span style={{ color: '#ff2d55', fontSize: 36, fontWeight: 800, letterSpacing: 4 }}>REVEAL</span>
+      </div>
+    );
 
-          {answers.length > 0 ? (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
-              {answers.map((ans, i) => {
-                const barWidth = Math.max(8, (ans.points / maxPoints) * 100);
+    const questionLine = (
+      <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 38, marginBottom: 50, lineHeight: 1.3 }}>
+        {content.question}
+      </p>
+    );
+
+    // POINTLESS MODE — multiple answers with bar chart
+    if (scoringType === 'pointless' && content.answers && content.answers.length > 0) {
+      const maxPoints = Math.max(...content.answers.map((a) => a.points), 1);
+      return (
+        <div style={containerStyle}>
+          <div style={bgStyle} />
+          <div style={overlayStyle} />
+          <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
+            {header}
+            {questionLine}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+              {content.answers.map((ans, i) => {
+                const barWidth = Math.max(4, (ans.points / maxPoints) * 100);
                 return (
                   <div key={i}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'white', fontSize: 44, fontWeight: ans.is_pointless ? 800 : 600 }}>
-                        {ans.text} {ans.is_pointless ? '★' : ''}
+                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'white', fontSize: 40, fontWeight: ans.is_pointless ? 800 : 600 }}>
+                        {ans.text}{ans.is_pointless ? ' ★' : ''}
                       </span>
-                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'rgba(255,255,255,0.6)', fontSize: 44, fontWeight: 700 }}>
+                      <span style={{ color: ans.is_pointless ? '#00f2ea' : 'rgba(255,255,255,0.55)', fontSize: 40, fontWeight: 700 }}>
                         {ans.is_pointless ? 'POINTLESS' : `${ans.points}pts`}
                       </span>
                     </div>
-                    <div style={{ height: 16, background: 'rgba(255,255,255,0.1)', borderRadius: 8, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${barWidth}%`, background: ans.is_pointless ? '#00f2ea' : '#ff2d55', borderRadius: 8, transition: 'width 0.5s' }} />
+                    <div style={{ height: 14, background: 'rgba(255,255,255,0.08)', borderRadius: 7, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${barWidth}%`, background: ans.is_pointless ? '#00f2ea' : '#ff2d55', borderRadius: 7 }} />
                     </div>
                   </div>
                 );
               })}
             </div>
-          ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ color: '#00f2ea', fontSize: 96, fontWeight: 900 }}>{content.correct_answer}</div>
-                {content.fun_fact && (
-                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 40, marginTop: 40, lineHeight: 1.4, fontStyle: 'italic' }}>
-                    {content.fun_fact}
-                  </p>
-                )}
-              </div>
+            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 28, textAlign: 'center', marginTop: 40 }}>
+              Lower score = rarer answer = better
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // POSITION MODE — historical order with partial credit
+    if (scoringType === 'position' && content.correct_order && content.correct_order.length > 0) {
+      return (
+        <div style={containerStyle}>
+          <div style={bgStyle} />
+          <div style={overlayStyle} />
+          <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
+            {header}
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 38, marginBottom: 50 }}>Correct chronological order:</p>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
+              {content.correct_order.map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                  <span style={{ color: '#00f2ea', fontSize: 44, fontWeight: 900, minWidth: 48 }}>{i + 1}</span>
+                  <div>
+                    <span style={{ color: 'white', fontSize: 44, fontWeight: 700 }}>{item.event}</span>
+                    <span style={{ color: '#ff2d55', fontSize: 38, fontWeight: 800, marginLeft: 20 }}>{item.year}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
+            <div style={{ marginTop: 50, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: '36px 40px', textAlign: 'center' }}>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 32, marginBottom: 12 }}>Score yourself — 1 point per correct position</p>
+              <p style={{ color: '#00f2ea', fontSize: 36, fontWeight: 700 }}>
+                {content.max_points || 4}/{content.max_points || 4} = perfect
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // DIFFICULTY MODE — single correct answer with tier badge
+    return (
+      <div style={containerStyle}>
+        <div style={bgStyle} />
+        <div style={overlayStyle} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
+          {header}
+          {questionLine}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 48 }}>
+            {tier && (
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                {Array.from({ length: tier.stars }).map((_, i) => (
+                  <span key={i} style={{ fontSize: 52, color: tier.color }}>★</span>
+                ))}
+                {Array.from({ length: 4 - tier.stars }).map((_, i) => (
+                  <span key={i} style={{ fontSize: 52, color: 'rgba(255,255,255,0.15)' }}>★</span>
+                ))}
+                <span style={{ color: tier.color, fontSize: 40, fontWeight: 800, marginLeft: 16, letterSpacing: 3 }}>{tier.label}</span>
+              </div>
+            )}
+            <div style={{ color: '#00f2ea', fontSize: 96, fontWeight: 900, lineHeight: 1.05, textShadow: '0 0 60px rgba(0,242,234,0.4)' }}>
+              {content.correct_answer}
+            </div>
+            {content.clue_giveaway && (
+              <div style={{ background: 'rgba(255,45,85,0.15)', border: '1px solid rgba(255,45,85,0.3)', borderRadius: 14, padding: '16px 36px' }}>
+                <span style={{ color: '#ff2d55', fontSize: 34, fontWeight: 600 }}>Most people get it from {content.clue_giveaway}</span>
+              </div>
+            )}
+            {content.fun_fact && (
+              <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 38, lineHeight: 1.45, fontStyle: 'italic', maxWidth: 860 }}>
+                "{content.fun_fact}"
+              </p>
+            )}
+          </div>
         </div>
       </div>
     );

@@ -13,6 +13,8 @@ export type FormatType =
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';
 export type ImageStatus = 'pending' | 'generating' | 'ready' | 'failed';
+export type ScoringType = 'pointless' | 'difficulty' | 'position';
+export type DifficultyTier = 'easy' | 'medium' | 'hard' | 'impossible';
 
 export interface Template {
   id: string;
@@ -29,6 +31,11 @@ export interface Answer {
   is_pointless?: boolean;
 }
 
+export interface CorrectOrderItem {
+  event: string;
+  year: number;
+}
+
 export interface SlideContent {
   // title slide
   title?: string;
@@ -41,10 +48,18 @@ export interface SlideContent {
   difficulty?: string;
   clues?: string[];
   events?: string[];
-  // reveal slide
+  // reveal slide — scoring_type determines which display mode is used
+  scoring_type?: ScoringType;
+  // pointless mode
   answers?: Answer[];
+  // difficulty mode (single correct answer)
   correct_answer?: string;
+  difficulty_tier?: DifficultyTier;
   fun_fact?: string;
+  clue_giveaway?: string;
+  // position mode (historical order)
+  correct_order?: CorrectOrderItem[];
+  max_points?: number;
   // score slide
   scoring_summary?: string;
 }
