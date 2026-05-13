@@ -406,19 +406,29 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
 
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, W, H);
-
   const isFlagRound = formatType === 'guess-the-flag' && slide.slide_type === 'round';
   const isPartialFlagRound = formatType === 'partial-flag' && slide.slide_type === 'round';
   const isFlagStyleRound = isFlagRound || isPartialFlagRound;
 
+  ctx.fillStyle = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
+  ctx.fillRect(0, 0, W, H);
+
   if (slide.image_path) {
     try {
       const img = await loadImage(slide.image_path);
-      // Both flag game types use contain so the image sits on the slide background
-      if (isFlagStyleRound) drawContain(ctx, img);
-      else drawCover(ctx, img);
+      if (isPartialFlagRound) {
+        // Progressive centre zoom: each round shows less of the flag
+        const PARTIAL_ZOOMS = [1.0, 1.4, 2.0, 3.2, 5.2];
+        const roundNum = (slide.content.round_number ?? 1) as number;
+        const zoom = PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)];
+        const scaledW = W * zoom;
+        const scaledH = scaledW / (img.width / img.height);
+        ctx.drawImage(img, (W - scaledW) / 2, (H - scaledH) / 2, scaledW, scaledH);
+      } else if (isFlagRound) {
+        drawContain(ctx, img);
+      } else {
+        drawCover(ctx, img);
+      }
     } catch {}
   }
 

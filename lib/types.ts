@@ -64,6 +64,8 @@ export interface SlideContent {
   max_points?: number;
   // score slide
   scoring_summary?: string;
+  // flag games — ISO 3166-1 alpha-2 code used to fetch real flag from CDN
+  country_code?: string;
 }
 
 export interface Slide {

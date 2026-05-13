@@ -16,6 +16,14 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   // Both flag formats use the top/bottom text layout (image IS the question)
   const isFlagStyleRound = isFlagRound || isPartialFlagRound;
 
+  // Partial-flag: progressively zoom into the flag centre each round
+  const PARTIAL_ZOOMS = [100, 140, 200, 320, 520]; // percent of element width
+  const roundNum = (content.round_number ?? 1) as number;
+  const partialZoom = isPartialFlagRound ? PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)] : 100;
+
+  // Partial-flag uses a neutral grey bg so the flag edges don't bleed into dark
+  const slideBg = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
+
   const containerStyle: React.CSSProperties = {
     width: W,
     height: H,
@@ -24,7 +32,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     position: 'relative',
     overflow: 'hidden',
     fontFamily: "'Inter', system-ui, sans-serif",
-    backgroundColor: '#0a0a0a',
+    backgroundColor: slideBg,
     flexShrink: 0,
   };
 
@@ -33,15 +41,20 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
-        // Flag games: contain so the flag/crop sits on the background without filling the frame
-        backgroundSize: isFlagStyleRound ? 'contain' : 'cover',
+        backgroundSize: isPartialFlagRound
+          ? `${partialZoom}%`      // zoom into centre of flag
+          : isFlagRound
+          ? 'contain'              // full flag, padding visible
+          : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }
     : {
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
+        background: isPartialFlagRound
+          ? slideBg
+          : 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
       };
 
   const overlayStyle: React.CSSProperties = {

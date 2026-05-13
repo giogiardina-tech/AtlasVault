@@ -150,6 +150,7 @@ FORMAT: GUESS THE FLAG — EASY TO IMPOSSIBLE
   * Round 3: Moderately known nation — difficulty_tier: "medium"
   * Round 4: Lesser-known sovereign nation — difficulty_tier: "hard"
   * Round 5: Obscure sovereign nation or visually confusing flag of a real country — difficulty_tier: "impossible"
+- CRITICAL: Every round slide AND its paired reveal slide must include "country_code": "xx" — the ISO 3166-1 alpha-2 code (2 lowercase letters) for the featured country (e.g. "us", "gb", "jp", "br", "ng")
 - Reveal: the country name + a fun fact about what the flag's symbols mean`,
     },
 
@@ -229,13 +230,7 @@ FORMAT: PARTIAL FLAG CHALLENGE — GUESS THE FLAG FROM A ZOOMED CROP
   * Round 3: a moderately known flag — difficulty_tier: "medium"
   * Round 4: a less common flag most people would struggle with — difficulty_tier: "hard"
   * Round 5: an obscure flag very few people could identify — difficulty_tier: "impossible"
-- For EACH round, choose the single most iconic/distinctive feature on that flag (e.g. Canada → maple leaf, Mexico → golden eagle and snake, USA → stars cluster, Brazil → globe with stars, UK → union cross pattern, Japan → red disc). The image_prompt must zoom directly into that feature.
-- The crop gets tighter each round:
-  * Round 1: zoom showing the iconic feature plus generous surrounding flag area
-  * Round 2: iconic feature fills about half the frame
-  * Round 3: iconic feature fills most of the frame, edges slightly cropped
-  * Round 4: tightly cropped to just the iconic feature, very little context
-  * Round 5: extreme close-up of a tiny detail of the iconic feature — nearly unrecognisable
+- CRITICAL: Every round slide AND its paired reveal slide must include "country_code": "xx" — the ISO 3166-1 alpha-2 code (2 lowercase letters) for the featured country (e.g. "us", "gb", "jp", "br", "ng")
 - Question for every round: "Which country does this flag belong to?"
 - Reveal: full country name + a fun_fact about what the flag's symbols represent`,
     },
@@ -273,22 +268,10 @@ FORMAT: NAME A COUNTRY BY CLUE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
-  const roundImageRule = format_type === 'partial-flag'
-    ? `ROUND slides (PARTIAL FLAG CHALLENGE — a cropped rectangular section of the flag on a clean neutral background):
-- Show a clearly cropped rectangular piece of the flag centered in the image. The flag section must look like a genuine flag crop — flat, bold, accurate colours, no texture, no wave, no 3D.
-- Background: clean solid light grey (#e8e8e8) on all sides around the flag piece. NO dark backgrounds, NO glow, NO atmospheric effects — just a plain neutral grey that does not conflict with any flag colour.
-- The flag piece must NOT fill the whole image — there must be visible grey background space on all four sides around it.
-- Each image_prompt must name the country's flag AND the specific iconic feature that is visible in the crop (e.g. "a cropped section showing the maple leaf of the Canadian flag on a light grey background", "a cropped close-up of the golden eagle emblem from the Mexican flag on a light grey background"). The crop gets tighter each round per the game instructions.
-- Every colour, stripe, symbol, and detail in the visible crop must be crisply and accurately rendered
-- NO country names, text, labels, or dark/coloured backgrounds anywhere in the image`
-    : format_type === 'guess-the-flag'
-    ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
-- STYLE: bold flat vector/icon style — think oversized flag emoji or SVG icon. Solid bold colours, simplified clean shapes, zero fabric texture, zero wave, zero 3D effects
-- Show the flag as a clean flat rectangle, ALWAYS wider than tall (landscape ~3:2 ratio). NEVER taller than wide.
-- Center the flag in the image with generous dark space on all sides (at least 20% padding each side) — flag must not touch the image edges
-- Background: deep dark solid or very subtle gradient behind the flag, with a soft colour glow matching the flag's dominant colour — makes the flag pop without distracting from it
-- Every colour band, symbol, emblem, coat of arms, and detail accurately rendered in the flat icon style
-- NO country names, text, labels, or decorative borders anywhere in the image`
+  const roundImageRule = (format_type === 'partial-flag' || format_type === 'guess-the-flag')
+    ? `ROUND slides (FLAG GAME — real flag fetched from CDN, no AI image needed):
+- The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
+- Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.

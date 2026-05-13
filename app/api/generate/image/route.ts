@@ -14,18 +14,31 @@ export async function POST(req: NextRequest) {
   db.prepare("UPDATE slides SET image_status = 'generating' WHERE id = ?").run(slide_id);
 
   try {
-    const response = await openai.images.generate({
-      model: 'gpt-image-1' as any,
-      prompt: image_prompt,
-      size: '1024x1024' as any,
-      quality: 'low' as any,
-      n: 1,
-    });
+    // Check if this is a flag game slide — use CDN instead of OpenAI
+    const slideRow = db.prepare('SELECT content FROM slides WHERE id = ?').get(slide_id) as any;
+    const slideContent = slideRow ? JSON.parse(slideRow.content) : {};
+    const countryCode = slideContent.country_code as string | undefined;
 
-    const b64 = (response.data?.[0] as any)?.b64_json;
-    if (!b64) throw new Error('No image data returned from API');
+    let buffer: Buffer;
 
-    const buffer = Buffer.from(b64, 'base64');
+    if (countryCode) {
+      const flagUrl = `https://flagcdn.com/w1280/${countryCode.toLowerCase()}.png`;
+      const flagRes = await fetch(flagUrl);
+      if (!flagRes.ok) throw new Error(`Flag not found for country code: ${countryCode}`);
+      buffer = Buffer.from(await flagRes.arrayBuffer());
+    } else {
+      const response = await openai.images.generate({
+        model: 'gpt-image-1' as any,
+        prompt: image_prompt,
+        size: '1024x1024' as any,
+        quality: 'low' as any,
+        n: 1,
+      });
+
+      const b64 = (response.data?.[0] as any)?.b64_json;
+      if (!b64) throw new Error('No image data returned from API');
+      buffer = Buffer.from(b64, 'base64');
+    }
 
     const gameDir = path.join(process.cwd(), 'public', 'games', game_id);
     fs.mkdirSync(gameDir, { recursive: true });
