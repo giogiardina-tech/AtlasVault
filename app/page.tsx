@@ -8,10 +8,10 @@ import GameOutline from '@/components/GameOutline';
 import ImageGenerator from '@/components/ImageGenerator';
 import SlidePreview from '@/components/SlidePreview';
 import GameCard from '@/components/GameCard';
-import { Category, Game, GameIdea, Slide, Template } from '@/lib/types';
+import { Category, Game, GameDifficulty, GameIdea, Slide, Template } from '@/lib/types';
 
 type AppView = 'dashboard' | 'library' | 'templates' | 'builder' | 'game';
-type BuilderStep = 'category' | 'template' | 'ideas' | 'outline' | 'generating' | 'preview';
+type BuilderStep = 'category' | 'template' | 'difficulty' | 'ideas' | 'outline' | 'generating' | 'preview';
 
 export default function Home() {
   const [view, setView] = useState<AppView>('dashboard');
@@ -24,6 +24,7 @@ export default function Home() {
   // Builder state
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty>('medium');
   const [ideas, setIdeas] = useState<GameIdea[]>([]);
   const [ideasLoading, setIdeasLoading] = useState(false);
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
@@ -66,8 +67,9 @@ export default function Home() {
     setView('builder');
   };
 
-  const fetchIdeas = useCallback(async (template: Template, categoryOverride?: Category) => {
+  const fetchIdeas = useCallback(async (template: Template, categoryOverride?: Category, difficultyOverride?: GameDifficulty) => {
     const cat = categoryOverride ?? selectedCategory;
+    const diff = difficultyOverride ?? selectedDifficulty;
     setIdeasLoading(true);
     setIdeas([]);
     try {
@@ -78,6 +80,7 @@ export default function Home() {
           category: cat,
           format_type: template.format_type,
           template_name: template.name,
+          difficulty: diff,
         }),
       });
       const data = await res.json();
@@ -86,7 +89,7 @@ export default function Home() {
       setError('Failed to generate ideas. Check your API key.');
     }
     setIdeasLoading(false);
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedDifficulty]);
 
   const handleCategorySelect = (category: Category) => {
     setSelectedCategory(category);
@@ -95,8 +98,13 @@ export default function Home() {
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
+    setStep('difficulty');
+  };
+
+  const handleDifficultySelect = (diff: GameDifficulty) => {
+    setSelectedDifficulty(diff);
     setStep('ideas');
-    fetchIdeas(template);
+    fetchIdeas(selectedTemplate!, undefined, diff);
   };
 
   const handleIdeaSelect = async (idea: GameIdea) => {
@@ -113,6 +121,7 @@ export default function Home() {
           template_id: selectedTemplate!.id,
           title: idea.title,
           hook: idea.hook,
+          difficulty: selectedDifficulty,
         }),
       });
       const data = await res.json();
@@ -269,8 +278,7 @@ export default function Home() {
                               startBuilder();
                               setSelectedCategory(cat);
                               setSelectedTemplate(t);
-                              setStep('ideas');
-                              fetchIdeas(t, cat);
+                              setStep('difficulty');
                             }}
                             className="w-full text-left text-sm text-zinc-400 hover:text-white py-1.5 border-b border-tk-border last:border-0 transition-colors"
                           >
@@ -333,9 +341,8 @@ export default function Home() {
                           onClick={() => {
                             setSelectedCategory(cat);
                             setSelectedTemplate(t);
-                            setStep('ideas');
+                            setStep('difficulty');
                             setView('builder');
-                            fetchIdeas(t, cat);
                           }}
                           className="shrink-0 text-sm text-tk-red hover:text-red-400 font-semibold transition-colors"
                         >
@@ -355,10 +362,10 @@ export default function Home() {
           <div className="p-8 min-h-screen">
             {/* Step progress */}
             <div className="flex items-center gap-2 mb-8">
-              {(['category', 'template', 'ideas', 'outline', 'generating', 'preview'] as BuilderStep[]).map((s, i) => (
+              {(['category', 'template', 'difficulty', 'ideas', 'outline', 'generating', 'preview'] as BuilderStep[]).map((s, i) => (
                 <div key={s} className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${step === s ? 'bg-tk-red' : i < (['category','template','ideas','outline','generating','preview'] as BuilderStep[]).indexOf(step) ? 'bg-white/40' : 'bg-white/10'}`} />
-                  {i < 5 && <div className="w-6 h-px bg-white/10" />}
+                  <div className={`w-2 h-2 rounded-full ${step === s ? 'bg-tk-red' : i < (['category','template','difficulty','ideas','outline','generating','preview'] as BuilderStep[]).indexOf(step) ? 'bg-white/40' : 'bg-white/10'}`} />
+                  {i < 6 && <div className="w-6 h-px bg-white/10" />}
                 </div>
               ))}
               <span className="text-zinc-600 text-xs ml-2 capitalize">{step}</span>
@@ -381,6 +388,32 @@ export default function Home() {
                 onSelect={handleTemplateSelect}
                 onBack={() => setStep('category')}
               />
+            )}
+
+            {step === 'difficulty' && selectedTemplate && (
+              <div className="max-w-lg mx-auto">
+                <button onClick={() => setStep('template')} className="text-zinc-500 hover:text-white text-sm mb-6 transition-colors">← Back</button>
+                <h2 className="text-2xl font-bold text-white mb-1">Choose Difficulty</h2>
+                <p className="text-zinc-400 text-sm mb-8">Sets how challenging the content is overall. The game always escalates from easy → impossible within whatever level you pick.</p>
+                <div className="space-y-3">
+                  {([
+                    { value: 'easy' as GameDifficulty, label: 'Easy', desc: 'Famous countries, iconic flags, well-known empires — great for broad audiences', color: '#22c55e' },
+                    { value: 'medium' as GameDifficulty, label: 'Medium', desc: 'Mix of well-known and lesser-known content — the default sweet spot', color: '#f59e0b' },
+                    { value: 'hard' as GameDifficulty, label: 'Hard', desc: 'Avoids obvious answers — built for geography nerds and history enthusiasts', color: '#ef4444' },
+                  ]).map(({ value, label, desc, color }) => (
+                    <button
+                      key={value}
+                      onClick={() => handleDifficultySelect(value)}
+                      className="w-full text-left bg-tk-card border border-tk-border rounded-xl p-5 hover:border-white/20 transition-all group"
+                    >
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="text-sm font-bold" style={{ color }}>{label}</span>
+                      </div>
+                      <p className="text-zinc-400 text-sm group-hover:text-zinc-300 transition-colors">{desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
 
             {step === 'ideas' && selectedTemplate && (

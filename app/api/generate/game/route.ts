@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  const { category, format_type, template_id, title, hook } = await req.json();
+  const { category, format_type, template_id, title, hook, difficulty = 'medium' } = await req.json();
   const openai = getOpenAI();
   const db = getDb();
 
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const prompt = buildGamePrompt(category, format_type, title, hook, Array.from(new Set(usedSubjects)));
+  const prompt = buildGamePrompt(category, format_type, title, hook, Array.from(new Set(usedSubjects)), difficulty);
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',

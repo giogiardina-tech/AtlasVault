@@ -17,8 +17,29 @@ export function buildGamePrompt(
   format_type: string,
   title: string,
   hook: string,
-  usedSubjects: string[] = []
+  usedSubjects: string[] = [],
+  difficulty: 'easy' | 'medium' | 'hard' = 'medium'
 ): string {
+  const difficultyInstructions: Record<string, string> = {
+    easy: `CONTENT DIFFICULTY LEVEL: EASY
+- Use the most famous, universally recognised countries/flags/empires/capitals/events
+- Rounds 1–2: things any schoolchild worldwide knows (France, China, Roman Empire, Paris)
+- Round 3: things most adults know
+- Round 4: things a geography/history enthusiast knows
+- Round 5 ("impossible"): genuinely tricky but guessable by any geography or history fan`,
+    medium: `CONTENT DIFFICULTY LEVEL: MEDIUM
+- Mix of well-known and lesser-known content across all 5 rounds
+- Rounds 1–2: well-known but not the most obvious choices
+- Round 3: moderately known to an engaged general audience
+- Round 4: requires genuine knowledge of the subject
+- Round 5 ("impossible"): genuinely obscure to most people`,
+    hard: `CONTENT DIFFICULTY LEVEL: HARD
+- Avoid the obvious, over-used examples — use less commonly known content throughout
+- Round 1 ("easy"): things geography/history enthusiasts know but casual viewers likely do not
+- Round 2: requires real interest in the subject
+- Rounds 3–4: specialist knowledge territory
+- Round 5 ("impossible"): extremely obscure — tiny nations, ancient or regional empires, surprise capitals, visually similar or rarely seen flags of sovereign countries`,
+  };
   // Reveal structure varies per scoring type — define them clearly
   const revealStructures: Record<string, string> = {
     pointless: `
@@ -122,13 +143,13 @@ FORMAT: POINTLESS-STYLE BORDERING COUNTRY CHALLENGE
       revealType: 'difficulty',
       instructions: `
 FORMAT: GUESS THE FLAG — EASY TO IMPOSSIBLE
+- CRITICAL: Use SOVEREIGN COUNTRIES ONLY — no territories, dependencies, overseas regions, or autonomous areas. Every flag must belong to a UN-recognised sovereign nation.
 - 5 rounds with strict difficulty progression:
   * Round 1: Major world power — difficulty_tier: "easy"
   * Round 2: Well-known nation — difficulty_tier: "easy"
   * Round 3: Moderately known nation — difficulty_tier: "medium"
-  * Round 4: Lesser-known nation — difficulty_tier: "hard"
-  * Round 5: Very obscure territory, dependency, or visually confusing flag — difficulty_tier: "impossible"
-- Image prompts: photorealistic flag dramatically lit on dark background
+  * Round 4: Lesser-known sovereign nation — difficulty_tier: "hard"
+  * Round 5: Obscure sovereign nation or visually confusing flag of a real country — difficulty_tier: "impossible"
 - Reveal: the country name + a fun fact about what the flag's symbols mean`,
     },
 
@@ -254,6 +275,8 @@ FORMAT: NAME A COUNTRY BY CLUE
 GAME: "${title}"
 HOOK: "${hook}"
 CATEGORY: ${category}
+
+${difficultyInstructions[difficulty]}
 ${exclusionBlock}
 ${instructions}
 

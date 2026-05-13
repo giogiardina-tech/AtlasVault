@@ -12,6 +12,7 @@ export type FormatType =
 
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';
+export type GameDifficulty = 'easy' | 'medium' | 'hard';
 export type ImageStatus = 'pending' | 'generating' | 'ready' | 'failed';
 export type ScoringType = 'pointless' | 'difficulty' | 'position';
 export type DifficultyTier = 'easy' | 'medium' | 'hard' | 'impossible';
