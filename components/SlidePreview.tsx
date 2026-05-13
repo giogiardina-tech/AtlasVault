@@ -151,10 +151,12 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
                 </button>
               </div>
             </div>
-          ) : (
+          ) : slide.image_prompt ? (
             <button onClick={handleRegenerate} className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors">
               Regenerate this slide
             </button>
+          ) : (
+            <p className="text-center text-zinc-600 text-xs">This slide reuses another slide's image</p>
           )}
         </div>
 

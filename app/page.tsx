@@ -167,10 +167,11 @@ export default function Home() {
     });
 
     const data = await res.json();
+    const ts = Date.now();
     setSlides((prev) =>
       prev.map((s) =>
         s.id === slideId
-          ? { ...s, image_path: data.image_path || null, image_status: data.success ? 'ready' : 'failed', image_prompt: prompt }
+          ? { ...s, image_path: data.image_path ? `${data.image_path}?t=${ts}` : null, image_status: data.success ? 'ready' : 'failed', image_prompt: prompt }
           : s
       )
     );
@@ -213,10 +214,11 @@ export default function Home() {
     });
 
     const data = await res.json();
+    const ts = Date.now();
     setViewingSlides((prev) =>
       prev.map((s) =>
         s.id === slideId
-          ? { ...s, image_path: data.image_path || null, image_status: data.success ? 'ready' : 'failed' }
+          ? { ...s, image_path: data.image_path ? `${data.image_path}?t=${ts}` : null, image_status: data.success ? 'ready' : 'failed' }
           : s
       )
     );
