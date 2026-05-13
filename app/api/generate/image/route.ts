@@ -15,24 +15,23 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await openai.images.generate({
-      model: 'dall-e-3',
+      model: 'gpt-image-1' as any,
       prompt: image_prompt,
-      size: '1024x1792',
-      quality: 'standard',
+      size: '1024x1536' as any,
       n: 1,
     });
 
-    const imageUrl = response.data?.[0]?.url;
-    if (!imageUrl) throw new Error('No image URL returned from DALL-E');
-    const imageRes = await fetch(imageUrl);
-    const buffer = await imageRes.arrayBuffer();
+    const b64 = (response.data?.[0] as any)?.b64_json;
+    if (!b64) throw new Error('No image data returned from API');
+
+    const buffer = Buffer.from(b64, 'base64');
 
     const gameDir = path.join(process.cwd(), 'public', 'games', game_id);
     fs.mkdirSync(gameDir, { recursive: true });
 
     const filename = `slide_${String(slide_index).padStart(2, '0')}.png`;
     const filePath = path.join(gameDir, filename);
-    fs.writeFileSync(filePath, Buffer.from(buffer));
+    fs.writeFileSync(filePath, buffer);
 
     const imagePath = `/games/${game_id}/${filename}`;
 
