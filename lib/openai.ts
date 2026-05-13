@@ -268,13 +268,13 @@ FORMAT: NAME A COUNTRY BY CLUE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'partial-flag'
-    ? `ROUND slides (PARTIAL FLAG CHALLENGE — show a cropped piece of the flag centered on a dark background):
-- The image_prompt must describe a cropped rectangular section of the flag placed centrally in the image, with a rich dark atmospheric background visible on all sides around it (deep dark gradient with a subtle radial glow matching the flag's dominant colour fading to near-black)
-- The flag piece must NOT fill the whole frame — there must be clearly visible dark background space surrounding it on all sides
-- Specify exactly which section of the flag is visible in the prompt (e.g. "the top-left quarter of the flag", "just the central emblem region", "a narrow horizontal strip across the middle of the flag")
-- Keep the visible flag section completely flat and accurate: NO texture, NO wave, NO drape, NO shadows, NO 3D effects
-- Every colour, line, and detail in the visible section must be sharply and accurately rendered
-- NO country names, text, or labels anywhere in the image`
+    ? `ROUND slides (PARTIAL FLAG CHALLENGE — zoomed-in crop of the flag, filling the entire frame edge-to-edge):
+- The image must look exactly like a standard flat flag photo (like a Google Images flag result) — clean, flat, accurate colours, no fabric texture, no wave, no 3D
+- The flag is zoomed in so only a PORTION of it fills the frame — the flag extends beyond the frame edges and is cropped, as if you took a flag image and zoomed into one section of it
+- NO background visible at all — the flag colours/pattern fill 100% of the frame edge-to-edge
+- Specify which section of the flag is zoomed into (e.g. "zoomed into the top-left corner of the flag", "zoomed into the central emblem", "zoomed into the right half of the flag") — the crop gets tighter each round
+- Every colour, stripe, symbol, and detail in the visible section must be sharply and accurately rendered
+- NO country names, text, labels, or dark background anywhere in the image`
     : format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
 - Show the country's flag as a clean, flat, precisely proportioned rectangle — flags are ALWAYS wider than they are tall (landscape orientation, roughly 3:2 width-to-height ratio). NEVER show a flag taller than it is wide.
