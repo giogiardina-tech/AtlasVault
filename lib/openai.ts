@@ -268,10 +268,11 @@ FORMAT: NAME A COUNTRY BY CLUE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'partial-flag'
-    ? `ROUND slides (PARTIAL FLAG CHALLENGE — show only a cropped section of the flag filling the entire frame):
-- The image_prompt for each round must describe a tight close-up crop of a specific section of that country's flag, filling the frame edge-to-edge with NO background visible
-- The crop size matches the round difficulty — specify which section to crop in the prompt (e.g. "the top-left quarter", "just the central emblem", "a narrow horizontal stripe across the middle")
-- Keep the flag section completely flat and accurate: NO texture, NO wave, NO drape, NO shadows, NO 3D effects
+    ? `ROUND slides (PARTIAL FLAG CHALLENGE — show a cropped piece of the flag centered on a dark background):
+- The image_prompt must describe a cropped rectangular section of the flag placed centrally in the image, with a rich dark atmospheric background visible on all sides around it (deep dark gradient with a subtle radial glow matching the flag's dominant colour fading to near-black)
+- The flag piece must NOT fill the whole frame — there must be clearly visible dark background space surrounding it on all sides
+- Specify exactly which section of the flag is visible in the prompt (e.g. "the top-left quarter of the flag", "just the central emblem region", "a narrow horizontal strip across the middle of the flag")
+- Keep the visible flag section completely flat and accurate: NO texture, NO wave, NO drape, NO shadows, NO 3D effects
 - Every colour, line, and detail in the visible section must be sharply and accurately rendered
 - NO country names, text, or labels anywhere in the image`
     : format_type === 'guess-the-flag'

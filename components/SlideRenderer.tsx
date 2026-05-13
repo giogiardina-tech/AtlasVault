@@ -33,8 +33,8 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
-        // partial-flag crops fill the frame (cover); full flags need padding (contain)
-        backgroundSize: isFlagRound ? 'contain' : 'cover',
+        // Both flag formats use contain so the background shows around the flag
+        backgroundSize: isFlagStyleRound ? 'contain' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }
