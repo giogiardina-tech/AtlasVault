@@ -15,15 +15,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await openai.images.generate({
-      model: 'dall-e-3',
+      model: 'gpt-image-1' as any,
       prompt: image_prompt,
-      size: '1024x1024',
-      quality: 'standard',
-      response_format: 'b64_json',
+      size: '1024x1024' as any,
+      quality: 'low' as any,
       n: 1,
     });
 
-    const b64 = response.data?.[0]?.b64_json;
+    const b64 = (response.data?.[0] as any)?.b64_json;
     if (!b64) throw new Error('No image data returned from API');
 
     const buffer = Buffer.from(b64, 'base64');

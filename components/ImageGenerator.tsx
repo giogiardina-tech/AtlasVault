@@ -105,7 +105,7 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold text-white mb-1">Generating Images</h2>
-      <p className="text-zinc-400 mb-1">DALL-E 3 is creating your TikTok slides…</p>
+      <p className="text-zinc-400 mb-1">Generating your TikTok slides…</p>
       <p className="text-zinc-600 text-xs mb-6">Generating {total} images — reveal slides reuse their round's image</p>
 
       <div className="mb-6">
