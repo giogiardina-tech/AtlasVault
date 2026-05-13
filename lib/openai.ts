@@ -218,6 +218,22 @@ FORMAT: GUESS THE CAPITAL CITY
 - Reveal: the correct capital + a fun_fact explaining why people get it wrong`,
     },
 
+    'partial-flag': {
+      revealType: 'difficulty',
+      instructions: `
+FORMAT: PARTIAL FLAG CHALLENGE — GUESS THE FLAG FROM A CROP
+- CRITICAL: Use SOVEREIGN COUNTRIES ONLY — no territories, dependencies, or autonomous regions
+- 5 rounds, each showing a progressively smaller crop of the flag:
+  * Round 1: roughly half the flag — a large section with clearly distinctive design elements — difficulty_tier: "easy"
+  * Round 2: about one-third of the flag — still includes a key identifier — difficulty_tier: "easy"
+  * Round 3: a quarter section — a corner, stripe, or emblem area — difficulty_tier: "medium"
+  * Round 4: a small distinctive strip or symbol only — difficulty_tier: "hard"
+  * Round 5: an extremely small or ambiguous detail that could plausibly belong to multiple flags — difficulty_tier: "impossible"
+- Question for every round: "Which country does this flag belong to?"
+- Use a different country for each of the 5 rounds
+- Reveal: full country name + a fun_fact about the flag's design or what its symbols represent`,
+    },
+
     'country-by-clue': {
       revealType: 'difficulty_clue',
       instructions: `
@@ -241,6 +257,7 @@ FORMAT: NAME A COUNTRY BY CLUE
     'guess-the-empire': `scoring_summary uses correct answers out of 5. Example: "5/5 = history master | 4/5 = empire enthusiast | 3/5 = solid | 2 or below = brush up on history!"`,
     'historical-order': `scoring_summary uses POSITION scoring — 1 point per correct position, 4 per round, 20 total. Example: "20/20 = history genius | 15-19 = impressive | 10-14 = solid | under 10 = study up!"`,
     'guess-the-capital': `scoring_summary uses correct answers out of 5. Example: "5/5 = capital city expert | 4/5 = sharp | 3/5 = decent | 2 or below = study your capitals!"`,
+    'partial-flag': `scoring_summary uses correct answers out of 5. Example: "5/5 = flag detective | 4/5 = sharp eyes | 3/5 = solid | 2 or below = study your flags!"`,
     'country-by-clue': `scoring_summary uses correct answers out of 5. Example: "5/5 = world explorer | 4/5 = impressive | 3/5 = solid | 2 or below = keep exploring!"`,
   };
 
@@ -250,7 +267,14 @@ FORMAT: NAME A COUNTRY BY CLUE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
-  const roundImageRule = format_type === 'guess-the-flag'
+  const roundImageRule = format_type === 'partial-flag'
+    ? `ROUND slides (PARTIAL FLAG CHALLENGE — show only a cropped section of the flag filling the entire frame):
+- The image_prompt for each round must describe a tight close-up crop of a specific section of that country's flag, filling the frame edge-to-edge with NO background visible
+- The crop size matches the round difficulty — specify which section to crop in the prompt (e.g. "the top-left quarter", "just the central emblem", "a narrow horizontal stripe across the middle")
+- Keep the flag section completely flat and accurate: NO texture, NO wave, NO drape, NO shadows, NO 3D effects
+- Every colour, line, and detail in the visible section must be sharply and accurately rendered
+- NO country names, text, or labels anywhere in the image`
+    : format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
 - Show the country's flag as a clean, flat, precisely proportioned rectangle — flags are ALWAYS wider than they are tall (landscape orientation, roughly 3:2 width-to-height ratio). NEVER show a flag taller than it is wide.
 - The flag must have perfectly straight, sharp edges and correct rectangular shape with no rounding, curving, warping, or distortion of any kind

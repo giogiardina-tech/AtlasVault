@@ -12,6 +12,9 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const W = 1080;
   const H = 1920;
   const isFlagRound = format_type === 'guess-the-flag' && slide_type === 'round';
+  const isPartialFlagRound = format_type === 'partial-flag' && slide_type === 'round';
+  // Both flag formats use the top/bottom text layout (image IS the question)
+  const isFlagStyleRound = isFlagRound || isPartialFlagRound;
 
   const containerStyle: React.CSSProperties = {
     width: W,
@@ -30,6 +33,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
+        // partial-flag crops fill the frame (cover); full flags need padding (contain)
         backgroundSize: isFlagRound ? 'contain' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -79,8 +83,8 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     );
   }
 
-  // FLAG ROUND: flag IS the content — text at top/bottom only, flag fully uncropped in the middle
-  if (isFlagRound) {
+  // FLAG-STYLE ROUNDS: the image IS the content — text at top/bottom only, image fills the middle
+  if (isFlagStyleRound) {
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />

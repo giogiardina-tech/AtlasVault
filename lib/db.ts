@@ -53,8 +53,7 @@ function initSchema(db: DatabaseSync) {
 }
 
 function seedTemplates(db: DatabaseSync) {
-  const row = db.prepare('SELECT COUNT(*) as count FROM templates').get() as { count: number };
-  if (row.count > 0) return;
+  // Use INSERT OR IGNORE so new templates are added without wiping existing data
 
   const insert = db.prepare(`
     INSERT OR IGNORE INTO templates (id, name, category, format_type, description)
@@ -79,6 +78,8 @@ function seedTemplates(db: DatabaseSync) {
       'Name the capital city. Starts with Paris and London, ends with capitals that trick even geography nerds (Canberra, Astana).');
     insert.run('tmpl-008', 'Name a Country by Clue', 'Geography', 'country-by-clue',
       'Three cryptic clues reveal a mystery country. Only the sharpest geography minds can deduce it from clue one.');
+    insert.run('tmpl-009', 'Partial Flag Challenge', 'Flags', 'partial-flag',
+      'Only a cropped section of the flag is shown — can you identify the country? The crop gets smaller and harder each round.');
     db.exec('COMMIT');
   } catch (e) {
     db.exec('ROLLBACK');

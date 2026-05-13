@@ -410,10 +410,13 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   ctx.fillRect(0, 0, W, H);
 
   const isFlagRound = formatType === 'guess-the-flag' && slide.slide_type === 'round';
+  const isPartialFlagRound = formatType === 'partial-flag' && slide.slide_type === 'round';
+  const isFlagStyleRound = isFlagRound || isPartialFlagRound;
 
   if (slide.image_path) {
     try {
       const img = await loadImage(slide.image_path);
+      // Full flags need contain (preserve ratio); partial crops fill the frame with cover
       if (isFlagRound) drawContain(ctx, img);
       else drawCover(ctx, img);
     } catch {}
@@ -422,7 +425,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const { slide_type, content } = slide;
 
   if (slide_type === 'title') { titleOverlay(ctx); renderTitle(ctx, content); }
-  else if (isFlagRound)       { flagOverlay(ctx);  renderFlagRound(ctx, content); }
+  else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }

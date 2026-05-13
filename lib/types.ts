@@ -3,6 +3,7 @@ export type Category = 'Geography' | 'Flags' | 'History';
 export type FormatType =
   | 'bordering-country'
   | 'guess-the-flag'
+  | 'partial-flag'
   | 'easy-to-impossible'
   | 'country-from-map'
   | 'guess-the-empire'
