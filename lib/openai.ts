@@ -230,10 +230,10 @@ FORMAT: NAME A COUNTRY BY CLUE
 
   const roundImageRule = format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
-- Show the country's flag as a clean, flat, simple rectangular image centred on a plain dark background
-- The flag must fill most of the frame with NO cropping — the entire flag must be fully visible
-- Keep it flat and clear like a reference flag image: NO fabric texture, NO wave or drape, NO cinematic lighting, NO shadows, NO perspective distortion
-- Every colour band, symbol, emblem, and detail must be clearly visible and identifiable
+- Show the country's flag as a clean, flat, simple rectangular image centred on a plain near-black background (#0a0a0a)
+- The flag must have significant padding on ALL four sides — at least 20% of the image width/height as empty dark space around it. The flag must NEVER touch or go near any edge of the image
+- Keep it completely flat like a reference flag image: NO fabric texture, NO wave or drape, NO shadows, NO 3D effects, NO perspective distortion, NO cinematic lighting
+- Every colour band, symbol, emblem, and detail must be sharply rendered and identifiable
 - NO country names, text, labels, or decorative elements anywhere in the image`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer

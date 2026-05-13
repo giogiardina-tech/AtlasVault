@@ -4,12 +4,14 @@ import { Slide } from '@/lib/types';
 interface Props {
   slide: Slide;
   scale?: number;
+  format_type?: string;
 }
 
-export default function SlideRenderer({ slide, scale = 1 }: Props) {
+export default function SlideRenderer({ slide, scale = 1, format_type }: Props) {
   const { slide_type, content, image_path } = slide;
   const W = 1080;
   const H = 1920;
+  const isFlagRound = format_type === 'guess-the-flag' && slide_type === 'round';
 
   const containerStyle: React.CSSProperties = {
     width: W,
@@ -28,8 +30,9 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
-        backgroundSize: 'cover',
+        backgroundSize: isFlagRound ? 'contain' : 'cover',
         backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }
     : {
         position: 'absolute',
@@ -70,6 +73,47 @@ export default function SlideRenderer({ slide, scale = 1 }: Props) {
           </div>
           <div style={{ position: 'absolute', bottom: 80, color: 'rgba(255,255,255,0.4)', fontSize: 28, letterSpacing: 4 }}>
             ATLASVAULT
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // FLAG ROUND: flag IS the content — text at top/bottom only, flag fully uncropped in the middle
+  if (isFlagRound) {
+    return (
+      <div style={containerStyle}>
+        <div style={bgStyle} />
+        {/* No full overlay — keep flag crisp and fully visible */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.75) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column' }}>
+          {/* Top: round label + question */}
+          <div style={{ padding: '80px 80px 0' }}>
+            <div style={{ background: 'rgba(0,0,0,0.7)', borderRadius: 24, padding: '40px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, textAlign: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                <span style={{ color: '#00f2ea', fontSize: 40, fontWeight: 800, letterSpacing: 4 }}>
+                  ROUND {content.round_number}
+                </span>
+                {content.difficulty && (
+                  <span style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)', fontSize: 26, padding: '6px 18px', borderRadius: 40, textTransform: 'uppercase', letterSpacing: 2 }}>
+                    {content.difficulty}
+                  </span>
+                )}
+              </div>
+              <h2 style={{ color: 'white', fontSize: 72, fontWeight: 800, lineHeight: 1.1 }}>
+                {content.question}
+              </h2>
+            </div>
+          </div>
+
+          {/* Middle: flag shows through */}
+          <div style={{ flex: 1 }} />
+
+          {/* Bottom: CTA */}
+          <div style={{ padding: '0 80px 100px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,45,85,0.9)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 36, fontWeight: 700, letterSpacing: 2 }}>
+              COMMENT YOUR ANSWER ↓
+            </div>
           </div>
         </div>
       </div>

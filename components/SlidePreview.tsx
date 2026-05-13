@@ -118,7 +118,7 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
         {/* Phone frame */}
         <div className="relative" style={{ width: 1080 * PREVIEW_SCALE, height: 1920 * PREVIEW_SCALE }}>
           <div className="rounded-2xl overflow-hidden" style={{ width: '100%', height: '100%' }}>
-            <SlideRenderer slide={slide} scale={PREVIEW_SCALE} />
+            <SlideRenderer slide={slide} scale={PREVIEW_SCALE} format_type={game.format_type} />
           </div>
         </div>
 
