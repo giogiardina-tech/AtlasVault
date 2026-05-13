@@ -11,7 +11,39 @@ export async function POST(req: NextRequest) {
   const openai = getOpenAI();
   const db = getDb();
 
-  const prompt = buildGamePrompt(category, format_type, title, hook);
+  // Collect subjects used in previous games of the same format so the AI avoids repeating them
+  const pastGames = db
+    .prepare('SELECT id FROM games WHERE format_type = ? ORDER BY created_at DESC LIMIT 30')
+    .all(format_type) as { id: string }[];
+
+  const usedSubjects: string[] = [];
+
+  for (const g of pastGames) {
+    const slides = db
+      .prepare('SELECT slide_type, content FROM slides WHERE game_id = ?')
+      .all(g.id) as { slide_type: string; content: string }[];
+
+    for (const s of slides) {
+      const c = JSON.parse(s.content);
+      if (s.slide_type === 'reveal') {
+        // Most formats: correct_answer is the subject
+        if (c.correct_answer) usedSubjects.push(c.correct_answer);
+        // Historical order: collect individual event names
+        if (c.correct_order) {
+          c.correct_order.forEach((item: { event: string }) => usedSubjects.push(item.event));
+        }
+      }
+      if (s.slide_type === 'round') {
+        // Bordering-country: featured country is in the question text
+        if (format_type === 'bordering-country' && c.question) {
+          const m = c.question.match(/borders?\s+(.+?)(?:\?|$)/i);
+          if (m) usedSubjects.push(m[1].trim());
+        }
+      }
+    }
+  }
+
+  const prompt = buildGamePrompt(category, format_type, title, hook, Array.from(new Set(usedSubjects)));
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',

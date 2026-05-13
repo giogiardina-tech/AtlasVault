@@ -16,7 +16,8 @@ export function buildGamePrompt(
   category: string,
   format_type: string,
   title: string,
-  hook: string
+  hook: string,
+  usedSubjects: string[] = []
 ): string {
   // Reveal structure varies per scoring type — define them clearly
   const revealStructures: Record<string, string> = {
@@ -244,12 +245,16 @@ FORMAT: NAME A COUNTRY BY CLUE
 - Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
 - Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible`;
 
+  const exclusionBlock = usedSubjects.length > 0
+    ? `\nALREADY USED IN PREVIOUS GAMES — DO NOT REPEAT ANY OF THESE:\n${usedSubjects.join(', ')}\nEvery answer, country, flag, empire, capital, and event in this game must be completely different from the above.\n`
+    : '';
+
   return `You are an expert TikTok trivia game designer. Create a complete, engaging trivia game in JSON format.
 
 GAME: "${title}"
 HOOK: "${hook}"
 CATEGORY: ${category}
-
+${exclusionBlock}
 ${instructions}
 
 SCORING SYSTEM FOR THIS FORMAT:
