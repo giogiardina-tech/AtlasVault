@@ -35,9 +35,12 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
         if (!needsGeneration(slide)) continue;
         if (slide.image_status === 'ready') continue;
 
-        // For round slides, pair with the next slide (the reveal)
-        const revealEntry = slide.slide_type === 'round'
+        // Round slides pair with the next slide (the reveal).
+        // Title slide pairs with the score slide (index 11) to reuse the image.
+        const pairedEntry = slide.slide_type === 'round'
           ? byIndex.get(slide.slide_index + 1)
+          : slide.slide_type === 'title'
+          ? byIndex.get(11)
           : undefined;
 
         try {
@@ -49,7 +52,7 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
               game_id: gameId,
               image_prompt: slide.image_prompt,
               slide_index: slide.slide_index,
-              copy_to_slide_id: revealEntry?.slide.id ?? null,
+              copy_to_slide_id: pairedEntry?.slide.id ?? null,
             }),
           });
 
@@ -59,10 +62,10 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
 
           current[i] = { ...slide, image_path: imagePath, image_status: status };
 
-          // Mirror the result onto the reveal slide in local state
-          if (data.success && revealEntry) {
-            current[revealEntry.pos] = {
-              ...revealEntry.slide,
+          // Mirror the result onto the paired slide in local state
+          if (data.success && pairedEntry) {
+            current[pairedEntry.pos] = {
+              ...pairedEntry.slide,
               image_path: imagePath,
               image_status: 'ready',
             };
@@ -87,11 +90,8 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
   const statusIcon = (s: Slide) => {
-    if (!needsGeneration(s) && s.slide_type === 'score') {
-      return <span className="text-zinc-600">—</span>;
-    }
     if (!needsGeneration(s)) {
-      // reveal slide — mirrors its round
+      // reveal and score slides mirror another slide's image
       return s.image_status === 'ready'
         ? <span className="text-emerald-400/60">✓</span>
         : <span className="text-zinc-600">◷</span>;
@@ -140,7 +140,7 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
               <span className="text-xs text-zinc-600 ml-auto">reuses round image</span>
             )}
             {slide.slide_type === 'score' && (
-              <span className="text-xs text-zinc-600 ml-auto">gradient</span>
+              <span className="text-xs text-zinc-600 ml-auto">reuses intro image</span>
             )}
           </div>
         ))}

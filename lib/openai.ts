@@ -229,11 +229,12 @@ FORMAT: NAME A COUNTRY BY CLUE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'guess-the-flag'
-    ? `ROUND slides (FLAG GAME — the flag IS the question, show it directly):
-- Show the country's flag as the FULL IMAGE — large, centred, dramatically lit against a dark or atmospheric background
-- The flag must fill most of the frame and be clearly readable — this is what viewers are guessing
-- Photorealistic fabric texture, slight wave or drape, cinematic lighting
-- NO country names, text, or labels anywhere in the image`
+    ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
+- Show the country's flag as a clean, flat, simple rectangular image centred on a plain dark background
+- The flag must fill most of the frame with NO cropping — the entire flag must be fully visible
+- Keep it flat and clear like a reference flag image: NO fabric texture, NO wave or drape, NO cinematic lighting, NO shadows, NO perspective distortion
+- Every colour band, symbol, emblem, and detail must be clearly visible and identifiable
+- NO country names, text, labels, or decorative elements anywhere in the image`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
