@@ -252,11 +252,13 @@ FORMAT: NAME A COUNTRY BY CLUE
 
   const roundImageRule = format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
-- Show the country's flag as a clean, flat, simple rectangular image centred on a plain near-black background (#0a0a0a)
-- The flag must have significant padding on ALL four sides — at least 20% of the image width/height as empty dark space around it. The flag must NEVER touch or go near any edge of the image
-- Keep it completely flat like a reference flag image: NO fabric texture, NO wave or drape, NO shadows, NO 3D effects, NO perspective distortion, NO cinematic lighting
-- Every colour band, symbol, emblem, and detail must be sharply rendered and identifiable
-- NO country names, text, labels, or decorative elements anywhere in the image`
+- Show the country's flag as a clean, flat, precisely proportioned rectangle — flags are ALWAYS wider than they are tall (landscape orientation, roughly 3:2 width-to-height ratio). NEVER show a flag taller than it is wide.
+- The flag must have perfectly straight, sharp edges and correct rectangular shape with no rounding, curving, warping, or distortion of any kind
+- Center the flag in the image with generous padding on all sides (at least 20% of image width as dark space on each side) — the flag should never touch the image edges
+- Keep the flag completely flat and accurate: NO fabric texture, NO wave, NO drape, NO shadows, NO 3D effects, NO perspective tilt
+- Background: a rich, deep dark atmospheric gradient — use a subtle radial glow in the flag's dominant colour fading into near-black, giving the flag a dramatic "spotlight" feel without any text or labels
+- Every colour band, symbol, emblem, coat of arms, and detail must be sharply and accurately rendered
+- NO country names, text, labels, or decorative borders anywhere in the image`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
