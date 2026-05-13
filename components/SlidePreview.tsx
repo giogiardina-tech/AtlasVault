@@ -1,5 +1,8 @@
 'use client';
 import { useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import html2canvas from 'html2canvas';
+import JSZip from 'jszip';
 import { Game, Slide } from '@/lib/types';
 import SlideRenderer from './SlideRenderer';
 
@@ -25,40 +28,76 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
 
   const slide = slides[currentIndex];
 
+  // Render a slide off-screen and capture it as a PNG blob (text + image composited)
+  const captureSlide = (slide: Slide): Promise<Blob | null> =>
+    new Promise(async (resolve) => {
+      const container = document.createElement('div');
+      container.style.cssText =
+        'position:fixed;left:-99999px;top:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;';
+      document.body.appendChild(container);
+      const root = createRoot(container);
+      root.render(<SlideRenderer slide={slide} scale={1} format_type={game.format_type} />);
+      // Wait for React render + image load
+      await new Promise((r) => setTimeout(r, 1200));
+      try {
+        const canvas = await html2canvas(container, {
+          width: 1080,
+          height: 1920,
+          scale: 1,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#0a0a0a',
+          logging: false,
+        });
+        canvas.toBlob((b) => resolve(b), 'image/png');
+      } catch {
+        resolve(null);
+      } finally {
+        root.unmount();
+        document.body.removeChild(container);
+      }
+    });
+
   const exportSlides = async (asZip: boolean) => {
     setExporting(true);
     setExportProgress(0);
 
-    if (asZip) {
-      const res = await fetch(`/api/export/${game.id}`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${game.title.replace(/[^a-zA-Z0-9]/g, '_')}.zip`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-      setExporting(false);
-      return;
-    }
+    const safeTitle = game.title.replace(/[^a-zA-Z0-9]/g, '_');
 
-    // Individual PNG download — download each image directly
-    for (let i = 0; i < slides.length; i++) {
-      const s = slides[i];
-      if (s.image_path) {
-        const res = await fetch(s.image_path);
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `slide_${String(i + 1).padStart(2, '0')}_${s.slide_type}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        await new Promise((r) => setTimeout(r, 200));
+    if (asZip) {
+      const zip = new JSZip();
+      const folder = zip.folder(safeTitle)!;
+      for (let i = 0; i < slides.length; i++) {
+        const s = slides[i];
+        const blob = await captureSlide(s);
+        if (blob) {
+          const num = String(i + 1).padStart(2, '0');
+          folder.file(`${num}_${s.slide_type}.png`, blob);
+        }
+        setExportProgress(Math.round(((i + 1) / slides.length) * 100));
       }
-      setExportProgress(Math.round(((i + 1) / slides.length) * 100));
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${safeTitle}.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      for (let i = 0; i < slides.length; i++) {
+        const s = slides[i];
+        const blob = await captureSlide(s);
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `slide_${String(i + 1).padStart(2, '0')}_${s.slide_type}.png`;
+          a.click();
+          URL.revokeObjectURL(url);
+          await new Promise((r) => setTimeout(r, 150));
+        }
+        setExportProgress(Math.round(((i + 1) / slides.length) * 100));
+      }
     }
 
     setExporting(false);

@@ -8,12 +8,12 @@
     "start": "NODE_OPTIONS='--experimental-sqlite' next start"
   },
   "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jszip": "^3.10.1",
     "next": "^14.2.5",
+    "openai": "^4.52.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "openai": "^4.52.7",
-    "jszip": "^3.10.1",
-    "html2canvas": "^1.4.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
