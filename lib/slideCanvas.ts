@@ -416,8 +416,8 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   if (slide.image_path) {
     try {
       const img = await loadImage(slide.image_path);
-      // Full flag uses contain (padding visible); partial flag zooms in so cover fills frame
-      if (isFlagRound) drawContain(ctx, img);
+      // Both flag game types use contain so the image sits on the slide background
+      if (isFlagStyleRound) drawContain(ctx, img);
       else drawCover(ctx, img);
     } catch {}
   }

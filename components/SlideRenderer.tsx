@@ -33,8 +33,8 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
-        // Full flag (guess-the-flag) uses contain to show padding; partial flag fills frame with cover
-        backgroundSize: isFlagRound ? 'contain' : 'cover',
+        // Flag games: contain so the flag/crop sits on the background without filling the frame
+        backgroundSize: isFlagStyleRound ? 'contain' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }

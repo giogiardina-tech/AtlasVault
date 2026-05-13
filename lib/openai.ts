@@ -274,12 +274,13 @@ FORMAT: NAME A COUNTRY BY CLUE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'partial-flag'
-    ? `ROUND slides (PARTIAL FLAG CHALLENGE — tight zoom on the flag's most iconic feature, filling the frame):
-- STYLE: bold flat vector/icon style — think oversized flag emoji or SVG icon. Solid bold colours, simplified clean shapes, zero fabric texture, zero wave, zero 3D
-- The frame is filled edge-to-edge with the flag — NO background, NO padding, NO border. The flag graphic bleeds to all four edges.
-- Each image_prompt must name the country's flag AND the specific iconic feature to zoom into (e.g. "the maple leaf of the Canadian flag", "the golden eagle emblem of the Mexican flag", "the red disc of the Japanese flag"). The zoom level tightens each round per the instructions above.
-- Every colour, stripe, symbol, and fine detail must be crisply rendered in the bold flat icon style
-- NO country names, text, labels, or any non-flag background anywhere in the image`
+    ? `ROUND slides (PARTIAL FLAG CHALLENGE — a cropped rectangular section of the flag on a clean neutral background):
+- Show a clearly cropped rectangular piece of the flag centered in the image. The flag section must look like a genuine flag crop — flat, bold, accurate colours, no texture, no wave, no 3D.
+- Background: clean solid light grey (#e8e8e8) on all sides around the flag piece. NO dark backgrounds, NO glow, NO atmospheric effects — just a plain neutral grey that does not conflict with any flag colour.
+- The flag piece must NOT fill the whole image — there must be visible grey background space on all four sides around it.
+- Each image_prompt must name the country's flag AND the specific iconic feature that is visible in the crop (e.g. "a cropped section showing the maple leaf of the Canadian flag on a light grey background", "a cropped close-up of the golden eagle emblem from the Mexican flag on a light grey background"). The crop gets tighter each round per the game instructions.
+- Every colour, stripe, symbol, and detail in the visible crop must be crisply and accurately rendered
+- NO country names, text, labels, or dark/coloured backgrounds anywhere in the image`
     : format_type === 'guess-the-flag'
     ? `ROUND slides (FLAG GAME — the flag IS the question, show it clearly):
 - STYLE: bold flat vector/icon style — think oversized flag emoji or SVG icon. Solid bold colours, simplified clean shapes, zero fabric texture, zero wave, zero 3D effects
