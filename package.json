@@ -1,0 +1,29 @@
+{
+  "name": "atlasvault",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--experimental-sqlite' next dev --port 3000",
+    "build": "NODE_OPTIONS='--experimental-sqlite' next build",
+    "start": "NODE_OPTIONS='--experimental-sqlite' next start"
+  },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "openai": "^4.52.7",
+    "jszip": "^3.10.1",
+    "html2canvas": "^1.4.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.40",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5"
+  }
+}
