@@ -191,7 +191,11 @@ FORMAT: GUESS THE EMPIRE
   * Round 3: Known to history enthusiasts — difficulty_tier: "medium"
   * Round 4: Specialist knowledge — difficulty_tier: "hard"
   * Round 5: Obscure ancient empire — difficulty_tier: "impossible"
-- Image prompts: dark historical map showing empire territory at peak extent, glowing borders
+- QUESTION FIELD: write a geographic hint describing the territory WITHOUT naming the empire. Mention continents/regions covered and approximate era. Examples:
+  * "Which empire once controlled territory stretching from Eastern Europe all the way to China and Korea?"
+  * "Which empire ringed the entire Mediterranean Sea at its peak in the 2nd century AD?"
+  * "Which empire ruled the British Isles, India, large parts of Africa, Canada, and Australia?"
+  * "Which ancient empire controlled the Nile Valley and stretched deep into modern-day Sudan?"
 - Reveal: empire name + peak period dates as the fun_fact (e.g. "At its peak in 117 AD, the Roman Empire covered 5 million km²")`,
     },
 

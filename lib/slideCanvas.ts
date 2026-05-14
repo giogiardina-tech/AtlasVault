@@ -199,30 +199,34 @@ function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.fillText(cta, W / 2, H - 180 + ctaH / 2);
 }
 
-function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
-  // Top: round + question
-  const topH = 300;
-  fillRR(ctx, M, 80, CW, topH, 24, 'rgba(0,0,0,0.7)');
-  let y = 80 + 36;
+function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpire = false) {
+  // Top panel — starts at 220px to clear TikTok top chrome
+  const topY = 220;
+  const qFontSize = isEmpire ? 52 : 64;
+  const lineH = isEmpire ? 64 : 76;
+  const panelH = isEmpire ? 380 : 300;
+  fillRR(ctx, M, topY, CW, panelH, 24, 'rgba(0,0,0,0.72)');
+  let y = topY + 36;
 
   ctx.font = '800 40px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#00f2ea';
   drawLine(ctx, `ROUND ${c.round_number}`, W / 2, y);
   y += 56;
 
-  ctx.font = '800 64px Inter, system-ui, sans-serif';
+  ctx.font = `800 ${qFontSize}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  drawWrapped(ctx, c.question || '', W / 2, y, CW - 80, 76);
+  drawWrapped(ctx, c.question || '', W / 2, y, CW - 80, lineH);
 
-  // CTA
+  // CTA — bottom at H - 420 to clear TikTok bottom chrome
   const cta = 'COMMENT YOUR ANSWER ↓';
   ctx.font = '700 36px Inter, system-ui, sans-serif';
   const ctaW = ctx.measureText(cta).width + 128;
-  fillRR(ctx, W / 2 - ctaW / 2, H - 200, ctaW, 80, 60, 'rgba(255,45,85,0.9)');
+  const ctaY = H - 420;
+  fillRR(ctx, W / 2 - ctaW / 2, ctaY, ctaW, 80, 60, 'rgba(255,45,85,0.9)');
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(cta, W / 2, H - 200 + 40);
+  ctx.fillText(cta, W / 2, ctaY + 40);
 }
 
 function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
@@ -408,7 +412,8 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
 
   const isFlagRound = formatType === 'guess-the-flag' && slide.slide_type === 'round';
   const isPartialFlagRound = formatType === 'partial-flag' && slide.slide_type === 'round';
-  const isFlagStyleRound = isFlagRound || isPartialFlagRound;
+  const isEmpireRound = formatType === 'guess-the-empire' && slide.slide_type === 'round';
+  const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   ctx.fillStyle = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
   ctx.fillRect(0, 0, W, H);
@@ -435,7 +440,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const { slide_type, content } = slide;
 
   if (slide_type === 'title') { titleOverlay(ctx); renderTitle(ctx, content); }
-  else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content); }
+  else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }

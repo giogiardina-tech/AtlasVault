@@ -13,8 +13,9 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const H = 1920;
   const isFlagRound = format_type === 'guess-the-flag' && slide_type === 'round';
   const isPartialFlagRound = format_type === 'partial-flag' && slide_type === 'round';
-  // Both flag formats use the top/bottom text layout (image IS the question)
-  const isFlagStyleRound = isFlagRound || isPartialFlagRound;
+  const isEmpireRound = format_type === 'guess-the-empire' && slide_type === 'round';
+  // Flag + empire rounds use top/bottom text layout so the image fills the middle
+  const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   // Partial-flag: progressively zoom into the flag centre each round
   const PARTIAL_ZOOMS = [100, 140, 200, 320, 520]; // percent of element width
@@ -96,17 +97,19 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     );
   }
 
-  // FLAG-STYLE ROUNDS: the image IS the content — text at top/bottom only, image fills the middle
+  // FLAG / EMPIRE ROUNDS: image fills the middle — question at top, CTA at bottom
+  // Top panel starts at 220px (below TikTok's top chrome ~180px)
+  // Bottom CTA ends at 420px from bottom (above TikTok's bottom chrome ~380px)
   if (isFlagStyleRound) {
+    const questionFontSize = isEmpireRound ? 54 : 72;
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />
-        {/* No full overlay — keep flag crisp and fully visible */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.75) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.8) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column' }}>
-          {/* Top: round label + question */}
-          <div style={{ padding: '80px 80px 0' }}>
-            <div style={{ background: 'rgba(0,0,0,0.7)', borderRadius: 24, padding: '40px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, textAlign: 'center' }}>
+          {/* Top: round label + question — starts at 220px to clear TikTok top chrome */}
+          <div style={{ paddingTop: 220, paddingLeft: 80, paddingRight: 80 }}>
+            <div style={{ background: 'rgba(0,0,0,0.72)', borderRadius: 24, padding: '36px 56px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, textAlign: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                 <span style={{ color: '#00f2ea', fontSize: 40, fontWeight: 800, letterSpacing: 4 }}>
                   ROUND {content.round_number}
@@ -117,17 +120,17 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
                   </span>
                 )}
               </div>
-              <h2 style={{ color: 'white', fontSize: 72, fontWeight: 800, lineHeight: 1.1 }}>
+              <h2 style={{ color: 'white', fontSize: questionFontSize, fontWeight: 800, lineHeight: 1.15 }}>
                 {content.question}
               </h2>
             </div>
           </div>
 
-          {/* Middle: flag shows through */}
+          {/* Middle: image shows through */}
           <div style={{ flex: 1 }} />
 
-          {/* Bottom: CTA */}
-          <div style={{ padding: '0 80px 100px', display: 'flex', justifyContent: 'center' }}>
+          {/* Bottom CTA — ends at 420px from bottom to clear TikTok bottom chrome */}
+          <div style={{ paddingBottom: 420, paddingLeft: 80, paddingRight: 80, display: 'flex', justifyContent: 'center' }}>
             <div style={{ background: 'rgba(255,45,85,0.9)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 36, fontWeight: 700, letterSpacing: 2 }}>
               COMMENT YOUR ANSWER ↓
             </div>
