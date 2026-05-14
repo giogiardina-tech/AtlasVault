@@ -136,9 +136,12 @@ function renderTitle(ctx: CanvasRenderingContext2D, c: SlideContent) {
 
 function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const PAD = 60;
+  const TOP_SAFE = 220;   // below TikTok top chrome
+  const BOT_SAFE = 1480;  // above TikTok bottom chrome (H - 440)
   const hasExtra = !!(c.clues || c.events);
   const panelH = hasExtra ? 1100 : 600;
-  const panelY = H / 2 - panelH / 2;
+  // Centre the panel but clamp inside TikTok safe zone
+  const panelY = Math.max(TOP_SAFE, Math.min(H / 2 - panelH / 2, BOT_SAFE - panelH));
   fillRR(ctx, M, panelY, CW, panelH, 28, 'rgba(0,0,0,0.6)');
   let y = panelY + PAD;
 
@@ -188,15 +191,15 @@ function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
     });
   }
 
-  // CTA
+  // CTA — at H-420 to stay above TikTok bottom chrome
   const cta = 'COMMENT YOUR ANSWER ↓';
   ctx.font = '700 34px Inter, system-ui, sans-serif';
   const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
-  fillRR(ctx, W / 2 - ctaW / 2, H - 180, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
+  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(cta, W / 2, H - 180 + ctaH / 2);
+  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
 }
 
 function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpire = false) {

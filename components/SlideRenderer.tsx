@@ -145,7 +145,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
       <div style={containerStyle}>
         <div style={bgStyle} />
         <div style={overlayStyle} />
-        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '100px 80px', textAlign: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '220px 80px 520px', textAlign: 'center' }}>
           <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 28, padding: '60px 72px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 48 }}>
               <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
@@ -187,7 +187,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
             )}
           </div>
 
-          <div style={{ position: 'absolute', bottom: 100, left: 80, right: 80, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', bottom: 420, left: 80, right: 80, display: 'flex', justifyContent: 'center' }}>
             <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '18px 60px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
               COMMENT YOUR ANSWER ↓
             </div>
