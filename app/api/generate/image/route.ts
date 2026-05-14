@@ -27,9 +27,10 @@ export async function POST(req: NextRequest) {
       if (!flagRes.ok) throw new Error(`Flag not found for country code: ${countryCode}`);
       buffer = Buffer.from(await flagRes.arrayBuffer());
     } else {
+      const safePrompt = `${image_prompt} — CRITICAL: absolutely no text, no words, no labels, no country names, no empire names, no captions, no annotations anywhere in the image. Pure visual only.`;
       const response = await openai.images.generate({
         model: 'gpt-image-1' as any,
-        prompt: image_prompt,
+        prompt: safePrompt,
         size: '1024x1024' as any,
         quality: 'low' as any,
         n: 1,
