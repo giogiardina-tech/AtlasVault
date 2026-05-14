@@ -273,13 +273,13 @@ FORMAT: NAME A COUNTRY BY CLUE
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
     : format_type === 'guess-the-empire'
-    ? `ROUND slides (GUESS THE EMPIRE — show the empire's most recognisable visual signature, NO names or labels anywhere):
-- CRITICAL: absolutely NO text, NO empire names, NO country names, NO labels, NO captions anywhere in the image — not even partially visible
-- For each empire choose whichever is MORE iconic: (A) a stylised territory map or (B) a famous architectural/cultural symbol
-- Territory map style (Mongol, Roman, British, Ottoman, Achaemenid Persian…): pure dark navy/black background, empire territory filled with a semi-transparent amber/gold wash, bright glowing neon amber border outlining ONLY the empire's edges — like a neon sign tracing the border. Surrounding regions are flat near-black. No realistic terrain, no coastline texture, no satellite imagery, no labels of any kind.
-- Symbol style (Egyptian → pyramids and sphinx silhouette, Greek → Parthenon silhouette, Aztec → step pyramid silhouette, Viking → longship silhouette at sea…): dramatic dark background, iconic silhouette or outline glowing in amber/gold, no text or labels anywhere
-- The image must be graphic and stylised — NOT photorealistic, NOT a satellite image
-- Every image_prompt must describe the empire indirectly by geography or symbol only (e.g. "glowing amber neon border tracing a vast territory from Eastern Europe to the Pacific on a near-black background, territory filled with faint amber wash" for the Mongol Empire)`
+    ? `ROUND slides (GUESS THE EMPIRE — show the empire's territory or iconic symbol, NO names or labels):
+- CRITICAL: absolutely NO text, NO empire names, NO country names, NO city names, NO labels, NO captions anywhere in the image
+- STYLE: historical atlas illustration — aged dark parchment/paper background, empire territory filled with a warm sepia/amber colour wash, clean accurate border lines, no glow effects, no neon, no satellite imagery
+- For each empire choose whichever is MORE iconic: (A) territory map or (B) architectural/cultural symbol
+- Territory map (Mongol, Roman, Ottoman, Achaemenid Persian, British…): dark parchment background showing a world or regional map, ONLY the empire's territory filled with warm sepia/amber wash — surrounding regions stay dark/unfilled. Describe the territory by its geographic coverage rather than exact borders to ensure accuracy (e.g. for Mongol Empire: "territory covering most of Central Asia, China, Persia, and reaching into Eastern Europe"; for British Empire: "scattered territories including the British Isles, India, parts of Africa, Canada, and Australia — NOT the whole world"; for Roman Empire: "territory ringing the Mediterranean sea — southern Europe, North Africa, and the Near East")
+- Symbol (Egyptian → pyramids and sphinx, Greek → Parthenon columns, Aztec → step pyramid, Viking → longship…): the iconic structure illustrated in historical atlas style against dark parchment, no text
+- Every image_prompt must describe the territory by named continents/regions only — never use the empire name in the prompt`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
