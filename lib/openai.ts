@@ -277,13 +277,29 @@ FORMAT: NAME A COUNTRY BY CLUE
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
     : format_type === 'guess-the-empire'
-    ? `ROUND slides (GUESS THE EMPIRE — show the empire's territory or iconic symbol, NO names or labels):
+    ? `ROUND slides (GUESS THE EMPIRE — visually stunning image hinting at the empire, NO text or labels anywhere):
 - CRITICAL: absolutely NO text, NO empire names, NO country names, NO city names, NO labels, NO captions anywhere in the image
-- STYLE: historical atlas illustration — aged dark parchment/paper background, empire territory filled with a warm sepia/amber colour wash, clean accurate border lines, no glow effects, no neon, no satellite imagery
-- For each empire choose whichever is MORE iconic: (A) territory map or (B) architectural/cultural symbol
-- Territory map (Mongol, Roman, Ottoman, Achaemenid Persian, British…): dark parchment background showing a world or regional map, ONLY the empire's territory filled with warm sepia/amber wash — surrounding regions stay dark/unfilled. Describe the territory by its geographic coverage rather than exact borders to ensure accuracy (e.g. for Mongol Empire: "territory covering most of Central Asia, China, Persia, and reaching into Eastern Europe"; for British Empire: "scattered territories including the British Isles, India, parts of Africa, Canada, and Australia — NOT the whole world"; for Roman Empire: "territory ringing the Mediterranean sea — southern Europe, North Africa, and the Near East")
-- Symbol (Egyptian → pyramids and sphinx, Greek → Parthenon columns, Aztec → step pyramid, Viking → longship…): the iconic structure illustrated in historical atlas style against dark parchment, no text
-- Every image_prompt must describe the territory by named continents/regions only — never use the empire name in the prompt`
+- STYLE: cinematic, high-quality digital art or dramatic illustration — rich colours, moody lighting, visually striking. NOT a flat map unless the territory truly is the best hint.
+- For each empire choose the MOST iconic and visually compelling option:
+
+  ICONIC IMAGERY (preferred when an empire has a famous landmark, trade network, or cultural symbol):
+  - Egyptian → the Great Pyramids of Giza at dusk with the Sphinx, warm golden sand, dramatic sky
+  - Roman → the Colosseum lit at night or Roman aqueducts stretching across a landscape
+  - Greek/Hellenistic → the Parthenon on the Acropolis at golden hour, marble columns
+  - Ottoman → the Blue Mosque or Hagia Sophia silhouette at sunset over the Bosphorus
+  - Aztec → the Pyramid of the Sun at Teotihuacan with a dramatic sky
+  - Inca → Machu Picchu dramatically lit in mist and mountain peaks
+  - Viking → a Viking longship at sea under dramatic Northern Lights
+  - Silk Road empires (Tang, Abbasid…) → a dramatic desert caravan of camels at sunset with golden dunes
+  - Mughal → the Taj Mahal at dawn reflected in still water
+  - Persian/Achaemenid → Persepolis stone columns and reliefs dramatically lit
+  - Mali → dramatic saharan gold market or ancient mud-brick mosque
+  - Byzantine → gilded mosaics or the Hagia Sophia interior
+
+  TERRITORY MAP (use when the empire's sheer scale IS the most iconic thing, e.g. Mongol, British, Spanish, Portuguese):
+  - Style: aged dark parchment map with ONLY the empire territory filled in warm amber/sepia wash, surrounding regions dark. Describe coverage by continent/region — never the empire name.
+
+- Every image_prompt must describe the scene vividly (composition, lighting, mood, colours) without ever naming the empire`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
