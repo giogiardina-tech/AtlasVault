@@ -11,7 +11,8 @@ export type FormatType =
   | 'guess-the-capital'
   | 'country-by-clue'
   | 'guess-the-person'
-  | 'civilization-fight';
+  | 'civilization-fight'
+  | 'fame-battle';
 
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';

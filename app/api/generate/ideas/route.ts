@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     'country-by-clue': `"Three clues per round — can you guess the country before I give you the easy one?" / "I'll give you three clues for each country. Real ones get it on clue one."`,
     'guess-the-person': `"Three clues per person, hardest first — how quickly can you figure out who I'm describing?" / "Five historical figures, three clues each — real history fans get it on clue one."`,
     'civilization-fight': `"Five civilization matchups — pick your side before I reveal who actually wins." / "Rome vs Greece, Mongols vs Samurai — five battles, five results, how many do you get right?"`,
+    'fame-battle': `"Five matchups — comment who you think was more famous before I reveal." / "Napoleon vs Cleopatra, Einstein vs Newton — five rounds, who left the bigger mark?"`,
   };
 
   const hookGuidance = formatHookExamples[format_type] || `"Five rounds, let's see how far you get." / "Easy start, impossible finish — how many can you get?"`;

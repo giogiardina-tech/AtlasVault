@@ -334,7 +334,52 @@ function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
 }
 
-function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
+function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
+  const PAD = 60;
+  // Round label
+  ctx.font = '800 42px Inter, system-ui, sans-serif';
+  ctx.fillStyle = '#00f2ea';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(`ROUND ${c.round_number}`, W / 2, 240);
+
+  const boxW = CW, boxH = 280;
+  const centerY = H / 2;
+
+  // Side A box — subtle purple tint
+  const aY = centerY - boxH - 60;
+  fillRR(ctx, M, aY, boxW, boxH, 20, 'rgba(30,0,60,0.55)');
+  strokeRR(ctx, M, aY, boxW, boxH, 20, 'rgba(160,80,255,0.55)', 3);
+  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 34, boxW - PAD * 2, 80);
+
+  // VS
+  ctx.font = '900 80px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('VS', W / 2, centerY);
+
+  // Side B box — subtle gold tint
+  const bY = centerY + 60;
+  fillRR(ctx, M, bY, boxW, boxH, 20, 'rgba(40,25,0,0.55)');
+  strokeRR(ctx, M, bY, boxW, boxH, 20, 'rgba(220,160,0,0.55)', 3);
+  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 34, boxW - PAD * 2, 80);
+
+  // CTA
+  const cta = 'COMMENT WHO WAS MORE FAMOUS ↓';
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
+  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(160,80,255,0.85)');
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+}
+
+function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false) {
   const scoringType = c.scoring_type || (c.answers && c.answers.length > 1 ? 'pointless' : 'difficulty');
 
   // Header
@@ -381,7 +426,7 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
     ctx.fillText(`${aPercent}%`, M + CW - 48, py);
     py += 64;
     fillRR(ctx, M + 48, py, CW - 96, 18, 9, 'rgba(255,255,255,0.1)');
-    fillRR(ctx, M + 48, py, Math.max(18, (aPercent / 100) * (CW - 96)), 18, 9, aWins ? '#ff2d55' : 'rgba(255,45,85,0.4)');
+    fillRR(ctx, M + 48, py, Math.max(18, (aPercent / 100) * (CW - 96)), 18, 9, aWins ? (isFame ? '#a050ff' : '#ff2d55') : (isFame ? 'rgba(160,80,255,0.4)' : 'rgba(255,45,85,0.4)'));
     py += 56;
 
     // Side B
@@ -395,7 +440,7 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
     ctx.fillText(`${bPercent}%`, M + CW - 48, py);
     py += 64;
     fillRR(ctx, M + 48, py, CW - 96, 18, 9, 'rgba(255,255,255,0.1)');
-    fillRR(ctx, M + 48, py, Math.max(18, (bPercent / 100) * (CW - 96)), 18, 9, !aWins ? '#0078ff' : 'rgba(0,120,255,0.4)');
+    fillRR(ctx, M + 48, py, Math.max(18, (bPercent / 100) * (CW - 96)), 18, 9, !aWins ? (isFame ? '#dca000' : '#0078ff') : (isFame ? 'rgba(220,160,0,0.4)' : 'rgba(0,120,255,0.4)'));
 
     y += panelH + 40;
 
@@ -564,6 +609,8 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const isPartialFlagRound = formatType === 'partial-flag' && slide.slide_type === 'round';
   const isEmpireRound = formatType === 'guess-the-empire' && slide.slide_type === 'round';
   const isFightRound = formatType === 'civilization-fight' && slide.slide_type === 'round';
+  const isFameBattleRound = formatType === 'fame-battle' && slide.slide_type === 'round';
+  const isFameBattleReveal = formatType === 'fame-battle' && slide.slide_type === 'reveal';
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   ctx.fillStyle = '#0a0a0a';
@@ -621,9 +668,11 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const { slide_type, content } = slide;
 
   if (slide_type === 'title') { renderTitle(ctx, content); }
-  else if (isPartialFlagRound){ renderPartialFlagRoundText(ctx, content); }
-  else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
-  else if (isFightRound)      { stdOverlay(ctx);   renderFightRound(ctx, content); }
+  else if (isPartialFlagRound)  { renderPartialFlagRoundText(ctx, content); }
+  else if (isFlagStyleRound)    { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
+  else if (isFightRound)        { stdOverlay(ctx);   renderFightRound(ctx, content); }
+  else if (isFameBattleRound)   { stdOverlay(ctx);   renderFameBattleRound(ctx, content); }
+  else if (isFameBattleReveal)  { stdOverlay(ctx);   renderReveal(ctx, content, true); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }

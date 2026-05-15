@@ -15,6 +15,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const isPartialFlagRound = format_type === 'partial-flag' && slide_type === 'round';
   const isEmpireRound = format_type === 'guess-the-empire' && slide_type === 'round';
   const isFightRound = format_type === 'civilization-fight' && slide_type === 'round';
+  const isFameBattleRound = format_type === 'fame-battle' && slide_type === 'round';
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
@@ -198,6 +199,35 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           <div style={{ paddingBottom: 420, paddingLeft: 80, paddingRight: 80, display: 'flex', justifyContent: 'center' }}>
             <div style={{ background: 'rgba(255,45,85,0.9)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 36, fontWeight: 700, letterSpacing: 2 }}>
               COMMENT YOUR ANSWER ↓
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // FAME BATTLE ROUNDS: purple/gold tints for people matchups
+  if (isFameBattleRound) {
+    return (
+      <div style={containerStyle}>
+        <div style={bgStyle} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 28%, rgba(0,0,0,0.15) 72%, rgba(0,0,0,0.7) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '220px 80px 420px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>ROUND {content.round_number}</span>
+          </div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(30,0,60,0.55)', border: '2px solid rgba(160,80,255,0.55)', borderRadius: 20, padding: '36px 56px', width: '100%', textAlign: 'center', marginBottom: 24 }}>
+              <p style={{ color: 'white', fontSize: 68, fontWeight: 900, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>{content.side_a}</p>
+            </div>
+            <div style={{ color: 'white', fontSize: 72, fontWeight: 900, letterSpacing: 6, textShadow: '0 2px 24px rgba(0,0,0,0.9)', marginBottom: 24 }}>VS</div>
+            <div style={{ background: 'rgba(40,25,0,0.55)', border: '2px solid rgba(220,160,0,0.55)', borderRadius: 20, padding: '36px 56px', width: '100%', textAlign: 'center' }}>
+              <p style={{ color: 'white', fontSize: 68, fontWeight: 900, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>{content.side_b}</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
+              COMMENT WHO WAS MORE FAMOUS ↓
             </div>
           </div>
         </div>

@@ -84,6 +84,8 @@ function seedTemplates(db: DatabaseSync) {
       'Three clues, hardest first — can you identify the historical figure? From ancient rulers to modern icons, test your knowledge of the people who shaped history.');
     insert.run('tmpl-011', 'Civilization Fight', 'Fights', 'civilization-fight',
       'Two civilizations, empires, or nations go head to head. Pick your side — then see who actually wins and why, backed by historical analysis.');
+    insert.run('tmpl-012', 'Who Was More Famous?', 'People', 'fame-battle',
+      'Two iconic historical figures go head to head. Who left the bigger mark on history? Comment your pick before the reveal.');
     db.exec('COMMIT');
   } catch (e) {
     db.exec('ROLLBACK');

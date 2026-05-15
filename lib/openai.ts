@@ -282,6 +282,27 @@ FORMAT: NAME A COUNTRY BY CLUE
 - Reveal: the mystery country + clue_giveaway (which clue most people crack it from) + fun_fact`,
     },
 
+    'fame-battle': {
+      revealType: 'fight',
+      instructions: `
+FORMAT: WHO WAS MORE FAMOUS? — FAME BATTLE
+- 5 rounds, each pitting two iconic historical figures against each other in a fame and cultural impact showdown
+- Figures can come from any era and any field: rulers, scientists, artists, explorers, philosophers, athletes, inventors, religious leaders
+- NO difficulty field — every round stands on its own, omit "difficulty" from round slide content entirely
+- Matchup quality rules:
+  * Mix obvious crowd-pleasers with surprising or controversial matchups that spark debate
+  * Include at least one cross-field matchup (e.g. Napoleon vs Shakespeare)
+  * Include at least one matchup where the result is genuinely surprising or counterintuitive
+  * Include figures from non-Western history — not just European or American icons
+  * Avoid obvious mismatches where the answer is too easy (e.g. Hitler vs an obscure figure)
+- ROUND slide content must include:
+  * "side_a": full name of first person (e.g. "Napoleon Bonaparte", "Cleopatra")
+  * "side_b": full name of second person (e.g. "Julius Caesar", "Marie Curie")
+  * "question": always exactly "Who was more famous?"
+- REVEAL slide: AI-informed fame percentages based on cultural reach, historical recognition, name recognition across cultures, media presence, and lasting legacy. The fun_fact must explain in 1-2 punchy sentences WHY the winner edges ahead — what specifically makes them more culturally embedded in human history.
+- Percentages should reflect genuine analysis — never a boring 50/50, always give one person a clear edge based on real reasoning`,
+    },
+
     'civilization-fight': {
       revealType: 'fight',
       instructions: `
@@ -341,6 +362,7 @@ FORMAT: GUESS THE HISTORICAL FIGURE
     'partial-flag': `scoring_summary uses correct answers out of 5. Example: "5/5 = flag detective | 4/5 = sharp eyes | 3/5 = solid | 2 or below = study your flags!"`,
     'country-by-clue': `scoring_summary uses correct answers out of 5. Example: "5/5 = world explorer | 4/5 = impressive | 3/5 = solid | 2 or below = keep exploring!"`,
     'guess-the-person': `scoring_summary uses correct answers out of 5 AND which clue they needed. Example: "5/5 on clue 1 = history genius | 5/5 = historian | 3-4/5 = solid | 2 or below = brush up on history!"`,
+    'fame-battle': `scoring_summary is based on how many picks matched the AI's result. Example: "5/5 = cultural genius | 4/5 = history buff | 3/5 = decent | 2 or below = brush up on your icons!"`,
     'civilization-fight': `scoring_summary is based on how many battles the audience predicted correctly. Example: "5/5 = military genius | 4/5 = sharp strategist | 3/5 = decent commander | 2 or below = stick to peacetime!"`,
   };
 
@@ -350,7 +372,13 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
-  const roundImageRule = format_type === 'civilization-fight'
+  const roundImageRule = format_type === 'fame-battle'
+    ? `ROUND slides (FAME BATTLE — evocative historical era scene, NO text, NO portraits, NO names):
+- CRITICAL: absolutely NO text, NO names, NO portraits of specific people anywhere in the image
+- Show a dramatic scene from the era or cultural world these two figures inhabited — a Roman forum, a Renaissance court, a royal court, a scientific laboratory, a battlefield
+- The image should evoke "greatness" and historical weight without identifying any specific person
+- Style: clean, realistic, documentary-style historical photography or illustration — NOT fantasy art`
+    : format_type === 'civilization-fight'
     ? `ROUND slides (CIVILIZATION FIGHT — epic battle scene, NO text or names):
 - CRITICAL: absolutely NO text, NO civilization names, NO labels anywhere in the image
 - Show a dramatic, cinematic clash between two opposing forces — armies colliding, warships in battle, siege warfare, cavalry charges
