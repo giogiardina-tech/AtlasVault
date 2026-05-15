@@ -576,11 +576,11 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
         rrPath(ctx, cardX, cardY, cardW, cardH, 28);
         ctx.clip();
         const CROP_CONFIGS = [
-          { zoom: 3.6, xFrac:  0.00, yFrac: -0.28 },
-          { zoom: 4.6, xFrac: -0.95, yFrac: -0.12 },
-          { zoom: 5.8, xFrac: -0.18, yFrac: -0.75 },
-          { zoom: 7.2, xFrac: -0.55, yFrac:  0.08 },
-          { zoom: 9.4, xFrac: -0.85, yFrac: -0.55 },
+          { zoom: 1.15, xFrac: -0.05, yFrac: -0.10 },  // ~87% visible
+          { zoom: 1.34, xFrac: -0.15, yFrac: -0.12 },  // ~75% visible
+          { zoom: 1.57, xFrac: -0.20, yFrac: -0.15 },  // ~64% visible
+          { zoom: 2.00, xFrac: -0.30, yFrac: -0.20 },  // ~50% visible
+          { zoom: 2.85, xFrac: -0.45, yFrac: -0.30 },  // ~35% visible
         ];
         const roundNum = (slide.content.round_number ?? 1) as number;
         const cfg = CROP_CONFIGS[Math.min(roundNum - 1, 4)];

@@ -19,14 +19,15 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   const roundNum = (content.round_number ?? 1) as number;
-  // Each round: zoom % of card width + offset (% of card) so flag bleeds off edges
-  // Zoom 360-900% ensures only 11-28% of flag is visible at any time
+  // Zoom is % of card width. Visible % of flag ≈ 100/zoom.
+  // Offset (% of card) nudges the flag off-center so at least one edge bleeds out.
+  // Round 1 → ~87% visible | Round 2 → ~75% | Round 3 → ~64% | Round 4 → ~50% | Round 5 → ~35%
   const CROP_CONFIGS = [
-    { zoom: 360, left: '0%',    top: '-28%' },  // top-left region
-    { zoom: 460, left: '-95%',  top: '-12%' },  // right portion
-    { zoom: 580, left: '-18%',  top: '-75%' },  // lower-left section
-    { zoom: 720, left: '-55%',  top:  '8%'  },  // upper-right area
-    { zoom: 940, left: '-85%',  top: '-55%' },  // corner detail
+    { zoom: 115, left: '-5%',  top: '-10%' },
+    { zoom: 134, left: '-15%', top: '-12%' },
+    { zoom: 157, left: '-20%', top: '-15%' },
+    { zoom: 200, left: '-30%', top: '-20%' },
+    { zoom: 285, left: '-45%', top: '-30%' },
   ];
   const cropCfg = isPartialFlagRound ? CROP_CONFIGS[Math.min(roundNum - 1, 4)] : CROP_CONFIGS[0];
 
