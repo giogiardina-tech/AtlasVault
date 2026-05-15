@@ -14,6 +14,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const isFlagRound = format_type === 'guess-the-flag' && slide_type === 'round';
   const isPartialFlagRound = format_type === 'partial-flag' && slide_type === 'round';
   const isEmpireRound = format_type === 'guess-the-empire' && slide_type === 'round';
+  const isFightRound = format_type === 'civilization-fight' && slide_type === 'round';
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
@@ -140,6 +141,35 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     );
   }
 
+  // FIGHT ROUNDS: dramatic VS layout with two sides
+  if (isFightRound) {
+    return (
+      <div style={containerStyle}>
+        <div style={bgStyle} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.75) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '220px 80px 420px' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>ROUND {content.round_number}</span>
+          </div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 24, padding: '48px 60px', width: '100%', textAlign: 'center', marginBottom: 28 }}>
+              <p style={{ color: 'white', fontSize: 76, fontWeight: 900, lineHeight: 1.1 }}>{content.side_a}</p>
+            </div>
+            <div style={{ color: 'white', fontSize: 84, fontWeight: 900, letterSpacing: 8, textShadow: '0 0 40px rgba(255,255,255,0.6)', marginBottom: 28 }}>VS</div>
+            <div style={{ background: 'rgba(0,120,255,0.85)', borderRadius: 24, padding: '48px 60px', width: '100%', textAlign: 'center' }}>
+              <p style={{ color: 'white', fontSize: 76, fontWeight: 900, lineHeight: 1.1 }}>{content.side_b}</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 36, fontWeight: 700, letterSpacing: 2 }}>
+              COMMENT YOUR PICK ↓
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (slide_type === 'round') {
     return (
       <div style={containerStyle}>
@@ -222,6 +252,54 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         {content.question}
       </p>
     );
+
+    // FIGHT MODE — winner + win percentages
+    if (scoringType === 'fight' && content.side_a && content.side_b) {
+      const aWins = content.winner === content.side_a;
+      const aPercent = content.side_a_percent ?? 50;
+      const bPercent = content.side_b_percent ?? 50;
+      return (
+        <div style={containerStyle}>
+          <div style={bgStyle} />
+          <div style={overlayStyle} />
+          <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
+            {header}
+            <div style={{ textAlign: 'center', marginBottom: 40 }}>
+              <span style={{ color: '#ffd700', fontSize: 52, fontWeight: 900, textShadow: '0 0 30px rgba(255,215,0,0.5)' }}>
+                ★ {content.winner} WINS
+              </span>
+            </div>
+            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 28, padding: '52px 60px', display: 'flex', flexDirection: 'column', gap: 44, marginBottom: 40 }}>
+              {/* Side A */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+                  <span style={{ color: aWins ? '#ffd700' : 'rgba(255,255,255,0.75)', fontSize: 48, fontWeight: aWins ? 900 : 600, lineHeight: 1 }}>{content.side_a}</span>
+                  <span style={{ color: aWins ? '#ffd700' : 'rgba(255,255,255,0.6)', fontSize: 52, fontWeight: 800 }}>{aPercent}%</span>
+                </div>
+                <div style={{ height: 22, background: 'rgba(255,255,255,0.1)', borderRadius: 11, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${aPercent}%`, background: aWins ? '#ff2d55' : 'rgba(255,45,85,0.4)', borderRadius: 11, transition: 'width 0.6s ease' }} />
+                </div>
+              </div>
+              {/* Side B */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+                  <span style={{ color: !aWins ? '#ffd700' : 'rgba(255,255,255,0.75)', fontSize: 48, fontWeight: !aWins ? 900 : 600, lineHeight: 1 }}>{content.side_b}</span>
+                  <span style={{ color: !aWins ? '#ffd700' : 'rgba(255,255,255,0.6)', fontSize: 52, fontWeight: 800 }}>{bPercent}%</span>
+                </div>
+                <div style={{ height: 22, background: 'rgba(255,255,255,0.1)', borderRadius: 11, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${bPercent}%`, background: !aWins ? '#0078ff' : 'rgba(0,120,255,0.4)', borderRadius: 11 }} />
+                </div>
+              </div>
+            </div>
+            {content.fun_fact && (
+              <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: 38, lineHeight: 1.5, fontStyle: 'italic', textAlign: 'center' }}>
+                "{content.fun_fact}"
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
 
     // POINTLESS MODE — multiple answers with bar chart
     if (scoringType === 'pointless' && content.answers && content.answers.length > 0) {

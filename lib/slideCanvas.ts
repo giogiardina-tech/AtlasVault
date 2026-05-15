@@ -232,6 +232,49 @@ function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpir
   ctx.fillText(cta, W / 2, ctaY + 40);
 }
 
+function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
+  const PAD = 60;
+  // Round label
+  ctx.font = '800 42px Inter, system-ui, sans-serif';
+  ctx.fillStyle = '#00f2ea';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(`ROUND ${c.round_number}`, W / 2, 240);
+
+  const boxW = CW, boxH = 280;
+  const centerY = H / 2;
+
+  // Side A box (red)
+  const aY = centerY - boxH - 60;
+  fillRR(ctx, M, aY, boxW, boxH, 24, 'rgba(255,45,85,0.85)');
+  ctx.font = '900 72px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 36, boxW - PAD * 2, 84);
+
+  // VS
+  ctx.font = '900 84px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('VS', W / 2, centerY);
+
+  // Side B box (blue)
+  const bY = centerY + 60;
+  fillRR(ctx, M, bY, boxW, boxH, 24, 'rgba(0,120,255,0.85)');
+  ctx.font = '900 72px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 36, boxW - PAD * 2, 84);
+
+  // CTA
+  const cta = 'COMMENT YOUR PICK ↓';
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
+  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+}
+
 function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const scoringType = c.scoring_type || (c.answers && c.answers.length > 1 ? 'pointless' : 'difficulty');
 
@@ -250,6 +293,61 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.font = '600 36px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
   y += drawWrapped(ctx, c.question || '', W / 2, y, CW, 46) + 28;
+
+  if (scoringType === 'fight' && c.side_a && c.side_b) {
+    const aWins = c.winner === c.side_a;
+    const aPercent = c.side_a_percent ?? 50;
+    const bPercent = c.side_b_percent ?? 50;
+
+    // Winner announcement
+    ctx.font = '900 50px Inter, system-ui, sans-serif';
+    ctx.fillStyle = '#ffd700';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(`★ ${c.winner} WINS`, W / 2, y);
+    y += 80;
+
+    // Panel
+    const panelH = 480;
+    fillRR(ctx, M, y, CW, panelH, 28, 'rgba(0,0,0,0.6)');
+    let py = y + 48;
+
+    // Side A
+    ctx.font = `${aWins ? '900' : '600'} 44px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = aWins ? '#ffd700' : 'rgba(255,255,255,0.75)';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(c.side_a, M + 48, py);
+    ctx.font = '800 48px Inter, system-ui, sans-serif';
+    ctx.fillStyle = aWins ? '#ffd700' : 'rgba(255,255,255,0.6)';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${aPercent}%`, M + CW - 48, py);
+    py += 64;
+    fillRR(ctx, M + 48, py, CW - 96, 18, 9, 'rgba(255,255,255,0.1)');
+    fillRR(ctx, M + 48, py, Math.max(18, (aPercent / 100) * (CW - 96)), 18, 9, aWins ? '#ff2d55' : 'rgba(255,45,85,0.4)');
+    py += 56;
+
+    // Side B
+    ctx.font = `${!aWins ? '900' : '600'} 44px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = !aWins ? '#ffd700' : 'rgba(255,255,255,0.75)';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(c.side_b, M + 48, py);
+    ctx.font = '800 48px Inter, system-ui, sans-serif';
+    ctx.fillStyle = !aWins ? '#ffd700' : 'rgba(255,255,255,0.6)';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${bPercent}%`, M + CW - 48, py);
+    py += 64;
+    fillRR(ctx, M + 48, py, CW - 96, 18, 9, 'rgba(255,255,255,0.1)');
+    fillRR(ctx, M + 48, py, Math.max(18, (bPercent / 100) * (CW - 96)), 18, 9, !aWins ? '#0078ff' : 'rgba(0,120,255,0.4)');
+
+    y += panelH + 40;
+
+    if (c.fun_fact) {
+      ctx.font = 'italic 400 34px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      drawWrapped(ctx, `"${c.fun_fact}"`, W / 2, y, CW - 80, 48);
+    }
+    return;
+  }
 
   if (scoringType === 'pointless' && c.answers?.length) {
     const maxPts = Math.max(...c.answers.map(a => a.points), 1);
@@ -416,6 +514,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const isFlagRound = formatType === 'guess-the-flag' && slide.slide_type === 'round';
   const isPartialFlagRound = formatType === 'partial-flag' && slide.slide_type === 'round';
   const isEmpireRound = formatType === 'guess-the-empire' && slide.slide_type === 'round';
+  const isFightRound = formatType === 'civilization-fight' && slide.slide_type === 'round';
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   ctx.fillStyle = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
@@ -444,6 +543,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
 
   if (slide_type === 'title') { titleOverlay(ctx); renderTitle(ctx, content); }
   else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
+  else if (isFightRound)      { stdOverlay(ctx);   renderFightRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }

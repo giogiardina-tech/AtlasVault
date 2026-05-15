@@ -34,6 +34,13 @@ const categories = [
     color: 'from-purple-900/60 to-purple-950/80 border-purple-700/40 hover:border-purple-500/60',
     accent: 'text-purple-400',
   },
+  {
+    id: 'Fights' as Category,
+    emoji: '⚔️',
+    description: 'Two civilizations fight — who wins?',
+    color: 'from-orange-900/60 to-orange-950/80 border-orange-700/40 hover:border-orange-500/60',
+    accent: 'text-orange-400',
+  },
 ];
 
 export default function CategoryPicker({ onSelect }: Props) {

@@ -77,24 +77,45 @@ export default function GameOutline({ game, slides, scoringSystem, onSlidesChang
 
               {reveal && (
                 <div className="border-t border-tk-border bg-black/20 px-4 py-3">
-                  <p className="text-xs text-zinc-600 mb-2">Answers:</p>
+                  <p className="text-xs text-zinc-600 mb-2">
+                    {reveal.content.scoring_type === 'fight' ? 'Result:' : 'Answers:'}
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {reveal.content.answers?.map((ans, ai) => (
-                      <span
-                        key={ai}
-                        className={`text-xs px-2 py-1 rounded ${
-                          ans.is_pointless
-                            ? 'bg-tk-cyan/20 text-tk-cyan border border-tk-cyan/30'
-                            : 'bg-white/5 text-zinc-400'
-                        }`}
-                      >
-                        {ans.text} {ans.is_pointless ? '★ Pointless' : `(${ans.points}pts)`}
-                      </span>
-                    ))}
-                    {reveal.content.correct_answer && !reveal.content.answers && (
-                      <span className="text-xs px-2 py-1 rounded bg-tk-cyan/20 text-tk-cyan border border-tk-cyan/30">
-                        {reveal.content.correct_answer}
-                      </span>
+                    {reveal.content.scoring_type === 'fight' ? (
+                      <div className="w-full space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-bold ${reveal.content.winner === reveal.content.side_a ? 'text-yellow-400' : 'text-zinc-400'}`}>
+                            {reveal.content.winner === reveal.content.side_a ? '★ ' : ''}{reveal.content.side_a}
+                          </span>
+                          <span className="text-xs text-zinc-400">{reveal.content.side_a_percent}%</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-bold ${reveal.content.winner === reveal.content.side_b ? 'text-yellow-400' : 'text-zinc-400'}`}>
+                            {reveal.content.winner === reveal.content.side_b ? '★ ' : ''}{reveal.content.side_b}
+                          </span>
+                          <span className="text-xs text-zinc-400">{reveal.content.side_b_percent}%</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {reveal.content.answers?.map((ans, ai) => (
+                          <span
+                            key={ai}
+                            className={`text-xs px-2 py-1 rounded ${
+                              ans.is_pointless
+                                ? 'bg-tk-cyan/20 text-tk-cyan border border-tk-cyan/30'
+                                : 'bg-white/5 text-zinc-400'
+                            }`}
+                          >
+                            {ans.text} {ans.is_pointless ? '★ Pointless' : `(${ans.points}pts)`}
+                          </span>
+                        ))}
+                        {reveal.content.correct_answer && !reveal.content.answers && (
+                          <span className="text-xs px-2 py-1 rounded bg-tk-cyan/20 text-tk-cyan border border-tk-cyan/30">
+                            {reveal.content.correct_answer}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                   {reveal.content.fun_fact && (

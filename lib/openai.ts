@@ -98,6 +98,25 @@ REVEAL SLIDE (scoring_type: "difficulty"):
 }
 RULE: clue_giveaway is which clue most people would crack it from (e.g. "Clue 1", "Clue 2", "Clue 3").`,
 
+    fight: `
+REVEAL SLIDE (scoring_type: "fight"):
+{
+  "slide_index": N,
+  "slide_type": "reveal",
+  "content": {
+    "round_number": 1,
+    "scoring_type": "fight",
+    "side_a": "Roman Empire",
+    "side_b": "Greek City-States",
+    "winner": "Roman Empire",
+    "side_a_percent": 68,
+    "side_b_percent": 32,
+    "fun_fact": "Rome's professional legions, superior logistics and siege technology gave them a decisive edge — but the mountainous Greek terrain and naval power would have made victory costly."
+  },
+  "image_prompt": "..."
+}
+RULE: side_a_percent + side_b_percent must equal exactly 100. Winner must match side_a or side_b exactly. Never use 50/50 — always give one side a clear edge based on real military, logistical, and strategic analysis.`,
+
     position: `
 REVEAL SLIDE (scoring_type: "position"):
 {
@@ -184,18 +203,24 @@ FORMAT: GUESS THE COUNTRY FROM THE MAP
     'guess-the-empire': {
       revealType: 'difficulty',
       instructions: `
-FORMAT: GUESS THE EMPIRE
-- 5 rounds featuring historical empires at their territorial peak:
-  * Round 1: Famous empire everyone knows — difficulty_tier: "easy"
-  * Round 2: Well-known empire — difficulty_tier: "easy"
+FORMAT: GUESS THE EMPIRE (OR DEFUNCT STATE)
+- 5 rounds featuring historical empires, ancient civilisations, OR modern countries that no longer exist:
+  * Round 1: Famous empire or defunct state everyone knows — difficulty_tier: "easy"
+  * Round 2: Well-known empire or defunct state — difficulty_tier: "easy"
   * Round 3: Known to history enthusiasts — difficulty_tier: "medium"
   * Round 4: Specialist knowledge — difficulty_tier: "hard"
-  * Round 5: Obscure ancient empire — difficulty_tier: "impossible"
-- QUESTION FIELD: write a geographic hint describing the territory WITHOUT naming the empire. Mention continents/regions covered and approximate era. Examples:
+  * Round 5: Obscure ancient empire or lesser-known defunct state — difficulty_tier: "impossible"
+- SUBJECT POOL — draw from all of these, not just ancient empires:
+  * Ancient/classical empires: Roman, Mongol, Ottoman, Persian, Egyptian, Greek/Macedonian, Byzantine, Mayan, Aztec, Inca, Han, Mughal, Mali, Viking…
+  * Colonial empires: British, Spanish, Portuguese, French, Dutch…
+  * Modern defunct states: Soviet Union, East Germany (GDR), Yugoslavia, Czechoslovakia, Ottoman Empire (modern era), Austro-Hungarian Empire, Weimar Republic, Confederate States, Republic of Texas, USSR satellite states…
+  * Any sovereign country or political entity that no longer exists today
+- QUESTION FIELD: write a geographic or historical hint describing the entity WITHOUT naming it. Mention territory, era, or defining characteristics. Examples:
   * "Which empire once controlled territory stretching from Eastern Europe all the way to China and Korea?"
+  * "Which country occupied the eastern half of Germany from 1949 until reunification in 1990?"
+  * "Which federation of six republics dissolved in the 1990s following a series of devastating civil wars?"
+  * "Which superpower controlled much of Eastern Europe, Central Asia, and Siberia until its collapse in 1991?"
   * "Which empire ringed the entire Mediterranean Sea at its peak in the 2nd century AD?"
-  * "Which empire ruled the British Isles, India, large parts of Africa, Canada, and Australia?"
-  * "Which ancient empire controlled the Nile Valley and stretched deep into modern-day Sudan?"
 - CRITICAL: Every round slide content must include TWO image prompt fields:
   * "map_prompt": a vivid description for an aged parchment territory map (describe only by geography, e.g. "Aged dark parchment historical map, territory covering Central Asia, China, Persia and reaching into Eastern Europe filled with warm amber wash, surrounding regions near-black, no text")
   * "feature_prompt": a vivid cinematic description of the empire's most iconic landmark or cultural symbol WITHOUT naming the empire (e.g. "The Great Pyramids of Giza at dusk with the Sphinx in the foreground, warm golden light, dramatic orange and purple sky, cinematic composition")
@@ -257,6 +282,26 @@ FORMAT: NAME A COUNTRY BY CLUE
 - Reveal: the mystery country + clue_giveaway (which clue most people crack it from) + fun_fact`,
     },
 
+    'civilization-fight': {
+      revealType: 'fight',
+      instructions: `
+FORMAT: CIVILIZATION FIGHT — WHO WOULD WIN?
+- 5 rounds, each pitting two civilizations, empires, armies, or nations against each other in a hypothetical all-out war at their respective peaks
+- Matchups can span any era and type: ancient empires, medieval kingdoms, colonial powers, modern defunct states, or even cross-era hypotheticals
+- NO difficulty field — every round stands on its own, omit "difficulty" from round slide content entirely
+- Matchup quality rules:
+  * Mix obvious crowd-pleasing matchups with surprising or unexpected ones
+  * Include at least one cross-era or cross-geography hypothetical (e.g. Mongols vs. Napoleon's France)
+  * Include at least one matchup that is genuinely close — not every round should be a blowout
+  * Include at least one modern defunct state (Soviet Union, Ottoman Empire, Nazi Germany, Austro-Hungarian Empire, etc.)
+  * Avoid repeating matchups from obvious well-known games — be creative
+- ROUND slide content must include:
+  * "side_a": full name of first civilization/empire/nation (e.g. "Roman Empire", "Soviet Union")
+  * "side_b": full name of second civilization/empire/nation
+  * "question": always exactly "Who wins in an all-out war?"
+- REVEAL slide: AI-informed win percentages based on military strength, numbers, technology, logistics, terrain advantage, and historical context. The fun_fact must explain in 1-2 punchy sentences WHY the winner wins — the key deciding factors that most people wouldn't think of.`,
+    },
+
     'guess-the-person': {
       revealType: 'difficulty',
       instructions: `
@@ -290,6 +335,7 @@ FORMAT: GUESS THE HISTORICAL FIGURE
     'partial-flag': `scoring_summary uses correct answers out of 5. Example: "5/5 = flag detective | 4/5 = sharp eyes | 3/5 = solid | 2 or below = study your flags!"`,
     'country-by-clue': `scoring_summary uses correct answers out of 5. Example: "5/5 = world explorer | 4/5 = impressive | 3/5 = solid | 2 or below = keep exploring!"`,
     'guess-the-person': `scoring_summary uses correct answers out of 5 AND which clue they needed. Example: "5/5 on clue 1 = history genius | 5/5 = historian | 3-4/5 = solid | 2 or below = brush up on history!"`,
+    'civilization-fight': `scoring_summary is based on how many battles the audience predicted correctly. Example: "5/5 = military genius | 4/5 = sharp strategist | 3/5 = decent commander | 2 or below = stick to peacetime!"`,
   };
 
   const format = formatInstructions[format_type];
@@ -298,7 +344,13 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
-  const roundImageRule = format_type === 'guess-the-person'
+  const roundImageRule = format_type === 'civilization-fight'
+    ? `ROUND slides (CIVILIZATION FIGHT — epic battle scene, NO text or names):
+- CRITICAL: absolutely NO text, NO civilization names, NO labels anywhere in the image
+- Show a dramatic, cinematic clash between two opposing forces — armies colliding, warships in battle, siege warfare, cavalry charges
+- The image should feel like a blockbuster war film poster: epic scale, dramatic lighting, high contrast, rich colour
+- Style: ultra-cinematic digital art or photorealistic illustration — designed to stop someone mid-scroll`
+    : format_type === 'guess-the-person'
     ? `ROUND slides (GUESS THE PERSON — dramatic era-appropriate scene, NEVER show or name the person):
 - CRITICAL: absolutely NO text, NO names, NO portraits of the specific person anywhere in the image
 - Show a dramatic scene from the era or region the person is associated with — e.g. ancient Roman forum, Renaissance workshop, battle scene, explorer's ship
@@ -328,8 +380,15 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   - Mali → dramatic saharan gold market or ancient mud-brick mosque
   - Byzantine → gilded mosaics or the Hagia Sophia interior
 
-  TERRITORY MAP (use when the empire's sheer scale IS the most iconic thing, e.g. Mongol, British, Spanish, Portuguese):
+  TERRITORY MAP (use when the empire's sheer scale IS the most iconic thing, e.g. Mongol, British, Spanish, Portuguese, Soviet Union):
   - Style: aged dark parchment map with ONLY the empire territory filled in warm amber/sepia wash, surrounding regions dark. Describe coverage by continent/region — never the empire name.
+
+  MODERN DEFUNCT STATES (Soviet Union, East Germany, Yugoslavia, Czechoslovakia, etc.):
+  - Soviet Union → dramatic Cold War era imagery: a cosmonaut floating in space, a Soviet rocket launch, or Red Square at night under a dramatic sky
+  - East Germany → a dramatic shot of the Berlin Wall with watchtowers and searchlights at night
+  - Yugoslavia → dramatic Adriatic coastline or mountain landscape spanning the Balkans
+  - Austro-Hungarian Empire → the grand imperial architecture of Vienna or Budapest at golden hour
+  - Use iconic visual symbols of the era rather than maps where possible
 
 - Every image_prompt must describe the scene vividly (composition, lighting, mood, colours) without ever naming the empire`
     : `ROUND slides (question slides — do NOT reveal the answer):

@@ -1,4 +1,4 @@
-export type Category = 'Geography' | 'Flags' | 'History' | 'People';
+export type Category = 'Geography' | 'Flags' | 'History' | 'People' | 'Fights';
 
 export type FormatType =
   | 'bordering-country'
@@ -10,13 +10,14 @@ export type FormatType =
   | 'historical-order'
   | 'guess-the-capital'
   | 'country-by-clue'
-  | 'guess-the-person';
+  | 'guess-the-person'
+  | 'civilization-fight';
 
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';
 export type GameDifficulty = 'easy' | 'medium' | 'hard';
 export type ImageStatus = 'pending' | 'generating' | 'ready' | 'failed';
-export type ScoringType = 'pointless' | 'difficulty' | 'position';
+export type ScoringType = 'pointless' | 'difficulty' | 'position' | 'fight';
 export type DifficultyTier = 'easy' | 'medium' | 'hard' | 'impossible';
 
 export interface Template {
@@ -70,6 +71,12 @@ export interface SlideContent {
   // empire game — two pre-generated image prompt options shown to user before generation
   map_prompt?: string;
   feature_prompt?: string;
+  // fight game
+  side_a?: string;
+  side_b?: string;
+  winner?: string;
+  side_a_percent?: number;
+  side_b_percent?: number;
 }
 
 export interface Slide {
