@@ -243,27 +243,29 @@ function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const boxW = CW, boxH = 280;
   const centerY = H / 2;
 
-  // Side A box (red)
+  // Side A box — subtle red tint
   const aY = centerY - boxH - 60;
-  fillRR(ctx, M, aY, boxW, boxH, 24, 'rgba(255,45,85,0.85)');
-  ctx.font = '900 72px Inter, system-ui, sans-serif';
+  fillRR(ctx, M, aY, boxW, boxH, 20, 'rgba(20,0,5,0.55)');
+  strokeRR(ctx, M, aY, boxW, boxH, 20, 'rgba(255,45,85,0.55)', 3);
+  ctx.font = '900 68px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 36, boxW - PAD * 2, 84);
+  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 34, boxW - PAD * 2, 80);
 
   // VS
-  ctx.font = '900 84px Inter, system-ui, sans-serif';
+  ctx.font = '900 80px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText('VS', W / 2, centerY);
 
-  // Side B box (blue)
+  // Side B box — subtle blue tint
   const bY = centerY + 60;
-  fillRR(ctx, M, bY, boxW, boxH, 24, 'rgba(0,120,255,0.85)');
-  ctx.font = '900 72px Inter, system-ui, sans-serif';
+  fillRR(ctx, M, bY, boxW, boxH, 20, 'rgba(0,5,20,0.55)');
+  strokeRR(ctx, M, bY, boxW, boxH, 20, 'rgba(0,120,255,0.55)', 3);
+  ctx.font = '900 68px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 36, boxW - PAD * 2, 84);
+  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 34, boxW - PAD * 2, 80);
 
   // CTA
   const cta = 'COMMENT YOUR PICK ↓';

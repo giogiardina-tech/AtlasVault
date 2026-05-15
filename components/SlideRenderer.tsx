@@ -141,23 +141,23 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     );
   }
 
-  // FIGHT ROUNDS: dramatic VS layout with two sides
+  // FIGHT ROUNDS: subtle tinted panels so the image shows through
   if (isFightRound) {
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.75) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.15) 28%, rgba(0,0,0,0.15) 72%, rgba(0,0,0,0.7) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '220px 80px 420px' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
             <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>ROUND {content.round_number}</span>
           </div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
-            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 24, padding: '48px 60px', width: '100%', textAlign: 'center', marginBottom: 28 }}>
-              <p style={{ color: 'white', fontSize: 76, fontWeight: 900, lineHeight: 1.1 }}>{content.side_a}</p>
+            <div style={{ background: 'rgba(20,0,5,0.55)', border: '2px solid rgba(255,45,85,0.55)', borderRadius: 20, padding: '36px 56px', width: '100%', textAlign: 'center', marginBottom: 24 }}>
+              <p style={{ color: 'white', fontSize: 72, fontWeight: 900, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>{content.side_a}</p>
             </div>
-            <div style={{ color: 'white', fontSize: 84, fontWeight: 900, letterSpacing: 8, textShadow: '0 0 40px rgba(255,255,255,0.6)', marginBottom: 28 }}>VS</div>
-            <div style={{ background: 'rgba(0,120,255,0.85)', borderRadius: 24, padding: '48px 60px', width: '100%', textAlign: 'center' }}>
-              <p style={{ color: 'white', fontSize: 76, fontWeight: 900, lineHeight: 1.1 }}>{content.side_b}</p>
+            <div style={{ color: 'white', fontSize: 76, fontWeight: 900, letterSpacing: 8, textShadow: '0 2px 24px rgba(0,0,0,0.9)', marginBottom: 24 }}>VS</div>
+            <div style={{ background: 'rgba(0,5,20,0.55)', border: '2px solid rgba(0,120,255,0.55)', borderRadius: 20, padding: '36px 56px', width: '100%', textAlign: 'center' }}>
+              <p style={{ color: 'white', fontSize: 72, fontWeight: 900, lineHeight: 1.1, textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>{content.side_b}</p>
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
