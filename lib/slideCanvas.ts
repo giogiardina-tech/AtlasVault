@@ -202,6 +202,39 @@ function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
 }
 
+function renderPartialFlagRoundText(ctx: CanvasRenderingContext2D, c: SlideContent) {
+  const tierColors: Record<string, string> = { easy: '#22c55e', medium: '#f59e0b', hard: '#f97316', impossible: '#ef4444' };
+  const tierColor = tierColors[c.difficulty as string] ?? 'rgba(255,255,255,0.4)';
+
+  // Round label
+  ctx.font = '800 40px Inter, system-ui, sans-serif';
+  ctx.fillStyle = '#00f2ea';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(`ROUND ${c.round_number}`, W / 2, 240);
+
+  // Question
+  ctx.font = '800 54px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  drawWrapped(ctx, 'Which country does this flag belong to?', W / 2, 304, CW, 66);
+
+  // Difficulty label above CTA
+  if (c.difficulty) {
+    ctx.font = '700 28px Inter, system-ui, sans-serif';
+    ctx.fillStyle = tierColor;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText((c.difficulty as string).toUpperCase(), W / 2, H - 420 - 60);
+  }
+
+  // CTA
+  const cta = 'COMMENT YOUR ANSWER ↓';
+  ctx.font = '700 36px Inter, system-ui, sans-serif';
+  const ctaW = ctx.measureText(cta).width + 136, ctaH = 84;
+  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.88)');
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+}
+
 function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpire = false) {
   // Top panel — starts at 220px to clear TikTok top chrome
   const topY = 220;
@@ -519,20 +552,44 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const isFightRound = formatType === 'civilization-fight' && slide.slide_type === 'round';
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
-  ctx.fillStyle = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
+  ctx.fillStyle = '#0a0a0a';
   ctx.fillRect(0, 0, W, H);
 
   if (slide.image_path) {
     try {
       const img = await loadImage(slide.image_path);
       if (isPartialFlagRound) {
-        // Progressive centre zoom: each round shows less of the flag
-        const PARTIAL_ZOOMS = [1.0, 1.4, 2.0, 3.2, 5.2];
+        // Draw dark cinematic background — flag drawn later inside clipped card
+        const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.8);
+        g.addColorStop(0, 'rgba(0,242,234,0.06)');
+        g.addColorStop(1, 'transparent');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+
+        // Card dimensions
+        const cardW = 880, cardH = 540;
+        const cardX = (W - cardW) / 2;
+        const cardY = H / 2 - cardH / 2 + 80;
+
+        // Clip to card and draw zoomed flag
+        ctx.save();
+        rrPath(ctx, cardX, cardY, cardW, cardH, 28);
+        ctx.clip();
+        const PARTIAL_ZOOMS = [1.6, 2.3, 3.4, 5.0, 7.5];
         const roundNum = (slide.content.round_number ?? 1) as number;
         const zoom = PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)];
-        const scaledW = W * zoom;
+        const scaledW = cardW * zoom;
         const scaledH = scaledW / (img.width / img.height);
-        ctx.drawImage(img, (W - scaledW) / 2, (H - scaledH) / 2, scaledW, scaledH);
+        ctx.fillStyle = '#111120';
+        ctx.fillRect(cardX, cardY, cardW, cardH);
+        ctx.drawImage(img, cardX + (cardW - scaledW) / 2, cardY + (cardH - scaledH) / 2, scaledW, scaledH);
+        ctx.restore();
+
+        // Card border + glow
+        ctx.shadowColor = 'rgba(0,242,234,0.25)';
+        ctx.shadowBlur = 60;
+        strokeRR(ctx, cardX, cardY, cardW, cardH, 28, 'rgba(255,255,255,0.12)', 2);
+        ctx.shadowBlur = 0;
       } else if (isFlagRound) {
         drawContain(ctx, img);
       } else {
@@ -544,6 +601,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const { slide_type, content } = slide;
 
   if (slide_type === 'title') { titleOverlay(ctx); renderTitle(ctx, content); }
+  else if (isPartialFlagRound){ renderPartialFlagRoundText(ctx, content); }
   else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
   else if (isFightRound)      { stdOverlay(ctx);   renderFightRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }

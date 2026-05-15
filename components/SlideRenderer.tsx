@@ -18,13 +18,12 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
-  // Partial-flag: progressively zoom into the flag centre each round
-  const PARTIAL_ZOOMS = [100, 140, 200, 320, 520]; // percent of element width
+  // Partial-flag: progressively zoom into flag centre — card clips the overflow
+  const PARTIAL_ZOOMS = [160, 230, 340, 500, 750]; // percent of card width
   const roundNum = (content.round_number ?? 1) as number;
   const partialZoom = isPartialFlagRound ? PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)] : 100;
 
-  // Partial-flag uses a neutral grey bg so the flag edges don't bleed into dark
-  const slideBg = isPartialFlagRound ? '#c8c8c8' : '#0a0a0a';
+  const slideBg = '#0a0a0a';
 
   const containerStyle: React.CSSProperties = {
     width: W,
@@ -43,20 +42,14 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         position: 'absolute',
         inset: 0,
         backgroundImage: `url(${image_path})`,
-        backgroundSize: isPartialFlagRound
-          ? `${partialZoom}%`      // zoom into centre of flag
-          : isFlagRound
-          ? 'contain'              // full flag, padding visible
-          : 'cover',
+        backgroundSize: isFlagRound ? 'contain' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }
     : {
         position: 'absolute',
         inset: 0,
-        background: isPartialFlagRound
-          ? slideBg
-          : 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
       };
 
   const overlayStyle: React.CSSProperties = {
@@ -92,6 +85,72 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           </div>
           <div style={{ position: 'absolute', bottom: 80, color: 'rgba(255,255,255,0.4)', fontSize: 28, letterSpacing: 4 }}>
             ATLASVAULT
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // PARTIAL FLAG ROUNDS: dark cinematic bg + centered card with cropped flag
+  if (isPartialFlagRound) {
+    const tierColors: Record<string, string> = { easy: '#22c55e', medium: '#f59e0b', hard: '#f97316', impossible: '#ef4444' };
+    const tierColor = tierColors[content.difficulty as string] ?? 'rgba(255,255,255,0.4)';
+    return (
+      <div style={containerStyle}>
+        {/* Dark cinematic background */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #080810 0%, #0f0f1e 50%, #080810 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(0,242,234,0.06) 0%, transparent 65%)' }} />
+
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '220px 80px 420px' }}>
+          {/* Round label + question */}
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ color: '#00f2ea', fontSize: 40, fontWeight: 800, letterSpacing: 4, marginBottom: 20 }}>
+              ROUND {content.round_number}
+            </div>
+            <h2 style={{ color: 'white', fontSize: 58, fontWeight: 800, lineHeight: 1.2, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>
+              Which country does<br />this flag belong to?
+            </h2>
+          </div>
+
+          {/* Cropped flag card */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <div style={{
+              width: 880, height: 540,
+              borderRadius: 28,
+              overflow: 'hidden',
+              border: '2px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 0 100px rgba(0,242,234,0.12), 0 40px 80px rgba(0,0,0,0.7)',
+              position: 'relative',
+              background: '#111120',
+            }}>
+              {image_path && (
+                <img
+                  src={image_path}
+                  style={{
+                    position: 'absolute',
+                    width: `${partialZoom}%`,
+                    height: 'auto',
+                    minHeight: '100%',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    objectFit: 'cover',
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Difficulty + CTA */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, marginTop: 48 }}>
+            {content.difficulty && (
+              <span style={{ color: tierColor, fontSize: 28, fontWeight: 700, letterSpacing: 4, textTransform: 'uppercase' }}>
+                {content.difficulty}
+              </span>
+            )}
+            <div style={{ background: 'rgba(255,45,85,0.88)', borderRadius: 60, padding: '22px 68px', color: 'white', fontSize: 36, fontWeight: 700, letterSpacing: 2 }}>
+              COMMENT YOUR ANSWER ↓
+            </div>
           </div>
         </div>
       </div>
