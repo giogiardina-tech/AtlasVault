@@ -100,7 +100,12 @@ export default function Home() {
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
-    setStep('difficulty');
+    if (template.format_type === 'civilization-fight') {
+      setStep('ideas');
+      fetchIdeas(template);
+    } else {
+      setStep('difficulty');
+    }
   };
 
   const handleDifficultySelect = (diff: GameDifficulty) => {
