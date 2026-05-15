@@ -104,6 +104,8 @@ export interface Game {
 export interface GameIdea {
   title: string;
   hook: string;
+  hook_score?: number;
+  curiosity_score?: number;
 }
 
 export interface GeneratedSlide {

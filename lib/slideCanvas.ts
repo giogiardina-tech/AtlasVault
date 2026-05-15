@@ -474,7 +474,7 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
     ctx.fillText(`${c.max_points || 4}/${c.max_points || 4} = perfect`, W / 2, y + 76);
 
   } else {
-    // Difficulty mode
+    // Difficulty mode — answer dominates
     const tiers: Record<string, { label: string; color: string; stars: number }> = {
       easy: { label: 'EASY', color: '#22c55e', stars: 1 },
       medium: { label: 'MEDIUM', color: '#f59e0b', stars: 2 },
@@ -482,50 +482,40 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent) {
       impossible: { label: 'IMPOSSIBLE', color: '#ef4444', stars: 4 },
     };
     const tier = tiers[c.difficulty_tier || 'medium'];
-    fillRR(ctx, M, y, CW, H - y - 80, 24, 'rgba(0,0,0,0.55)');
+    fillRR(ctx, M, y, CW, H - y - 80, 24, 'rgba(0,0,0,0.6)');
     y += 60;
 
+    // Answer — massive and first
+    ctx.font = '900 120px Inter, system-ui, sans-serif';
+    ctx.fillStyle = '#00f2ea';
+    ctx.shadowColor = 'rgba(0,242,234,0.5)';
+    ctx.shadowBlur = 80;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 132) + 40;
+    ctx.shadowBlur = 0;
+
+    // Tier stars below answer
     if (tier) {
-      const starSz = 52, gap = 12;
-      ctx.font = `400 ${starSz}px Inter, system-ui, sans-serif`;
-      ctx.textBaseline = 'top';
-      let totalW = 4 * starSz + 3 * gap;
-      ctx.font = '800 40px Inter, system-ui, sans-serif';
-      totalW += ctx.measureText(tier.label).width + 28;
+      const starSz = 40, gap = 8;
+      const totalW = 4 * (starSz + gap) - gap + ctx.measureText(tier.label).width + 36;
       let sx = W / 2 - totalW / 2;
       ctx.font = `400 ${starSz}px Inter, system-ui, sans-serif`;
+      ctx.textBaseline = 'top';
       for (let i = 0; i < 4; i++) {
-        ctx.fillStyle = i < tier.stars ? tier.color : 'rgba(255,255,255,0.2)';
+        ctx.fillStyle = i < tier.stars ? tier.color : 'rgba(255,255,255,0.15)';
         ctx.textAlign = 'left';
         ctx.fillText('★', sx, y);
         sx += starSz + gap;
       }
-      ctx.font = '800 40px Inter, system-ui, sans-serif';
+      ctx.font = '800 30px Inter, system-ui, sans-serif';
       ctx.fillStyle = tier.color;
       ctx.fillText(tier.label, sx + 8, y + 8);
-      y += starSz + 36;
-    }
-
-    ctx.font = '900 88px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#00f2ea';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 104) + 36;
-
-    if (c.clue_giveaway) {
-      const cgt = `Most people get it from ${c.clue_giveaway}`;
-      ctx.font = '600 32px Inter, system-ui, sans-serif';
-      const cgW = ctx.measureText(cgt).width + 72;
-      fillRR(ctx, W / 2 - cgW / 2, y, cgW, 62, 14, 'rgba(255,45,85,0.25)');
-      strokeRR(ctx, W / 2 - cgW / 2, y, cgW, 62, 14, 'rgba(255,45,85,0.5)');
-      ctx.fillStyle = '#ff2d55';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(cgt, W / 2, y + 31);
-      y += 62 + 36;
+      y += starSz + 40;
     }
 
     if (c.fun_fact) {
       ctx.font = 'italic 400 34px Inter, system-ui, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
       drawWrapped(ctx, `"${c.fun_fact}"`, W / 2, y, CW - 80, 48);
     }

@@ -25,6 +25,9 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
   const [promptValue, setPromptValue] = useState('');
   const [regenerating, setRegenerating] = useState(false);
   const [regenError, setRegenError] = useState<string | null>(null);
+  const [editingHook, setEditingHook] = useState(false);
+  const [hookValue, setHookValue] = useState('');
+  const [regenRound, setRegenRound] = useState(false);
   const renderContainerRef = useRef<HTMLDivElement>(null);
 
   const slide = slides[currentIndex];
@@ -80,6 +83,42 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
   const handleRegenerate = () => {
     setEditingPrompt(true);
     setPromptValue(slide.image_prompt);
+  };
+
+  const saveHook = async () => {
+    const newContent = { ...slide.content, hook: hookValue };
+    await fetch(`/api/games/${game.id}/slides`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slide_id: slide.id, content: newContent }),
+    });
+    onSlidesChange(slides.map(s => s.id === slide.id ? { ...s, content: newContent } : s));
+    setEditingHook(false);
+  };
+
+  const regenerateRound = async () => {
+    const roundNum = slide.content.round_number;
+    if (!roundNum) return;
+    setRegenRound(true);
+    setRegenError(null);
+    try {
+      const res = await fetch(`/api/games/${game.id}/regenerate-round`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ round_number: roundNum }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      onSlidesChange(slides.map(s => {
+        if (s.id === data.round.id) return { ...s, content: data.round.content, image_prompt: data.round.image_prompt, image_path: null, image_status: 'pending' as const };
+        if (s.id === data.reveal.id) return { ...s, content: data.reveal.content, image_prompt: data.reveal.image_prompt, image_path: null, image_status: 'pending' as const };
+        return s;
+      }));
+    } catch (e: any) {
+      setRegenError(e?.message || 'Regeneration failed');
+    } finally {
+      setRegenRound(false);
+    }
   };
 
   const confirmRegenerate = async () => {
@@ -140,10 +179,10 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
           <div className="rounded-2xl overflow-hidden" style={{ width: '100%', height: '100%' }}>
             <SlideRenderer slide={slide} scale={PREVIEW_SCALE} format_type={game.format_type} />
           </div>
-          {regenerating && (
+          {(regenerating || regenRound) && (
             <div className="absolute inset-0 rounded-2xl bg-black/70 flex flex-col items-center justify-center gap-2">
               <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-              <span className="text-white text-xs font-medium">Generating…</span>
+              <span className="text-white text-xs font-medium">{regenRound ? 'Generating question…' : 'Generating image…'}</span>
             </div>
           )}
         </div>
@@ -151,8 +190,45 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
         {/* Slide controls */}
         <div className="mt-4 flex flex-col gap-2 w-full max-w-xs">
           {regenError && <p className="text-red-400 text-xs text-center">{regenError}</p>}
+
+          {/* Title slide: edit hook */}
+          {slide.slide_type === 'title' && (
+            editingHook ? (
+              <div>
+                <p className="text-zinc-600 text-xs mb-1">Hook text:</p>
+                <textarea
+                  value={hookValue}
+                  onChange={(e) => setHookValue(e.target.value)}
+                  rows={2}
+                  className="w-full bg-tk-card border border-tk-border rounded-lg px-3 py-2 text-xs text-zinc-300 resize-none focus:outline-none focus:border-white/30 mb-2"
+                />
+                <div className="flex gap-2">
+                  <button onClick={saveHook} className="flex-1 py-2 rounded-lg bg-tk-red text-white text-xs font-semibold hover:bg-red-500 transition-colors">Save</button>
+                  <button onClick={() => setEditingHook(false)} className="py-2 px-4 rounded-lg border border-tk-border text-zinc-400 text-xs hover:text-white transition-colors">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => { setHookValue(slide.content.hook || ''); setEditingHook(true); }} className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors">
+                Edit hook text
+              </button>
+            )
+          )}
+
+          {/* Round / reveal: regenerate question content */}
+          {(slide.slide_type === 'round' || slide.slide_type === 'reveal') && slide.content.round_number && (
+            <button
+              onClick={regenerateRound}
+              disabled={regenRound}
+              className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors disabled:opacity-40"
+            >
+              {regenRound ? 'Regenerating question…' : 'Regenerate question'}
+            </button>
+          )}
+
+          {/* Image regeneration */}
           {editingPrompt ? (
             <div>
+              <p className="text-zinc-600 text-xs mb-1">Image prompt:</p>
               <textarea
                 value={promptValue}
                 onChange={(e) => setPromptValue(e.target.value)}
@@ -161,7 +237,7 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
               />
               <div className="flex gap-2">
                 <button onClick={confirmRegenerate} className="flex-1 py-2 rounded-lg bg-tk-red text-white text-xs font-semibold hover:bg-red-500 transition-colors">
-                  Regenerate
+                  Regenerate image
                 </button>
                 <button onClick={() => setEditingPrompt(false)} className="py-2 px-4 rounded-lg border border-tk-border text-zinc-400 text-xs hover:text-white transition-colors">
                   Cancel
@@ -170,7 +246,7 @@ export default function SlidePreview({ game, slides, currentIndex, onPrev, onNex
             </div>
           ) : slide.image_prompt ? (
             <button onClick={handleRegenerate} disabled={regenerating} className="w-full py-2 rounded-lg border border-tk-border text-zinc-400 hover:text-white hover:border-white/20 text-xs transition-colors disabled:opacity-40">
-              Regenerate this slide
+              Regenerate image
             </button>
           ) : (
             <p className="text-center text-zinc-600 text-xs">This slide reuses another slide's image</p>

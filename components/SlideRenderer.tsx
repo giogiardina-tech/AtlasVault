@@ -434,7 +434,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
       );
     }
 
-    // DIFFICULTY MODE — single correct answer with tier badge
+    // DIFFICULTY MODE — answer is the star of the show
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />
@@ -442,28 +442,25 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
           {header}
           {questionLine}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 36, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '60px 60px' }}>
-            {tier && (
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                {Array.from({ length: tier.stars }).map((_, i) => (
-                  <span key={i} style={{ fontSize: 52, color: tier.color }}>★</span>
-                ))}
-                {Array.from({ length: 4 - tier.stars }).map((_, i) => (
-                  <span key={i} style={{ fontSize: 52, color: 'rgba(255,255,255,0.2)' }}>★</span>
-                ))}
-                <span style={{ color: tier.color, fontSize: 40, fontWeight: 800, marginLeft: 16, letterSpacing: 3 }}>{tier.label}</span>
-              </div>
-            )}
-            <div style={{ color: '#00f2ea', fontSize: 96, fontWeight: 900, lineHeight: 1.05, textShadow: '0 0 60px rgba(0,242,234,0.4)' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 28, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '56px 60px' }}>
+            {/* Answer first and massive */}
+            <div style={{ color: '#00f2ea', fontSize: 130, fontWeight: 900, lineHeight: 1.0, textShadow: '0 0 80px rgba(0,242,234,0.5)', letterSpacing: -2 }}>
               {content.correct_answer}
             </div>
-            {content.clue_giveaway && (
-              <div style={{ background: 'rgba(255,45,85,0.25)', border: '1px solid rgba(255,45,85,0.5)', borderRadius: 14, padding: '16px 36px' }}>
-                <span style={{ color: '#ff2d55', fontSize: 34, fontWeight: 600 }}>Most people get it from {content.clue_giveaway}</span>
+            {/* Tier badge below answer */}
+            {tier && (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                {Array.from({ length: tier.stars }).map((_, i) => (
+                  <span key={i} style={{ fontSize: 40, color: tier.color }}>★</span>
+                ))}
+                {Array.from({ length: 4 - tier.stars }).map((_, i) => (
+                  <span key={i} style={{ fontSize: 40, color: 'rgba(255,255,255,0.15)' }}>★</span>
+                ))}
+                <span style={{ color: tier.color, fontSize: 30, fontWeight: 800, marginLeft: 10, letterSpacing: 3 }}>{tier.label}</span>
               </div>
             )}
             {content.fun_fact && (
-              <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 38, lineHeight: 1.45, fontStyle: 'italic', maxWidth: 860 }}>
+              <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 36, lineHeight: 1.5, fontStyle: 'italic', maxWidth: 860 }}>
                 "{content.fun_fact}"
               </p>
             )}

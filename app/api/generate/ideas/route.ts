@@ -21,47 +21,38 @@ export async function POST(req: NextRequest) {
 
   const hookGuidance = formatHookExamples[format_type] || `"Five rounds, let's see how far you get." / "Easy start, impossible finish — how many can you get?"`;
 
-  const prompt = `You are a viral TikTok content creator specializing in ${category} trivia games.
+  const prompt = `You are a viral TikTok trivia content creator who deeply understands retention psychology and what makes people stop scrolling.
 
-Generate 4 unique, catchy TikTok-style game ideas for the format: "${template_name}"
+Generate 4 unique game ideas for the format: "${template_name}" (category: ${category})
 
-Rules for great TikTok trivia titles:
-- MAXIMUM 4–8 words — short, punchy, instantly readable
-- Must create curiosity, urgency, or a competitive dare in under 1 second
-- Use numbers, superlatives, or direct challenges
-- NO long sentences, NO explanations, NO subtitles baked into the title
-- Must feel competitive and curiosity-driven, like a dare to the viewer
+TITLE RULES — max 6 words, punchy, scroll-stopping:
+- Create immediate curiosity or competitive tension
+- Use numbers, superlatives, identity-based challenges, or impossibility claims
+- Must work as a thumbnail label — readable in 0.5 seconds
 
-GOOD title examples (4–8 words, punchy):
-- "Only 1% Get All 5"
-- "Impossible Flag Quiz"
-- "Can You Beat Round 5?"
-- "Guess the Hidden Country"
-- "99% Fail Round 5"
-- "These Capitals Will Trick You"
-- "Name Every Border Country"
-- "Who Wins: Rome vs Greece?"
+GOOD titles: "Only 1% Get All 5" / "Impossible Flag Quiz" / "Nobody Gets Round 5" / "Only Europeans Pass This" / "The Hardest Border Quiz Yet" / "Can You Beat Round 5?" / "You'll Miss At Least One"
+BAD titles: "A Geography Challenge for Trivia Fans" / "Test Your Knowledge of World History"
 
-BAD title examples (too long, too descriptive):
-- "Name a Country That Borders Belgium and Explain Why"
-- "A Comprehensive Easy to Impossible Geography Challenge"
-- "Can You Correctly Identify All Five Flags in This Quiz?"
+HOOK RULES — what the creator SAYS aloud in the first 2 seconds (max 8 words):
+- Must reflect that this is a multi-round game (5 rounds)
+- Should feel natural spoken, not like a caption
+- Create urgency, disbelief, or a direct dare
+- Match this format's energy: ${hookGuidance}
 
-HOOK RULES — this is the most important part:
-- The hook is spoken out loud in the first 2 seconds of the video
-- It MUST reflect that this is a multi-round game (5 rounds), not a single question
-- It should set up the challenge or dare for the whole game, not just one round
-- It should feel natural to say out loud, not read like a caption
-- Match the energy of this format's style: ${hookGuidance}
-- Never use singular phrasing like "Can you guess this flag?" — always imply multiple rounds
+GOOD hooks: "Nobody gets Round 5. Nobody." / "You'll miss at least one, I promise." / "Five flags, five chances to embarrass yourself."
+BAD hooks: "Let's test your geography knowledge today!" / "Welcome to our ultimate trivia challenge!"
 
-Return ONLY this JSON:
+SCORING — rate each idea honestly:
+- hook_score (1–10): how likely is this hook to make someone pause mid-scroll? 10 = irresistible, 1 = forgettable
+- curiosity_score (1–10): how badly does the viewer NEED to see the answer? 10 = can't swipe away, 1 = meh
+
+Return ONLY this JSON (no markdown, no explanation):
 {
   "ideas": [
-    { "title": "...", "hook": "..." },
-    { "title": "...", "hook": "..." },
-    { "title": "...", "hook": "..." },
-    { "title": "...", "hook": "..." }
+    { "title": "...", "hook": "...", "hook_score": 8, "curiosity_score": 7 },
+    { "title": "...", "hook": "...", "hook_score": 9, "curiosity_score": 8 },
+    { "title": "...", "hook": "...", "hook_score": 7, "curiosity_score": 9 },
+    { "title": "...", "hook": "...", "hook_score": 6, "curiosity_score": 7 }
   ]
 }`;
 

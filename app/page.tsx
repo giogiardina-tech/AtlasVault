@@ -100,21 +100,12 @@ export default function Home() {
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
-    if (template.format_type === 'civilization-fight') {
-      setStep('ideas');
-      fetchIdeas(template);
-    } else {
-      setStep('difficulty');
-    }
-  };
-
-  const handleDifficultySelect = (diff: GameDifficulty) => {
-    setSelectedDifficulty(diff);
     setStep('ideas');
-    fetchIdeas(selectedTemplate!, undefined, diff);
+    fetchIdeas(template);
   };
 
-  const handleIdeaSelect = async (idea: GameIdea) => {
+  const handleIdeaSelect = async (idea: GameIdea, difficulty: GameDifficulty = 'medium') => {
+    setSelectedDifficulty(difficulty);
     setLoading(true);
     setError(null);
     setStep('outline');
@@ -317,7 +308,8 @@ export default function Home() {
                               startBuilder();
                               setSelectedCategory(cat);
                               setSelectedTemplate(t);
-                              setStep('difficulty');
+                              setStep('ideas');
+                              fetchIdeas(t, cat);
                             }}
                             className="w-full text-left text-sm text-zinc-400 hover:text-white py-1.5 border-b border-tk-border last:border-0 transition-colors"
                           >
@@ -380,8 +372,9 @@ export default function Home() {
                           onClick={() => {
                             setSelectedCategory(cat);
                             setSelectedTemplate(t);
-                            setStep('difficulty');
+                            setStep('ideas');
                             setView('builder');
+                            fetchIdeas(t, cat);
                           }}
                           className="shrink-0 text-sm text-tk-red hover:text-red-400 font-semibold transition-colors"
                         >
@@ -401,10 +394,10 @@ export default function Home() {
           <div className="p-8 min-h-screen">
             {/* Step progress */}
             <div className="flex items-center gap-2 mb-8">
-              {(['category', 'template', 'difficulty', 'ideas', 'outline', 'generating', 'preview'] as BuilderStep[]).map((s, i) => (
+              {(['category', 'template', 'ideas', 'outline', 'generating', 'preview'] as BuilderStep[]).map((s, i) => (
                 <div key={s} className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${step === s ? 'bg-tk-red' : i < (['category','template','difficulty','ideas','outline','generating','preview'] as BuilderStep[]).indexOf(step) ? 'bg-white/40' : 'bg-white/10'}`} />
-                  {i < 6 && <div className="w-6 h-px bg-white/10" />}
+                  <div className={`w-2 h-2 rounded-full ${step === s ? 'bg-tk-red' : i < (['category','template','ideas','outline','generating','preview'] as BuilderStep[]).indexOf(step) ? 'bg-white/40' : 'bg-white/10'}`} />
+                  {i < 5 && <div className="w-6 h-px bg-white/10" />}
                 </div>
               ))}
               <span className="text-zinc-600 text-xs ml-2 capitalize">{step}</span>
@@ -429,38 +422,12 @@ export default function Home() {
               />
             )}
 
-            {step === 'difficulty' && selectedTemplate && (
-              <div className="max-w-lg mx-auto">
-                <button onClick={() => setStep('template')} className="text-zinc-500 hover:text-white text-sm mb-6 transition-colors">← Back</button>
-                <h2 className="text-2xl font-bold text-white mb-1">Choose Difficulty</h2>
-                <p className="text-zinc-400 text-sm mb-8">Sets how challenging the content is overall. The game always escalates from easy → impossible within whatever level you pick.</p>
-                <div className="space-y-3">
-                  {([
-                    { value: 'easy' as GameDifficulty, label: 'Easy', desc: 'Famous countries, iconic flags, well-known empires — great for broad audiences', color: '#22c55e' },
-                    { value: 'medium' as GameDifficulty, label: 'Medium', desc: 'Mix of well-known and lesser-known content — the default sweet spot', color: '#f59e0b' },
-                    { value: 'hard' as GameDifficulty, label: 'Hard', desc: 'Avoids obvious answers — built for geography nerds and history enthusiasts', color: '#ef4444' },
-                  ]).map(({ value, label, desc, color }) => (
-                    <button
-                      key={value}
-                      onClick={() => handleDifficultySelect(value)}
-                      className="w-full text-left bg-tk-card border border-tk-border rounded-xl p-5 hover:border-white/20 transition-all group"
-                    >
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="text-sm font-bold" style={{ color }}>{label}</span>
-                      </div>
-                      <p className="text-zinc-400 text-sm group-hover:text-zinc-300 transition-colors">{desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {step === 'ideas' && selectedTemplate && (
               <GameIdeas
                 ideas={ideas}
                 loading={ideasLoading}
                 templateName={selectedTemplate.name}
-                onSelect={handleIdeaSelect}
+                onSelect={(idea, diff) => handleIdeaSelect(idea, diff)}
                 onRegenerate={() => fetchIdeas(selectedTemplate)}
                 onBack={() => setStep('template')}
               />
