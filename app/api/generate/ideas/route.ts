@@ -26,19 +26,26 @@ export async function POST(req: NextRequest) {
 Generate 4 unique, catchy TikTok-style game ideas for the format: "${template_name}"
 
 Rules for great TikTok trivia titles:
-- Short, punchy, makes people stop scrolling
-- Creates curiosity or a challenge
-- Uses numbers, superlatives, or provocative claims
-- Feels like a dare or a personal challenge
+- MAXIMUM 4–8 words — short, punchy, instantly readable
+- Must create curiosity, urgency, or a competitive dare in under 1 second
+- Use numbers, superlatives, or direct challenges
+- NO long sentences, NO explanations, NO subtitles baked into the title
+- Must feel competitive and curiosity-driven, like a dare to the viewer
 
-Examples of great titles:
-- "Name a Country That Borders Belgium"
-- "Guess the Flag: Easy to Impossible"
-- "Can You Name the Lost Empire?"
-- "Only Geography Nerds Get 0 Points"
-- "99% of People Fail Round 5"
-- "Name Every Country Bordering Russia"
+GOOD title examples (4–8 words, punchy):
+- "Only 1% Get All 5"
+- "Impossible Flag Quiz"
+- "Can You Beat Round 5?"
+- "Guess the Hidden Country"
+- "99% Fail Round 5"
 - "These Capitals Will Trick You"
+- "Name Every Border Country"
+- "Who Wins: Rome vs Greece?"
+
+BAD title examples (too long, too descriptive):
+- "Name a Country That Borders Belgium and Explain Why"
+- "A Comprehensive Easy to Impossible Geography Challenge"
+- "Can You Correctly Identify All Five Flags in This Quiz?"
 
 HOOK RULES — this is the most important part:
 - The hook is spoken out loud in the first 2 seconds of the video

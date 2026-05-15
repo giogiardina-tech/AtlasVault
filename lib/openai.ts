@@ -462,11 +462,13 @@ FULL JSON STRUCTURE (12 slides total):
 }
 
 IMAGE PROMPT RULES (every slide):
-- Vivid, cinematic, photorealistic — designed to stop someone mid-scroll on TikTok
-- Bold, saturated colours with dramatic lighting — think blockbuster movie poster energy
+- Style: clean, realistic photography or sharp documentary-style illustration — NOT cinematic fantasy artwork, NOT AI movie posters, NOT painted concept art
+- Grounded real-world imagery: actual geography, real landmarks, authentic historical scenes — not dramatised or over-stylised
+- Lighting: natural, realistic, high contrast — avoid excessive glow, lens flares, bloom, oversaturation, or fantasy atmosphere
+- The background should SUPPORT the subject of the slide, not overpower it — clean and purposeful, never a visual spectacle
 - Absolutely NO text, labels, country names, flag names, or writing visible anywhere in the image
 - Vertical 9:16 portrait format, composition centred for mobile viewing
-- Lighting can be dramatic and moody but must NOT be so dark that detail is lost — rich visible colour throughout
+- Think: quality geography or history documentary still frame, not a blockbuster film poster
 
 CRITICAL — IMAGE MUST BE RELEVANT TO THE SLIDE CONTENT:
 Each image_prompt must be written specifically for what that slide is about. Generic prompts are not acceptable.
