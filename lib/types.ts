@@ -66,6 +66,9 @@ export interface SlideContent {
   scoring_summary?: string;
   // flag games — ISO 3166-1 alpha-2 code used to fetch real flag from CDN
   country_code?: string;
+  // empire game — two pre-generated image prompt options shown to user before generation
+  map_prompt?: string;
+  feature_prompt?: string;
 }
 
 export interface Slide {

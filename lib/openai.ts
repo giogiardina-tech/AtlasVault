@@ -196,6 +196,10 @@ FORMAT: GUESS THE EMPIRE
   * "Which empire ringed the entire Mediterranean Sea at its peak in the 2nd century AD?"
   * "Which empire ruled the British Isles, India, large parts of Africa, Canada, and Australia?"
   * "Which ancient empire controlled the Nile Valley and stretched deep into modern-day Sudan?"
+- CRITICAL: Every round slide content must include TWO image prompt fields:
+  * "map_prompt": a vivid description for an aged parchment territory map (describe only by geography, e.g. "Aged dark parchment historical map, territory covering Central Asia, China, Persia and reaching into Eastern Europe filled with warm amber wash, surrounding regions near-black, no text")
+  * "feature_prompt": a vivid cinematic description of the empire's most iconic landmark or cultural symbol WITHOUT naming the empire (e.g. "The Great Pyramids of Giza at dusk with the Sphinx in the foreground, warm golden light, dramatic orange and purple sky, cinematic composition")
+- The top-level image_prompt field should be set to the feature_prompt value
 - Reveal: empire name + peak period dates as the fun_fact (e.g. "At its peak in 117 AD, the Roman Empire covered 5 million km²")`,
     },
 

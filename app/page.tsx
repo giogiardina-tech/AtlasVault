@@ -11,7 +11,7 @@ import GameCard from '@/components/GameCard';
 import { Category, Game, GameDifficulty, GameIdea, Slide, Template } from '@/lib/types';
 
 type AppView = 'dashboard' | 'library' | 'templates' | 'builder' | 'game';
-type BuilderStep = 'category' | 'template' | 'difficulty' | 'ideas' | 'outline' | 'generating' | 'preview';
+type BuilderStep = 'category' | 'template' | 'difficulty' | 'ideas' | 'outline' | 'empire-choices' | 'generating' | 'preview';
 
 export default function Home() {
   const [view, setView] = useState<AppView>('dashboard');
@@ -31,6 +31,8 @@ export default function Home() {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [scoringSystem, setScoringSystem] = useState('');
   const [previewIndex, setPreviewIndex] = useState(0);
+  // Empire game: user picks map or feature image per round before generation
+  const [empireChoices, setEmpireChoices] = useState<Record<string, 'map' | 'feature'>>({});
 
   // Viewed game (from library)
   const [viewingGame, setViewingGame] = useState<Game | null>(null);
@@ -136,6 +138,34 @@ export default function Home() {
   };
 
   const handleGenerateImages = () => {
+    if (selectedTemplate?.format_type === 'guess-the-empire') {
+      const defaultChoices: Record<string, 'map' | 'feature'> = {};
+      slides.filter((s) => s.slide_type === 'round').forEach((s) => {
+        defaultChoices[s.id] = 'feature';
+      });
+      setEmpireChoices(defaultChoices);
+      setStep('empire-choices');
+    } else {
+      setStep('generating');
+    }
+  };
+
+  const handleEmpireChoicesConfirm = async () => {
+    if (!currentGame) return;
+    setLoading(true);
+    const roundSlides = slides.filter((s) => s.slide_type === 'round');
+    await Promise.all(roundSlides.map(async (s) => {
+      const choice = empireChoices[s.id] ?? 'feature';
+      const prompt = choice === 'map' ? s.content.map_prompt : s.content.feature_prompt;
+      if (!prompt) return;
+      await fetch(`/api/games/${currentGame.id}/slides`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slide_id: s.id, image_prompt: prompt }),
+      });
+      setSlides((prev) => prev.map((sl) => sl.id === s.id ? { ...sl, image_prompt: prompt } : sl));
+    }));
+    setLoading(false);
     setStep('generating');
   };
 
@@ -453,6 +483,52 @@ export default function Home() {
                     onBack={() => setStep('ideas')}
                   />
                 )}
+              </div>
+            )}
+
+            {step === 'empire-choices' && currentGame && (
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-xl font-bold text-white mb-2">Choose image style per round</h2>
+                <p className="text-zinc-400 text-sm mb-6">Pick whether each empire is shown as a territory map or its most iconic landmark/feature.</p>
+                <div className="space-y-4 mb-8">
+                  {slides.filter((s) => s.slide_type === 'round').map((s) => {
+                    const revealSlide = slides.find((r) => r.slide_type === 'reveal' && r.content.round_number === s.content.round_number);
+                    const empireName = revealSlide?.content.correct_answer ?? `Round ${s.content.round_number}`;
+                    const choice = empireChoices[s.id] ?? 'feature';
+                    return (
+                      <div key={s.id} className="bg-tk-card border border-tk-border rounded-xl p-5">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-xs text-zinc-500 uppercase tracking-widest">Round {s.content.round_number}</span>
+                          <span className="text-white font-bold">{empireName}</span>
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setEmpireChoices((prev) => ({ ...prev, [s.id]: 'feature' }))}
+                            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${choice === 'feature' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
+                          >
+                            Iconic Feature
+                          </button>
+                          <button
+                            onClick={() => setEmpireChoices((prev) => ({ ...prev, [s.id]: 'map' }))}
+                            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${choice === 'map' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
+                          >
+                            Territory Map
+                          </button>
+                        </div>
+                        <p className="text-zinc-600 text-xs mt-2 truncate">
+                          {choice === 'map' ? (s.content.map_prompt ?? 'Map prompt not available') : (s.content.feature_prompt ?? s.image_prompt)}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={handleEmpireChoicesConfirm}
+                  disabled={loading}
+                  className="w-full py-4 rounded-xl bg-tk-red text-white font-bold text-lg hover:bg-red-500 disabled:opacity-40 transition-colors"
+                >
+                  {loading ? 'Applying choices…' : 'Generate Images →'}
+                </button>
               </div>
             )}
 
