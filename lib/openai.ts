@@ -312,6 +312,12 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   * Clue 1: Very indirect — an achievement, trait, or era that could apply to several people
   * Clue 2: More specific — a famous act, invention, title, or location that narrows it down significantly
   * Clue 3: Nearly gives it away — a well-known quote, iconic image description, or defining moment
+- CRITICAL — FACTUAL ACCURACY: Every date, era, location, title, and claim must be 100% historically verified. Do NOT guess or approximate. If you are not certain of a specific fact, omit it rather than risk stating it incorrectly. Common errors to avoid:
+  * Do NOT confuse centuries — Cleopatra died 30 BC (ancient, not medieval or Renaissance), Columbus sailed in 1492 (late 15th century, not 16th), Shakespeare lived 1564–1616 (Elizabethan era)
+  * Do NOT misstate birth/death years, reign dates, or discovery dates
+  * Do NOT attribute inventions, discoveries, or achievements to the wrong person
+  * Do NOT place a historical figure in the wrong country, empire, or era
+  * Before writing any date or century, verify it mentally: "Was Cleopatra really in the 16th century? No — she died 30 BC, ancient Egypt."
 - CRITICAL — NO REPEATED INFORMATION ACROSS CLUES: Every clue must introduce a completely new piece of information. Never repeat the same date, event, location, or fact in more than one clue. Each clue should make the person more identifiable through a DIFFERENT angle (era → specific act → defining legacy), not by restating the same thing in different words.
 - QUESTION for every round: "Who am I?" (the person is speaking in first person via the clues)
 - Clues should be written in first-person voice as if the person is describing themselves:
@@ -319,7 +325,7 @@ FORMAT: GUESS THE HISTORICAL FIGURE
 - BAD example (repeats the voyage): "I sailed west across the Atlantic" → "I reached the Americas in 1492" — these say the same thing
 - GOOD example (each clue adds something new): "I was born in Genoa and served a foreign crown" → "I made four voyages west, believing I'd reached Asia" → "In 1492 I landed in the Caribbean, opening the Americas to Europe"
 - "clues" array in ROUND content: [clue1_hardest, clue2_medium, clue3_easiest]
-- Reveal: the person's full name + a compelling fun_fact (birth/death years, their most surprising legacy, or something little-known about them)
+- Reveal: the person's full name + a compelling fun_fact (verified birth/death years, their most surprising legacy, or a little-known but confirmed fact)
 - Cover a wide range of history: ancient rulers, military leaders, scientists, artists, explorers, revolutionaries — not just Western figures`,
     },
   };
@@ -402,7 +408,9 @@ FORMAT: GUESS THE HISTORICAL FIGURE
     ? `\nALREADY USED IN PREVIOUS GAMES — DO NOT REPEAT ANY OF THESE:\n${usedSubjects.join(', ')}\nEvery answer, country, flag, empire, capital, and event in this game must be completely different from the above.\n`
     : '';
 
-  return `You are an expert TikTok trivia game designer. Create a complete, engaging trivia game in JSON format.
+  return `You are an expert TikTok trivia game designer with deep knowledge of history, geography, and world cultures. Create a complete, engaging trivia game in JSON format.
+
+CRITICAL — FACTUAL ACCURACY ABOVE ALL ELSE: Every single fact in this game must be 100% correct. Dates, centuries, names, locations, and achievements must all be verified before writing. If you are uncertain about any specific detail, use a well-known confirmed fact instead. A wrong answer or incorrect date destroys the credibility of the game — accuracy is non-negotiable.
 
 GAME: "${title}"
 HOOK: "${hook}"
