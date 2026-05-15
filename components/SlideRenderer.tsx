@@ -75,23 +75,23 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />
-        <div style={overlayStyle} />
-        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 80px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 32, padding: '80px 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, width: '100%' }}>
-            <span style={{ background: '#ff2d55', color: 'white', fontSize: 36, fontWeight: 700, padding: '8px 24px', borderRadius: 8, letterSpacing: 3, marginBottom: 48 }}>
-              {content.category?.toUpperCase()}
-            </span>
-            <h1 style={{ color: 'white', fontSize: 96, fontWeight: 900, lineHeight: 1.05, marginBottom: 48, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
-              {content.title}
-            </h1>
-            <p style={{ color: '#00f2ea', fontSize: 52, fontWeight: 500, lineHeight: 1.3, fontStyle: 'italic' }}>
-              {content.hook}
-            </p>
-            {content.subtitle && (
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 36, marginTop: 36 }}>{content.subtitle}</p>
-            )}
-          </div>
-          <div style={{ position: 'absolute', bottom: 80, color: 'rgba(255,255,255,0.4)', fontSize: 28, letterSpacing: 4 }}>
+        {/* Stronger overlay so text is instantly readable over any image */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 45%, rgba(0,0,0,0.8) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '160px 72px', textAlign: 'center', gap: 0 }}>
+          {/* Category pill — small, top anchor */}
+          <span style={{ background: '#ff2d55', color: 'white', fontSize: 30, fontWeight: 800, padding: '10px 32px', borderRadius: 100, letterSpacing: 4, marginBottom: 52, textTransform: 'uppercase' }}>
+            {content.category}
+          </span>
+          {/* MASSIVE title — must read in under 1 second */}
+          <h1 style={{ color: 'white', fontSize: 124, fontWeight: 900, lineHeight: 1.0, marginBottom: 52, textShadow: '0 4px 32px rgba(0,0,0,0.95)', letterSpacing: -2 }}>
+            {content.title}
+          </h1>
+          {/* Hook — bold, punchy, not italic */}
+          <p style={{ color: '#00f2ea', fontSize: 62, fontWeight: 800, lineHeight: 1.25, textShadow: '0 2px 20px rgba(0,0,0,0.9)' }}>
+            {content.hook}
+          </p>
+          {/* Watermark only */}
+          <div style={{ position: 'absolute', bottom: 72, color: 'rgba(255,255,255,0.25)', fontSize: 24, letterSpacing: 6, fontWeight: 600 }}>
             ATLASVAULT
           </div>
         </div>

@@ -100,38 +100,62 @@ const flagOverlay = (ctx: CanvasRenderingContext2D) =>
 // ─── Slide renderers ──────────────────────────────────────────────────────────
 
 function renderTitle(ctx: CanvasRenderingContext2D, c: SlideContent) {
-  const panelH = 760, panelY = H / 2 - panelH / 2;
-  fillRR(ctx, M, panelY, CW, panelH, 32, 'rgba(0,0,0,0.55)');
-  let y = panelY + 80;
+  // Stronger overlay for instant readability
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, 'rgba(0,0,0,0.45)');
+  g.addColorStop(0.45, 'rgba(0,0,0,0.65)');
+  g.addColorStop(1, 'rgba(0,0,0,0.8)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
 
+  // Measure total block height to centre it
+  ctx.font = '800 30px Inter, system-ui, sans-serif';
+  const badgeH = 60;
+  ctx.font = '900 120px Inter, system-ui, sans-serif';
+  const titleLines = wrapLines(ctx, c.title || '', CW - 80);
+  const titleH = titleLines.length * 126;
+  ctx.font = '800 60px Inter, system-ui, sans-serif';
+  const hookLines = wrapLines(ctx, c.hook || '', CW - 80);
+  const hookH = hookLines.length * 74;
+  const totalH = badgeH + 52 + titleH + 52 + hookH;
+  let y = H / 2 - totalH / 2;
+
+  // Category pill
   if (c.category) {
     const badge = c.category.toUpperCase();
-    ctx.font = '700 36px Inter, system-ui, sans-serif';
-    const bw = ctx.measureText(badge).width + 48, bh = 56;
-    fillRR(ctx, W / 2 - bw / 2, y, bw, bh, 8, '#ff2d55');
+    ctx.font = '800 30px Inter, system-ui, sans-serif';
+    const bw = ctx.measureText(badge).width + 64;
+    fillRR(ctx, W / 2 - bw / 2, y, bw, badgeH, 100, '#ff2d55');
     ctx.fillStyle = 'white';
-    drawLine(ctx, badge, W / 2, y + 10);
-    y += bh + 48;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(badge, W / 2, y + badgeH / 2);
+    y += badgeH + 52;
   }
 
-  ctx.font = '900 88px Inter, system-ui, sans-serif';
+  // Massive title
+  ctx.font = '900 120px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
-  y += drawWrapped(ctx, c.title || '', W / 2, y, CW - 80, 104) + 48;
+  ctx.shadowColor = 'rgba(0,0,0,0.95)';
+  ctx.shadowBlur = 32;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  titleLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * 126));
+  y += titleH + 52;
 
-  ctx.font = 'italic 500 50px Inter, system-ui, sans-serif';
+  // Bold hook
+  ctx.font = '800 60px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#00f2ea';
-  y += drawWrapped(ctx, c.hook || '', W / 2, y, CW - 80, 64);
+  ctx.shadowBlur = 20;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  hookLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * 74));
+  ctx.shadowBlur = 0;
 
-  if (c.subtitle) {
-    y += 36;
-    ctx.font = '400 34px Inter, system-ui, sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    drawLine(ctx, c.subtitle, W / 2, y);
-  }
-
-  ctx.font = '400 28px Inter, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  drawLine(ctx, 'ATLASVAULT', W / 2, H - 120);
+  // Watermark
+  ctx.font = '600 24px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.letterSpacing = '6px';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText('ATLASVAULT', W / 2, H - 110);
+  ctx.letterSpacing = '0px';
 }
 
 function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
@@ -606,7 +630,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
 
   const { slide_type, content } = slide;
 
-  if (slide_type === 'title') { titleOverlay(ctx); renderTitle(ctx, content); }
+  if (slide_type === 'title') { renderTitle(ctx, content); }
   else if (isPartialFlagRound){ renderPartialFlagRoundText(ctx, content); }
   else if (isFlagStyleRound)  { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
   else if (isFightRound)      { stdOverlay(ctx);   renderFightRound(ctx, content); }
