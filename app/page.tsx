@@ -487,10 +487,10 @@ export default function Home() {
             )}
 
             {step === 'empire-choices' && currentGame && (
-              <div className="max-w-2xl mx-auto">
+              <div className="max-w-2xl mx-auto pb-32">
                 <h2 className="text-xl font-bold text-white mb-2">Choose image style per round</h2>
                 <p className="text-zinc-400 text-sm mb-6">Pick whether each empire is shown as a territory map or its most iconic landmark/feature.</p>
-                <div className="space-y-4 mb-8">
+                <div className="space-y-4">
                   {slides.filter((s) => s.slide_type === 'round').map((s) => {
                     const revealSlide = slides.find((r) => r.slide_type === 'reveal' && r.content.round_number === s.content.round_number);
                     const empireName = revealSlide?.content.correct_answer ?? `Round ${s.content.round_number}`;
@@ -504,31 +504,33 @@ export default function Home() {
                         <div className="flex gap-3">
                           <button
                             onClick={() => setEmpireChoices((prev) => ({ ...prev, [s.id]: 'feature' }))}
-                            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${choice === 'feature' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
+                            className={`flex-1 py-3 rounded-lg text-sm font-semibold transition-all border ${choice === 'feature' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
                           >
-                            Iconic Feature
+                            🏛 Iconic Feature
                           </button>
                           <button
                             onClick={() => setEmpireChoices((prev) => ({ ...prev, [s.id]: 'map' }))}
-                            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${choice === 'map' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
+                            className={`flex-1 py-3 rounded-lg text-sm font-semibold transition-all border ${choice === 'map' ? 'bg-tk-red border-tk-red text-white' : 'border-tk-border text-zinc-400 hover:text-white hover:border-white/20'}`}
                           >
-                            Territory Map
+                            🗺 Territory Map
                           </button>
                         </div>
-                        <p className="text-zinc-600 text-xs mt-2 truncate">
-                          {choice === 'map' ? (s.content.map_prompt ?? 'Map prompt not available') : (s.content.feature_prompt ?? s.image_prompt)}
-                        </p>
                       </div>
                     );
                   })}
                 </div>
-                <button
-                  onClick={handleEmpireChoicesConfirm}
-                  disabled={loading}
-                  className="w-full py-4 rounded-xl bg-tk-red text-white font-bold text-lg hover:bg-red-500 disabled:opacity-40 transition-colors"
-                >
-                  {loading ? 'Applying choices…' : 'Generate Images →'}
-                </button>
+                {/* Sticky confirm button */}
+                <div className="fixed bottom-0 left-64 right-0 p-6 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none">
+                  <div className="max-w-2xl mx-auto pointer-events-auto">
+                    <button
+                      onClick={handleEmpireChoicesConfirm}
+                      disabled={loading}
+                      className="w-full py-4 rounded-xl bg-tk-red text-white font-bold text-lg hover:bg-red-500 disabled:opacity-40 transition-colors shadow-2xl"
+                    >
+                      {loading ? 'Applying choices…' : 'Generate Images →'}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

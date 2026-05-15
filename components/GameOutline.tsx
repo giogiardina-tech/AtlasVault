@@ -27,7 +27,7 @@ export default function GameOutline({ game, slides, scoringSystem, onSlidesChang
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto pb-32">
       <button onClick={onBack} className="text-zinc-500 hover:text-white text-sm mb-6 flex items-center gap-1 transition-colors">
         ← Back
       </button>
@@ -132,15 +132,17 @@ export default function GameOutline({ game, slides, scoringSystem, onSlidesChang
         })}
       </div>
 
-      <button
-        onClick={onGenerate}
-        className="w-full py-3.5 rounded-xl bg-tk-red text-white font-semibold hover:bg-red-500 transition-colors"
-      >
-        Generate Images →
-      </button>
-      <p className="text-center text-xs text-zinc-600 mt-2">
-        Generates {slides.length} slides via DALL-E 3 (~${(slides.length * 0.08).toFixed(2)} in API costs)
-      </p>
+      {/* Sticky generate button — always visible without scrolling */}
+      <div className="fixed bottom-0 left-64 right-0 p-6 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none">
+        <div className="max-w-2xl mx-auto pointer-events-auto">
+          <button
+            onClick={onGenerate}
+            className="w-full py-4 rounded-xl bg-tk-red text-white font-bold text-lg hover:bg-red-500 transition-colors shadow-2xl"
+          >
+            Generate Images →
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
