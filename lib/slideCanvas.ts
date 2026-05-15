@@ -571,18 +571,24 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
         const cardX = (W - cardW) / 2;
         const cardY = H / 2 - cardH / 2 + 80;
 
-        // Clip to card and draw zoomed flag
+        // Clip to card and draw flag fragment with offset — only 15-28% of flag visible
         ctx.save();
         rrPath(ctx, cardX, cardY, cardW, cardH, 28);
         ctx.clip();
-        const PARTIAL_ZOOMS = [1.6, 2.3, 3.4, 5.0, 7.5];
+        const CROP_CONFIGS = [
+          { zoom: 3.6, xFrac:  0.00, yFrac: -0.28 },
+          { zoom: 4.6, xFrac: -0.95, yFrac: -0.12 },
+          { zoom: 5.8, xFrac: -0.18, yFrac: -0.75 },
+          { zoom: 7.2, xFrac: -0.55, yFrac:  0.08 },
+          { zoom: 9.4, xFrac: -0.85, yFrac: -0.55 },
+        ];
         const roundNum = (slide.content.round_number ?? 1) as number;
-        const zoom = PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)];
-        const scaledW = cardW * zoom;
+        const cfg = CROP_CONFIGS[Math.min(roundNum - 1, 4)];
+        const scaledW = cardW * cfg.zoom;
         const scaledH = scaledW / (img.width / img.height);
         ctx.fillStyle = '#111120';
         ctx.fillRect(cardX, cardY, cardW, cardH);
-        ctx.drawImage(img, cardX + (cardW - scaledW) / 2, cardY + (cardH - scaledH) / 2, scaledW, scaledH);
+        ctx.drawImage(img, cardX + cfg.xFrac * cardW, cardY + cfg.yFrac * cardH, scaledW, scaledH);
         ctx.restore();
 
         // Card border + glow

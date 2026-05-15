@@ -18,10 +18,17 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
-  // Partial-flag: progressively zoom into flag centre — card clips the overflow
-  const PARTIAL_ZOOMS = [160, 230, 340, 500, 750]; // percent of card width
   const roundNum = (content.round_number ?? 1) as number;
-  const partialZoom = isPartialFlagRound ? PARTIAL_ZOOMS[Math.min(roundNum - 1, 4)] : 100;
+  // Each round: zoom % of card width + offset (% of card) so flag bleeds off edges
+  // Zoom 360-900% ensures only 11-28% of flag is visible at any time
+  const CROP_CONFIGS = [
+    { zoom: 360, left: '0%',    top: '-28%' },  // top-left region
+    { zoom: 460, left: '-95%',  top: '-12%' },  // right portion
+    { zoom: 580, left: '-18%',  top: '-75%' },  // lower-left section
+    { zoom: 720, left: '-55%',  top:  '8%'  },  // upper-right area
+    { zoom: 940, left: '-85%',  top: '-55%' },  // corner detail
+  ];
+  const cropCfg = isPartialFlagRound ? CROP_CONFIGS[Math.min(roundNum - 1, 4)] : CROP_CONFIGS[0];
 
   const slideBg = '#0a0a0a';
 
@@ -128,13 +135,10 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
                   src={image_path}
                   style={{
                     position: 'absolute',
-                    width: `${partialZoom}%`,
+                    width: `${cropCfg.zoom}%`,
                     height: 'auto',
-                    minHeight: '100%',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    objectFit: 'cover',
+                    left: cropCfg.left,
+                    top: cropCfg.top,
                   }}
                 />
               )}
