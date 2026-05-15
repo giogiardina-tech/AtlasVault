@@ -80,6 +80,8 @@ function seedTemplates(db: DatabaseSync) {
       'Three cryptic clues reveal a mystery country. Only the sharpest geography minds can deduce it from clue one.');
     insert.run('tmpl-009', 'Partial Flag Challenge', 'Flags', 'partial-flag',
       'Only a cropped section of the flag is shown — can you identify the country? The crop gets smaller and harder each round.');
+    insert.run('tmpl-010', 'Guess the Historical Figure', 'People', 'guess-the-person',
+      'Three clues, hardest first — can you identify the historical figure? From ancient rulers to modern icons, test your knowledge of the people who shaped history.');
     db.exec('COMMIT');
   } catch (e) {
     db.exec('ROLLBACK');

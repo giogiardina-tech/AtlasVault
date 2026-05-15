@@ -256,6 +256,27 @@ FORMAT: NAME A COUNTRY BY CLUE
 - "clues" array in ROUND content: [clue1, clue2, clue3]
 - Reveal: the mystery country + clue_giveaway (which clue most people crack it from) + fun_fact`,
     },
+
+    'guess-the-person': {
+      revealType: 'difficulty',
+      instructions: `
+FORMAT: GUESS THE HISTORICAL FIGURE
+- 5 rounds, each featuring a different historical figure from any era of human history
+- Difficulty increases across rounds (Round 1: extremely famous, Round 5: known only to history enthusiasts)
+- Each round gives exactly 3 clues in order from HARDEST to EASIEST (vague → specific → near giveaway):
+  * Clue 1: Very indirect — an achievement, trait, or era that could apply to several people
+  * Clue 2: More specific — a famous act, invention, title, or location that narrows it down significantly
+  * Clue 3: Nearly gives it away — a well-known quote, iconic image description, or defining moment
+- CRITICAL — NO REPEATED INFORMATION ACROSS CLUES: Every clue must introduce a completely new piece of information. Never repeat the same date, event, location, or fact in more than one clue. Each clue should make the person more identifiable through a DIFFERENT angle (era → specific act → defining legacy), not by restating the same thing in different words.
+- QUESTION for every round: "Who am I?" (the person is speaking in first person via the clues)
+- Clues should be written in first-person voice as if the person is describing themselves:
+  * e.g. "I led one of the greatest conquests in history" / "I united an empire stretching across Asia" / "They called me the Great"
+- BAD example (repeats the voyage): "I sailed west across the Atlantic" → "I reached the Americas in 1492" — these say the same thing
+- GOOD example (each clue adds something new): "I was born in Genoa and served a foreign crown" → "I made four voyages west, believing I'd reached Asia" → "In 1492 I landed in the Caribbean, opening the Americas to Europe"
+- "clues" array in ROUND content: [clue1_hardest, clue2_medium, clue3_easiest]
+- Reveal: the person's full name + a compelling fun_fact (birth/death years, their most surprising legacy, or something little-known about them)
+- Cover a wide range of history: ancient rulers, military leaders, scientists, artists, explorers, revolutionaries — not just Western figures`,
+    },
   };
 
   const scoreSummaryGuide: Record<string, string> = {
@@ -268,6 +289,7 @@ FORMAT: NAME A COUNTRY BY CLUE
     'guess-the-capital': `scoring_summary uses correct answers out of 5. Example: "5/5 = capital city expert | 4/5 = sharp | 3/5 = decent | 2 or below = study your capitals!"`,
     'partial-flag': `scoring_summary uses correct answers out of 5. Example: "5/5 = flag detective | 4/5 = sharp eyes | 3/5 = solid | 2 or below = study your flags!"`,
     'country-by-clue': `scoring_summary uses correct answers out of 5. Example: "5/5 = world explorer | 4/5 = impressive | 3/5 = solid | 2 or below = keep exploring!"`,
+    'guess-the-person': `scoring_summary uses correct answers out of 5 AND which clue they needed. Example: "5/5 on clue 1 = history genius | 5/5 = historian | 3-4/5 = solid | 2 or below = brush up on history!"`,
   };
 
   const format = formatInstructions[format_type];
@@ -276,7 +298,13 @@ FORMAT: NAME A COUNTRY BY CLUE
   const revealExample = revealStructures[revealType] || revealStructures.difficulty;
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
-  const roundImageRule = (format_type === 'partial-flag' || format_type === 'guess-the-flag')
+  const roundImageRule = format_type === 'guess-the-person'
+    ? `ROUND slides (GUESS THE PERSON — dramatic era-appropriate scene, NEVER show or name the person):
+- CRITICAL: absolutely NO text, NO names, NO portraits of the specific person anywhere in the image
+- Show a dramatic scene from the era or region the person is associated with — e.g. ancient Roman forum, Renaissance workshop, battle scene, explorer's ship
+- The image should hint at the era and setting without being identifiable to a specific individual
+- Style: cinematic, richly detailed historical illustration or photorealistic period scene`
+    : (format_type === 'partial-flag' || format_type === 'guess-the-flag')
     ? `ROUND slides (FLAG GAME — real flag fetched from CDN, no AI image needed):
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`

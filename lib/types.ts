@@ -1,4 +1,4 @@
-export type Category = 'Geography' | 'Flags' | 'History';
+export type Category = 'Geography' | 'Flags' | 'History' | 'People';
 
 export type FormatType =
   | 'bordering-country'
@@ -9,7 +9,8 @@ export type FormatType =
   | 'guess-the-empire'
   | 'historical-order'
   | 'guess-the-capital'
-  | 'country-by-clue';
+  | 'country-by-clue'
+  | 'guess-the-person';
 
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';

@@ -27,6 +27,13 @@ const categories = [
     color: 'from-amber-900/60 to-amber-950/80 border-amber-700/40 hover:border-amber-500/60',
     accent: 'text-amber-400',
   },
+  {
+    id: 'People' as Category,
+    emoji: '👤',
+    description: 'Guess the historical figure from clues',
+    color: 'from-purple-900/60 to-purple-950/80 border-purple-700/40 hover:border-purple-500/60',
+    accent: 'text-purple-400',
+  },
 ];
 
 export default function CategoryPicker({ onSelect }: Props) {
