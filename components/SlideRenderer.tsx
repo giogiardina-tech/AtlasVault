@@ -74,26 +74,47 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   };
 
   if (slide_type === 'title') {
+    // Stack hook: split into 2-word chunks for maximum visual impact
+    const hookWords = (content.hook || '').toUpperCase().split(' ');
+    const hookStackLines: string[] = [];
+    for (let i = 0; i < hookWords.length; i += 2) {
+      hookStackLines.push(hookWords.slice(i, Math.min(i + 2, hookWords.length)).join(' '));
+    }
     return (
       <div style={containerStyle}>
         <div style={bgStyle} />
-        {/* Stronger overlay so text is instantly readable over any image */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 45%, rgba(0,0,0,0.8) 100%)' }} />
-        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '160px 72px', textAlign: 'center', gap: 0 }}>
-          {/* Category pill — small, top anchor */}
-          <span style={{ background: '#ff2d55', color: 'white', fontSize: 30, fontWeight: 800, padding: '10px 32px', borderRadius: 100, letterSpacing: 4, marginBottom: 52, textTransform: 'uppercase' }}>
+        {/* Radial vignette — lighter centre lets background breathe, dark edges frame text */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 78% 66% at 50% 44%, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.88) 100%)' }} />
+        {/* Top/bottom fade for badge and watermark readability */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.50) 0%, transparent 20%, transparent 70%, rgba(0,0,0,0.85) 100%)' }} />
+        {/* Subtle cyan atmospheric glow at centre */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 52% 36% at 50% 44%, rgba(0,200,255,0.10) 0%, transparent 70%)' }} />
+
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '200px 80px', textAlign: 'center' }}>
+          {/* Category badge */}
+          <span style={{ background: '#ff2d55', color: 'white', fontSize: 28, fontWeight: 800, padding: '10px 32px', borderRadius: 100, letterSpacing: 4, marginBottom: 48, textTransform: 'uppercase' }}>
             {content.category}
           </span>
-          {/* MASSIVE title — must read in under 1 second */}
-          <h1 style={{ color: 'white', fontSize: 124, fontWeight: 900, lineHeight: 1.0, marginBottom: 52, textShadow: '0 4px 32px rgba(0,0,0,0.95)', letterSpacing: -2 }}>
+
+          {/* HOOK — massive stacked hero: each 2-word chunk on its own line */}
+          <div style={{ marginBottom: 28 }}>
+            {hookStackLines.map((line, i) => (
+              <div key={i} style={{ color: 'white', fontSize: 112, fontWeight: 900, lineHeight: 0.96, letterSpacing: -3, textShadow: '0 4px 40px rgba(0,0,0,0.95)' }}>
+                {line}
+              </div>
+            ))}
+          </div>
+
+          {/* Gold accent divider */}
+          <div style={{ width: 72, height: 4, background: '#ffd700', borderRadius: 2, marginBottom: 28 }} />
+
+          {/* Title — supporting text, smaller */}
+          <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: 46, fontWeight: 600, lineHeight: 1.2, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
             {content.title}
-          </h1>
-          {/* Hook — bold, punchy, not italic */}
-          <p style={{ color: '#00f2ea', fontSize: 62, fontWeight: 800, lineHeight: 1.25, textShadow: '0 2px 20px rgba(0,0,0,0.9)' }}>
-            {content.hook}
           </p>
-          {/* Watermark only */}
-          <div style={{ position: 'absolute', bottom: 72, color: 'rgba(255,255,255,0.25)', fontSize: 24, letterSpacing: 6, fontWeight: 600 }}>
+
+          {/* Watermark */}
+          <div style={{ position: 'absolute', bottom: 72, color: 'rgba(255,255,255,0.22)', fontSize: 22, letterSpacing: 6, fontWeight: 600 }}>
             ATLASVAULT
           </div>
         </div>

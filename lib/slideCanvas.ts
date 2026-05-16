@@ -100,58 +100,102 @@ const flagOverlay = (ctx: CanvasRenderingContext2D) =>
 // ─── Slide renderers ──────────────────────────────────────────────────────────
 
 function renderTitle(ctx: CanvasRenderingContext2D, c: SlideContent) {
-  // Stronger overlay for instant readability
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, 'rgba(0,0,0,0.45)');
-  g.addColorStop(0.45, 'rgba(0,0,0,0.65)');
-  g.addColorStop(1, 'rgba(0,0,0,0.8)');
-  ctx.fillStyle = g;
+  // ── Overlays: radial vignette + top/bottom fade + subtle glow ──
+  // Radial vignette — lighter centre lets background breathe, dark edges frame the text
+  const vignette = ctx.createRadialGradient(W / 2, H * 0.44, 0, W / 2, H * 0.44, W * 0.88);
+  vignette.addColorStop(0, 'rgba(0,0,0,0.12)');
+  vignette.addColorStop(0.55, 'rgba(0,0,0,0.52)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.88)');
+  ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, W, H);
 
-  // Measure total block height to centre it
-  ctx.font = '800 30px Inter, system-ui, sans-serif';
+  // Top/bottom gradient for badge + watermark readability
+  const topBot = ctx.createLinearGradient(0, 0, 0, H);
+  topBot.addColorStop(0, 'rgba(0,0,0,0.50)');
+  topBot.addColorStop(0.20, 'rgba(0,0,0,0)');
+  topBot.addColorStop(0.72, 'rgba(0,0,0,0)');
+  topBot.addColorStop(1, 'rgba(0,0,0,0.85)');
+  ctx.fillStyle = topBot;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle cyan atmospheric glow at centre — adds depth without fantasy look
+  const glow = ctx.createRadialGradient(W / 2, H * 0.44, 0, W / 2, H * 0.44, 380);
+  glow.addColorStop(0, 'rgba(0,200,255,0.10)');
+  glow.addColorStop(1, 'rgba(0,200,255,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle film grain — adds tactile texture, reduces flat AI look
+  ctx.save();
+  for (let i = 0; i < 6000; i++) {
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    const a = Math.random() * 0.055 + 0.01;
+    ctx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${a.toFixed(3)})` : `rgba(0,0,0,${a.toFixed(3)})`;
+    ctx.fillRect(x, y, 1, 1);
+  }
+  ctx.restore();
+
+  // ── Layout measurement ──
+  // Hook: stacked 2-words-per-line hero text
+  const hookWords = (c.hook || '').toUpperCase().split(' ');
+  const hookStackLines: string[] = [];
+  for (let i = 0; i < hookWords.length; i += 2) {
+    hookStackLines.push(hookWords.slice(i, Math.min(i + 2, hookWords.length)).join(' '));
+  }
+  const hookFontSize = 112;
+  const hookLineH = Math.round(hookFontSize * 0.97);
+  const hookTotalH = hookStackLines.length * hookLineH;
+
   const badgeH = 60;
-  ctx.font = '900 120px Inter, system-ui, sans-serif';
+  const badgeGap = 48;
+  const dividerGap = 28;
+  const dividerH = 4;
+  const titleGap = 28;
+
+  ctx.font = '600 46px Inter, system-ui, sans-serif';
   const titleLines = wrapLines(ctx, c.title || '', CW - 80);
-  const titleH = titleLines.length * 126;
-  ctx.font = '800 60px Inter, system-ui, sans-serif';
-  const hookLines = wrapLines(ctx, c.hook || '', CW - 80);
-  const hookH = hookLines.length * 74;
-  const totalH = badgeH + 52 + titleH + 52 + hookH;
+  const titleLineH = 54;
+  const titleTotalH = titleLines.length * titleLineH;
+
+  const totalH = badgeH + badgeGap + hookTotalH + dividerGap + dividerH + titleGap + titleTotalH;
   let y = H / 2 - totalH / 2;
 
-  // Category pill
+  // ── Category badge ──
   if (c.category) {
     const badge = c.category.toUpperCase();
-    ctx.font = '800 30px Inter, system-ui, sans-serif';
+    ctx.font = '800 28px Inter, system-ui, sans-serif';
     const bw = ctx.measureText(badge).width + 64;
     fillRR(ctx, W / 2 - bw / 2, y, bw, badgeH, 100, '#ff2d55');
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(badge, W / 2, y + badgeH / 2);
-    y += badgeH + 52;
+    y += badgeH + badgeGap;
   }
 
-  // Massive title
-  ctx.font = '900 120px Inter, system-ui, sans-serif';
+  // ── Hook — massive stacked hero ──
+  ctx.font = `900 ${hookFontSize}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
   ctx.shadowColor = 'rgba(0,0,0,0.95)';
-  ctx.shadowBlur = 32;
+  ctx.shadowBlur = 40;
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  titleLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * 126));
-  y += titleH + 52;
-
-  // Bold hook
-  ctx.font = '800 60px Inter, system-ui, sans-serif';
-  ctx.fillStyle = '#00f2ea';
-  ctx.shadowBlur = 20;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  hookLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * 74));
+  hookStackLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * hookLineH));
+  y += hookTotalH + dividerGap;
   ctx.shadowBlur = 0;
 
-  // Watermark
-  ctx.font = '600 24px Inter, system-ui, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  // ── Gold accent divider ──
+  fillRR(ctx, W / 2 - 36, y, 72, dividerH, 2, '#ffd700');
+  y += dividerH + titleGap;
+
+  // ── Title — supporting text ──
+  ctx.font = '600 46px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  titleLines.forEach((line, i) => ctx.fillText(line, W / 2, y + i * titleLineH));
+
+  // ── Watermark ──
+  ctx.font = '600 22px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
   ctx.letterSpacing = '6px';
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
   ctx.fillText('ATLASVAULT', W / 2, H - 110);
