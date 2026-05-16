@@ -27,25 +27,31 @@ export async function POST(req: NextRequest) {
 Generate 4 unique game ideas for the format: "${template_name}" (category: ${category})
 
 TITLE RULES — max 6 words, punchy, scroll-stopping:
-- Create immediate curiosity or competitive tension
-- Use numbers, superlatives, identity-based challenges, or impossibility claims
+- Create immediate curiosity, competitive tension, or identity challenge
+- Use: impossibility claims, identity triggers, superlatives, direct dares, "nobody" framing
 - Must work as a thumbnail label — readable in 0.5 seconds
 
-GOOD titles: "Only 1% Get All 5" / "Impossible Flag Quiz" / "Nobody Gets Round 5" / "Only Europeans Pass This" / "The Hardest Border Quiz Yet" / "Can You Beat Round 5?" / "You'll Miss At Least One"
-BAD titles: "A Geography Challenge for Trivia Fans" / "Test Your Knowledge of World History"
+GOOD titles: "Only 1% Get All 5" / "Nobody Gets Round 5" / "Only Europeans Pass This" / "Americans Always Fail Round 4" / "You'll Miss At Least One" / "Most People Fail Before Round 3" / "Can You Get a Perfect Score?" / "Impossible Flag Quiz"
+BAD titles: "A Geography Challenge" / "Test Your World Knowledge" / "History Trivia Game"
 
 HOOK RULES — what the creator SAYS aloud in the first 2 seconds (max 8 words):
-- Must reflect that this is a multi-round game (5 rounds)
-- Should feel natural spoken, not like a caption
-- Create urgency, disbelief, or a direct dare
+- Must feel natural spoken out loud — not a written caption
+- Creates urgency, a dare, identity challenge, or disbelief
+- References the game structure (5 rounds, comment your answer, etc.)
 - Match this format's energy: ${hookGuidance}
 
-GOOD hooks: "Nobody gets Round 5. Nobody." / "You'll miss at least one, I promise." / "Five flags, five chances to embarrass yourself."
-BAD hooks: "Let's test your geography knowledge today!" / "Welcome to our ultimate trivia challenge!"
+GOOD hooks: "Nobody gets Round 5. Nobody." / "You'll miss at least one, I promise." / "Five flags, five chances to embarrass yourself." / "Comment before I reveal — bet you get this wrong." / "Most people fail before Round 3."
+BAD hooks: "Let's test your geography knowledge today!" / "Welcome to our ultimate trivia challenge!" / "How well do you know world history?"
+
+RETENTION PSYCHOLOGY — make every idea feel:
+- Competitive ("beat me", "comment your score", "how many did you get?")
+- Identity-driven ("only Europeans", "geography nerds only", "history buffs will know this")
+- Impossible ("nobody gets this", "Round 5 has never been answered correctly")
+- Rewarding (satisfying to finish, makes you want to replay)
 
 SCORING — rate each idea honestly:
-- hook_score (1–10): how likely is this hook to make someone pause mid-scroll? 10 = irresistible, 1 = forgettable
-- curiosity_score (1–10): how badly does the viewer NEED to see the answer? 10 = can't swipe away, 1 = meh
+- hook_score (1–10): how likely is this hook to make someone pause mid-scroll? 10 = irresistible dare, 1 = forgettable
+- curiosity_score (1–10): how badly does the viewer NEED to see the answer? 10 = physically can't swipe away, 1 = meh
 
 Return ONLY this JSON (no markdown, no explanation):
 {

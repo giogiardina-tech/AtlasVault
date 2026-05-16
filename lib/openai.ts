@@ -74,11 +74,11 @@ REVEAL SLIDE (scoring_type: "difficulty"):
     "scoring_type": "difficulty",
     "difficulty_tier": "easy",
     "correct_answer": "The One Correct Answer",
-    "fun_fact": "A surprising, interesting fact related to this answer"
+    "fun_fact": "One punchy surprising fact — MAX 18 WORDS."
   },
   "image_prompt": "..."
 }
-RULE: difficulty_tier must be "easy" | "medium" | "hard" | "impossible" matching the round's actual difficulty.`,
+RULE: difficulty_tier must be "easy" | "medium" | "hard" | "impossible" matching the round's actual difficulty. fun_fact must be max 18 words — one sharp, surprising fact, NOT a full explanation.`,
 
     difficulty_clue: `
 REVEAL SLIDE (scoring_type: "difficulty"):
@@ -92,11 +92,11 @@ REVEAL SLIDE (scoring_type: "difficulty"):
     "difficulty_tier": "medium",
     "correct_answer": "The Mystery Country",
     "clue_giveaway": "Clue 2",
-    "fun_fact": "An interesting fact about this country"
+    "fun_fact": "One punchy surprising fact — MAX 18 WORDS."
   },
   "image_prompt": "..."
 }
-RULE: clue_giveaway is which clue most people would crack it from (e.g. "Clue 1", "Clue 2", "Clue 3").`,
+RULE: clue_giveaway is which clue most people would crack it from (e.g. "Clue 1", "Clue 2", "Clue 3"). fun_fact must be max 18 words.`,
 
     fight: `
 REVEAL SLIDE (scoring_type: "fight"):
@@ -111,11 +111,11 @@ REVEAL SLIDE (scoring_type: "fight"):
     "winner": "Roman Empire",
     "side_a_percent": 68,
     "side_b_percent": 32,
-    "fun_fact": "Rome's professional legions, superior logistics and siege technology gave them a decisive edge — but the mountainous Greek terrain and naval power would have made victory costly."
+    "fun_fact": "Two punchy sentences max — the key deciding factor most people miss."
   },
   "image_prompt": "..."
 }
-RULE: side_a_percent + side_b_percent must equal exactly 100. Winner must match side_a or side_b exactly. Never use 50/50 — always give one side a clear edge based on real military, logistical, and strategic analysis.`,
+RULE: side_a_percent + side_b_percent must equal exactly 100. Winner must match side_a or side_b exactly. Never use 50/50 — always give one side a clear edge based on real analysis. fun_fact: max 2 sentences, max 35 words.`,
 
     position: `
 REVEAL SLIDE (scoring_type: "position"):
@@ -275,11 +275,14 @@ FORMAT: NAME A COUNTRY BY CLUE
 - 5 rounds, each revealing a mystery country through exactly 3 progressive clues
 - Clues go from vague → specific:
   * Clue 1: Very general (continent, rough size, climate zone)
-  * Clue 2: More specific (a famous neighbor, a geographic feature, a cultural fact)
-  * Clue 3: Nearly gives it away (famous landmark, unique fact, specific export)
-- Difficulty increases across rounds (Round 1: famous country easily guessed, Round 5: very obscure)
+  * Clue 2: More specific (a famous neighbor, geographic feature, or cultural fact)
+  * Clue 3: Nearly gives it away (famous landmark, unique fact, or specific export)
+- CLUE LENGTH: Each clue must be MAX 15 WORDS. Short, punchy — NOT full explanatory sentences.
+  * BAD: "This country is located on the continent of South America and is known for its very large size and dense rainforests."
+  * GOOD: "South America. One of the largest countries on Earth. Famous for its rainforests."
+- Difficulty increases across rounds (Round 1: famous country, Round 5: very obscure)
 - "clues" array in ROUND content: [clue1, clue2, clue3]
-- Reveal: the mystery country + clue_giveaway (which clue most people crack it from) + fun_fact`,
+- Reveal: the mystery country + clue_giveaway (which clue most crack it from) + fun_fact (max 18 words)`,
     },
 
     'fame-battle': {
@@ -332,22 +335,24 @@ FORMAT: GUESS THE HISTORICAL FIGURE
 - Each round gives exactly 3 clues in order from HARDEST to EASIEST (vague → specific → near giveaway):
   * Clue 1: Very indirect — an achievement, trait, or era that could apply to several people
   * Clue 2: More specific — a famous act, invention, title, or location that narrows it down significantly
-  * Clue 3: Nearly gives it away — a well-known quote, iconic image description, or defining moment
-- CRITICAL — FACTUAL ACCURACY: Every date, era, location, title, and claim must be 100% historically verified. Do NOT guess or approximate. If you are not certain of a specific fact, omit it rather than risk stating it incorrectly. Common errors to avoid:
-  * Do NOT confuse centuries — Cleopatra died 30 BC (ancient, not medieval or Renaissance), Columbus sailed in 1492 (late 15th century, not 16th), Shakespeare lived 1564–1616 (Elizabethan era)
+  * Clue 3: Nearly gives it away — a defining moment, famous title, or iconic legacy
+- CLUE LENGTH: Each clue must be MAX 12 WORDS. Short punchy first-person fragments — NOT full paragraph sentences.
+  * BAD (too long): "As a renowned scientist living in the 20th century, I developed a revolutionary theory that completely transformed our understanding of space and time."
+  * GOOD (punchy): "I rewrote the laws of physics in the 20th century."
+  * BAD (too long): "I was born into a noble family in ancient Egypt and ruled with great power over an empire that stretched across the Mediterranean."
+  * GOOD (punchy): "I ruled Egypt and charmed two of Rome's greatest leaders."
+- CRITICAL — FACTUAL ACCURACY: Every date, era, location, title, and claim must be 100% historically verified. Do NOT guess. If uncertain, use a confirmed well-known fact.
+  * Do NOT confuse centuries — Cleopatra died 30 BC (ancient), Columbus sailed 1492 (late 15th century), Shakespeare lived 1564–1616
   * Do NOT misstate birth/death years, reign dates, or discovery dates
-  * Do NOT attribute inventions, discoveries, or achievements to the wrong person
-  * Do NOT place a historical figure in the wrong country, empire, or era
-  * Before writing any date or century, verify it mentally: "Was Cleopatra really in the 16th century? No — she died 30 BC, ancient Egypt."
-- CRITICAL — NO REPEATED INFORMATION ACROSS CLUES: Every clue must introduce a completely new piece of information. Never repeat the same date, event, location, or fact in more than one clue. Each clue should make the person more identifiable through a DIFFERENT angle (era → specific act → defining legacy), not by restating the same thing in different words.
-- QUESTION for every round: "Who am I?" (the person is speaking in first person via the clues)
-- Clues should be written in first-person voice as if the person is describing themselves:
-  * e.g. "I led one of the greatest conquests in history" / "I united an empire stretching across Asia" / "They called me the Great"
-- BAD example (repeats the voyage): "I sailed west across the Atlantic" → "I reached the Americas in 1492" — these say the same thing
-- GOOD example (each clue adds something new): "I was born in Genoa and served a foreign crown" → "I made four voyages west, believing I'd reached Asia" → "In 1492 I landed in the Caribbean, opening the Americas to Europe"
+  * Do NOT attribute achievements to the wrong person
+- CRITICAL — NO REPEATED INFORMATION ACROSS CLUES: Every clue must add completely new information. Different angle each time.
+  * BAD (repeats): "I sailed west across the Atlantic" → "I reached the Americas in 1492"
+  * GOOD (new each time): "I was born in Genoa and served a foreign crown" → "I made four voyages west" → "In 1492 I landed in the Caribbean"
+- QUESTION for every round: "Who am I?"
+- Clues in first-person: "I led the largest land empire in history" / "They called me the Great"
 - "clues" array in ROUND content: [clue1_hardest, clue2_medium, clue3_easiest]
-- Reveal: the person's full name + a compelling fun_fact (verified birth/death years, their most surprising legacy, or a little-known but confirmed fact)
-- Cover a wide range of history: ancient rulers, military leaders, scientists, artists, explorers, revolutionaries — not just Western figures`,
+- Reveal: full name + fun_fact (max 18 words — one surprising verified fact)
+- Cover a wide range of history: ancient rulers, scientists, artists, explorers, revolutionaries — not just Western figures`,
     },
   };
 
@@ -373,64 +378,61 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   const scoreSummary = scoreSummaryGuide[format_type] || `scoring_summary uses correct answers out of 5.`;
 
   const roundImageRule = format_type === 'fame-battle'
-    ? `ROUND slides (FAME BATTLE — evocative historical era scene, NO text, NO portraits, NO names):
+    ? `ROUND slides (FAME BATTLE — understated historical era scene, NO text, NO portraits, NO names):
 - CRITICAL: absolutely NO text, NO names, NO portraits of specific people anywhere in the image
-- Show a dramatic scene from the era or cultural world these two figures inhabited — a Roman forum, a Renaissance court, a royal court, a scientific laboratory, a battlefield
-- The image should evoke "greatness" and historical weight without identifying any specific person
-- Style: clean, realistic, documentary-style historical photography or illustration — NOT fantasy art`
+- Show a subdued scene from the era or cultural world these two figures inhabited — a Roman forum, a Renaissance court, a scientific laboratory, a battlefield — muted and atmospheric
+- Style: archival documentary photograph or restrained historical illustration, muted desaturated tones — NOT fantasy art, NOT dramatic AI concept art`
     : format_type === 'civilization-fight'
-    ? `ROUND slides (CIVILIZATION FIGHT — epic battle scene, NO text or names):
+    ? `ROUND slides (CIVILIZATION FIGHT — restrained historical battle scene, NO text or names):
 - CRITICAL: absolutely NO text, NO civilization names, NO labels anywhere in the image
-- Show a dramatic, cinematic clash between two opposing forces — armies colliding, warships in battle, siege warfare, cavalry charges
-- The image should feel like a blockbuster war film poster: epic scale, dramatic lighting, high contrast, rich colour
-- Style: ultra-cinematic digital art or photorealistic illustration — designed to stop someone mid-scroll`
+- Show a grounded historical conflict scene: armies in formation, siege walls, warships, cavalry — realistic and believable, not fantasy
+- Style: muted historical illustration or archival military art, desaturated tones, natural light — NOT a blockbuster film poster, NOT fantasy digital art`
     : format_type === 'guess-the-person'
-    ? `ROUND slides (GUESS THE PERSON — dramatic era-appropriate scene, NEVER show or name the person):
+    ? `ROUND slides (GUESS THE PERSON — understated era-appropriate scene, NEVER show or name the person):
 - CRITICAL: absolutely NO text, NO names, NO portraits of the specific person anywhere in the image
-- Show a dramatic scene from the era or region the person is associated with — e.g. ancient Roman forum, Renaissance workshop, battle scene, explorer's ship
-- The image should hint at the era and setting without being identifiable to a specific individual
-- Style: cinematic, richly detailed historical illustration or photorealistic period scene`
+- Show a clean scene from the era or region — e.g. ancient Roman forum, Renaissance workshop, explorer's ship, a battlefield — simple and grounded
+- Style: archival-style photograph or restrained period illustration, muted tones — NOT cinematic, NOT fantasy, NOT AI drama`
     : (format_type === 'partial-flag' || format_type === 'guess-the-flag')
     ? `ROUND slides (FLAG GAME — real flag fetched from CDN, no AI image needed):
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
     : format_type === 'guess-the-empire'
-    ? `ROUND slides (GUESS THE EMPIRE — visually stunning image hinting at the empire, NO text or labels anywhere):
+    ? `ROUND slides (GUESS THE EMPIRE — clean image hinting at the empire, NO text or labels anywhere):
 - CRITICAL: absolutely NO text, NO empire names, NO country names, NO city names, NO labels, NO captions anywhere in the image
-- STYLE: cinematic, high-quality digital art or dramatic illustration — rich colours, moody lighting, visually striking. NOT a flat map unless the territory truly is the best hint.
-- For each empire choose the MOST iconic and visually compelling option:
+- STYLE: clean documentary photograph or restrained historical illustration — natural light, muted realistic tones. NOT cinematic concept art, NOT fantasy illustration.
+- For each empire choose the MOST iconic and recognisable option:
 
-  ICONIC IMAGERY (preferred when an empire has a famous landmark, trade network, or cultural symbol):
-  - Egyptian → the Great Pyramids of Giza at dusk with the Sphinx, warm golden sand, dramatic sky
-  - Roman → the Colosseum lit at night or Roman aqueducts stretching across a landscape
+  ICONIC IMAGERY (preferred when an empire has a famous landmark or cultural symbol):
+  - Egyptian → the Great Pyramids of Giza at dusk with the Sphinx, warm golden sand, clear sky
+  - Roman → the Colosseum at dusk or Roman aqueducts across a landscape
   - Greek/Hellenistic → the Parthenon on the Acropolis at golden hour, marble columns
   - Ottoman → the Blue Mosque or Hagia Sophia silhouette at sunset over the Bosphorus
-  - Aztec → the Pyramid of the Sun at Teotihuacan with a dramatic sky
-  - Inca → Machu Picchu dramatically lit in mist and mountain peaks
-  - Viking → a Viking longship at sea under dramatic Northern Lights
-  - Silk Road empires (Tang, Abbasid…) → a dramatic desert caravan of camels at sunset with golden dunes
+  - Aztec → the Pyramid of the Sun at Teotihuacan, clear sky
+  - Inca → Machu Picchu in mountain mist
+  - Viking → a Viking longship at sea under a Northern sky
+  - Silk Road empires (Tang, Abbasid…) → a desert caravan of camels at sunset with golden dunes
   - Mughal → the Taj Mahal at dawn reflected in still water
-  - Persian/Achaemenid → Persepolis stone columns and reliefs dramatically lit
-  - Mali → dramatic saharan gold market or ancient mud-brick mosque
+  - Persian/Achaemenid → Persepolis stone columns and carved reliefs
+  - Mali → a saharan gold market scene or ancient mud-brick mosque
   - Byzantine → gilded mosaics or the Hagia Sophia interior
 
-  TERRITORY MAP (use when the empire's sheer scale IS the most iconic thing, e.g. Mongol, British, Spanish, Portuguese, Soviet Union):
+  TERRITORY MAP (use when the empire's sheer scale is the defining characteristic, e.g. Mongol, British, Spanish, Portuguese, Soviet Union):
   - Style: aged dark parchment map with ONLY the empire territory filled in warm amber/sepia wash, surrounding regions dark. Describe coverage by continent/region — never the empire name.
 
   MODERN DEFUNCT STATES (Soviet Union, East Germany, Yugoslavia, Czechoslovakia, etc.):
-  - Soviet Union → dramatic Cold War era imagery: a cosmonaut floating in space, a Soviet rocket launch, or Red Square at night under a dramatic sky
-  - East Germany → a dramatic shot of the Berlin Wall with watchtowers and searchlights at night
-  - Yugoslavia → dramatic Adriatic coastline or mountain landscape spanning the Balkans
-  - Austro-Hungarian Empire → the grand imperial architecture of Vienna or Budapest at golden hour
+  - Soviet Union → a cosmonaut floating in space against a dark starfield, or a Soviet rocket on a launch pad
+  - East Germany → the Berlin Wall with watchtowers and searchlights at night
+  - Yugoslavia → the Adriatic coastline or mountain landscape spanning the Balkans
+  - Austro-Hungarian Empire → the imperial architecture of Vienna or Budapest at golden hour
   - Use iconic visual symbols of the era rather than maps where possible
 
-- Every image_prompt must describe the scene vividly (composition, lighting, mood, colours) without ever naming the empire`
+- Every image_prompt must describe the scene clearly (subject, composition, lighting) without ever naming the empire`
     : `ROUND slides (question slides — do NOT reveal the answer):
-- Show a compelling visual that relates to the topic or region WITHOUT giving away the specific answer
-- Geography/map rounds: show the geographical REGION or continent — e.g. for a question about a European country, show a dramatic aerial/satellite view of Europe. Do NOT show the specific country outlined or highlighted.
-- Capital rounds: show a city skyline or urban landscape from the general region — NOT the specific capital city
-- Clue rounds: show a visual related to one of the clues (e.g. continent, climate, landscape) that hints but does not give away the country
-- Order rounds: show a dramatic historical collage or timeline aesthetic — no specific dates or names visible`;
+- Show a clean, minimal visual related to the topic or region WITHOUT giving away the specific answer
+- Geography/map rounds: show the REGION or continent — a clean aerial or satellite view. Do NOT show the specific country outlined or highlighted.
+- Capital rounds: show a city skyline or landmark from the general region — NOT the specific capital city
+- Clue rounds: show a visual hinting at the continent, climate, or landscape — simple and understated
+- Order rounds: a simple historical scene — muted, archival aesthetic, no specific dates or names visible`;
 
   const exclusionBlock = usedSubjects.length > 0
     ? `\nALREADY USED IN PREVIOUS GAMES — DO NOT REPEAT ANY OF THESE:\n${usedSubjects.join(', ')}\nEvery answer, country, flag, empire, capital, and event in this game must be completely different from the above.\n`
@@ -490,13 +492,12 @@ FULL JSON STRUCTURE (12 slides total):
 }
 
 IMAGE PROMPT RULES (every slide):
-- Style: clean, realistic photography or sharp documentary-style illustration — NOT cinematic fantasy artwork, NOT AI movie posters, NOT painted concept art
-- Grounded real-world imagery: actual geography, real landmarks, authentic historical scenes — not dramatised or over-stylised
-- Lighting: natural, realistic, high contrast — avoid excessive glow, lens flares, bloom, oversaturation, or fantasy atmosphere
-- The background should SUPPORT the subject of the slide, not overpower it — clean and purposeful, never a visual spectacle
-- Absolutely NO text, labels, country names, flag names, or writing visible anywhere in the image
-- Vertical 9:16 portrait format, composition centred for mobile viewing
-- Think: quality geography or history documentary still frame, not a blockbuster film poster
+- Style: minimal, clean, realistic photography — satellite imagery, archival documentary photography, aerial views, restrained historical illustration with muted tones. NOT AI concept art, NOT cinematic fantasy, NOT movie poster lighting.
+- Mood: dark, subdued, understated. Muted or desaturated colors. Soft natural or diffused lighting. NO excessive contrast, NO glow effects, NO fantasy atmosphere, NO painterly drama.
+- Purpose: the image is a BACKGROUND — it should recede behind the text, not compete. Darker edges, uncluttered subject.
+- Absolutely NO text, labels, country names, or any writing visible anywhere in the image
+- Vertical 9:16 portrait format, subject centred for mobile
+- Think: National Geographic photograph, clean satellite view, restrained archival illustration — NOT a blockbuster film poster
 
 CRITICAL — IMAGE MUST BE RELEVANT TO THE SLIDE CONTENT:
 Each image_prompt must be written specifically for what that slide is about. Generic prompts are not acceptable.
@@ -504,16 +505,18 @@ Each image_prompt must be written specifically for what that slide is about. Gen
 ${roundImageRule}
 
 REVEAL slides (answer slides — now you CAN show the subject directly):
-- Geography reveals: show a vivid satellite or aerial view of the specific country/region
-- Flag reveals: show the country's most iconic landmark, landscape, or cultural scene
-- Capital reveals: show the actual capital city's skyline or iconic monument
-- Empire reveals: show the empire's most iconic architecture or territory at its peak
-- Clue reveals: show the mystery country's most recognisable feature
-- Order reveals: show a dramatic historical scene related to the events shown
+- Geography reveals: clean satellite or aerial view of the specific country/region — minimal, clear
+- Flag reveals: the country's most recognisable landmark or landscape — simple and iconic, not over-composed
+- Capital reveals: the capital city's most famous landmark or skyline — direct, clean
+- Empire reveals: the empire's most iconic architecture or a clean territory map — understated
+- Clue reveals: the mystery country's most recognisable natural or built feature — clear and unambiguous
+- Order reveals: a simple, clean historical scene — muted, archival aesthetic, relevant to the events shown
+- Person reveals: the era the figure lived in — a period scene, NOT a portrait of the person
+- Fight/Fame reveals: a clean scene relevant to the winner — restrained, not triumphalist
 
 TITLE and SCORE slides:
-- Title: bold, dramatic visual matching the game's theme — a striking globe, atlas, or thematic scene
-- Score: triumphant, dramatic wide shot — world map, globe, or thematic finale image
+- Title: clean, dark background — a minimal globe, abstract world map, dark atlas texture, or subtle thematic image. Keep it simple and dark so the title text dominates completely.
+- Score: simple wide dark background — a world map, globe, or clean thematic scene. Atmospheric, not dramatic.
 
 CRITICAL: Return ONLY valid JSON. All 12 slides required. slide_index must be 0 through 11.`;
 }

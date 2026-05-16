@@ -533,8 +533,8 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     // Answer — massive and first
     ctx.font = '900 120px Inter, system-ui, sans-serif';
     ctx.fillStyle = '#00f2ea';
-    ctx.shadowColor = 'rgba(0,242,234,0.5)';
-    ctx.shadowBlur = 80;
+    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+    ctx.shadowBlur = 24;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 132) + 40;
     ctx.shadowBlur = 0;

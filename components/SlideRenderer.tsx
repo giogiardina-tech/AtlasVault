@@ -16,6 +16,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const isEmpireRound = format_type === 'guess-the-empire' && slide_type === 'round';
   const isFightRound = format_type === 'civilization-fight' && slide_type === 'round';
   const isFameBattleRound = format_type === 'fame-battle' && slide_type === 'round';
+  const isFameBattleReveal = format_type === 'fame-battle' && slide_type === 'reveal';
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
@@ -270,7 +271,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         <div style={bgStyle} />
         <div style={overlayStyle} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '220px 80px 520px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 28, padding: '60px 72px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ background: 'rgba(0,0,0,0.6)', borderRadius: 28, padding: '60px 72px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 48 }}>
               <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
                 ROUND {content.round_number}
@@ -352,6 +353,8 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
       const aWins = content.winner === content.side_a;
       const aPercent = content.side_a_percent ?? 50;
       const bPercent = content.side_b_percent ?? 50;
+      const aBarColor = isFameBattleReveal ? (aWins ? '#a050ff' : 'rgba(160,80,255,0.4)') : (aWins ? '#ff2d55' : 'rgba(255,45,85,0.4)');
+      const bBarColor = isFameBattleReveal ? (!aWins ? '#dca000' : 'rgba(220,160,0,0.4)') : (!aWins ? '#0078ff' : 'rgba(0,120,255,0.4)');
       return (
         <div style={containerStyle}>
           <div style={bgStyle} />
@@ -359,11 +362,11 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
             {header}
             <div style={{ textAlign: 'center', marginBottom: 40 }}>
-              <span style={{ color: '#ffd700', fontSize: 52, fontWeight: 900, textShadow: '0 0 30px rgba(255,215,0,0.5)' }}>
+              <span style={{ color: '#ffd700', fontSize: 52, fontWeight: 900 }}>
                 ★ {content.winner} WINS
               </span>
             </div>
-            <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 28, padding: '52px 60px', display: 'flex', flexDirection: 'column', gap: 44, marginBottom: 40 }}>
+            <div style={{ background: 'rgba(0,0,0,0.6)', borderRadius: 28, padding: '52px 60px', display: 'flex', flexDirection: 'column', gap: 44, marginBottom: 40 }}>
               {/* Side A */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
@@ -371,7 +374,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
                   <span style={{ color: aWins ? '#ffd700' : 'rgba(255,255,255,0.6)', fontSize: 52, fontWeight: 800 }}>{aPercent}%</span>
                 </div>
                 <div style={{ height: 22, background: 'rgba(255,255,255,0.1)', borderRadius: 11, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${aPercent}%`, background: aWins ? '#ff2d55' : 'rgba(255,45,85,0.4)', borderRadius: 11, transition: 'width 0.6s ease' }} />
+                  <div style={{ height: '100%', width: `${aPercent}%`, background: aBarColor, borderRadius: 11 }} />
                 </div>
               </div>
               {/* Side B */}
@@ -381,7 +384,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
                   <span style={{ color: !aWins ? '#ffd700' : 'rgba(255,255,255,0.6)', fontSize: 52, fontWeight: 800 }}>{bPercent}%</span>
                 </div>
                 <div style={{ height: 22, background: 'rgba(255,255,255,0.1)', borderRadius: 11, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${bPercent}%`, background: !aWins ? '#0078ff' : 'rgba(0,120,255,0.4)', borderRadius: 11 }} />
+                  <div style={{ height: '100%', width: `${bPercent}%`, background: bBarColor, borderRadius: 11 }} />
                 </div>
               </div>
             </div>
@@ -405,7 +408,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
             {header}
             {questionLine}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '48px 48px' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', borderRadius: 24, padding: '48px 48px' }}>
               {content.answers.map((ans, i) => {
                 const barWidth = Math.max(4, (ans.points / maxPoints) * 100);
                 return (
@@ -442,7 +445,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
             {header}
             <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 38, marginBottom: 32, fontWeight: 600 }}>Correct chronological order:</p>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '48px 48px' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, background: 'rgba(0,0,0,0.55)', borderRadius: 24, padding: '48px 48px' }}>
               {content.correct_order.map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
                   <span style={{ color: '#00f2ea', fontSize: 44, fontWeight: 900, minWidth: 48 }}>{i + 1}</span>
@@ -472,9 +475,9 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
           {header}
           {questionLine}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 28, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 24, padding: '56px 60px' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 28, background: 'rgba(0,0,0,0.6)', borderRadius: 24, padding: '56px 60px' }}>
             {/* Answer first and massive */}
-            <div style={{ color: '#00f2ea', fontSize: 130, fontWeight: 900, lineHeight: 1.0, textShadow: '0 0 80px rgba(0,242,234,0.5)', letterSpacing: -2 }}>
+            <div style={{ color: '#00f2ea', fontSize: 130, fontWeight: 900, lineHeight: 1.0, textShadow: '0 2px 24px rgba(0,0,0,0.9)', letterSpacing: -2 }}>
               {content.correct_answer}
             </div>
             {/* Tier badge below answer */}
@@ -506,7 +509,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
         <div style={bgStyle} />
         <div style={overlayStyle} />
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 80px', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)', borderRadius: 32, padding: '80px 72px', width: '100%' }}>
+          <div style={{ background: 'rgba(0,0,0,0.6)', borderRadius: 32, padding: '80px 72px', width: '100%' }}>
             <h1 style={{ color: 'white', fontSize: 100, fontWeight: 900, lineHeight: 1, marginBottom: 56 }}>
               {content.title}
             </h1>
