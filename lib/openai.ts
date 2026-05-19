@@ -354,6 +354,96 @@ FORMAT: GUESS THE HISTORICAL FIGURE
 - Reveal: full name + fun_fact (max 18 words — one surprising verified fact)
 - Cover a wide range of history: ancient rulers, scientists, artists, explorers, revolutionaries — not just Western figures`,
     },
+
+    'scrambled-capitals': {
+      revealType: 'difficulty',
+      instructions: `
+FORMAT: SCRAMBLED CAPITALS — UNSCRAMBLE THE CAPITAL CITY
+- 5 rounds, each presenting a scrambled capital city name the player must decode
+- QUESTION for every round: "What capital city is this?"
+
+SCRAMBLE RULES — quality scrambles are the entire point of this format:
+- The scrambled string must contain EXACTLY the same letters as the answer, all rearranged, ALL CAPS
+- Verify letter count before writing: BERLIN has 6 letters → scramble must have exactly 6 letters
+- AVOID leaving the first letter in place ("BERLIN" → "BELRIN" is too obvious)
+- AVOID leaving recognisable substrings intact ("PARIS" → "PRAIS" is bad — "PAR" is still visible)
+- AVOID impossible consonant clusters that are unreadable ("BRNLE" looks broken, not fun)
+- AIM FOR scrambles that look like unfamiliar but vaguely pronounceable nonsense: "NOLNOD", "NILREB", "SRIPA", "YODSET"
+- Later rounds should have more aggressive scrambling, especially of the word's start
+
+ROUND slide content:
+{
+  "round_number": 1,
+  "question": "What capital city is this?",
+  "scrambled": "NOLNOD",
+  "difficulty": "easy"
+}
+
+REVEAL slide content:
+{
+  "round_number": 1,
+  "question": "What capital city is this?",
+  "scoring_type": "difficulty",
+  "difficulty_tier": "easy",
+  "correct_answer": "London",
+  "scrambled": "NOLNOD",
+  "fun_fact": "London has been England's capital for over a thousand years."
+}
+
+DIFFICULTY PROGRESSION:
+  * Round 1: World-famous capital (Paris, Tokyo, London, Rome) — short name — difficulty_tier: "easy"
+  * Round 2: Well-known capital — difficulty_tier: "easy"
+  * Round 3: Moderately known capital, medium-length name — difficulty_tier: "medium"
+  * Round 4: Lesser-known capital, longer name, more deceptive scramble — difficulty_tier: "hard"
+  * Round 5: Obscure capital (Astana, Dodoma, Naypyidaw, Malabo) — maximally tricky — difficulty_tier: "impossible"
+
+fun_fact: verified fact, max 18 words, about the capital city or its country`,
+    },
+
+    'scrambled-countries': {
+      revealType: 'difficulty',
+      instructions: `
+FORMAT: SCRAMBLED COUNTRIES — UNSCRAMBLE THE COUNTRY NAME
+- 5 rounds, each presenting a scrambled country name the player must decode
+- QUESTION for every round: "What country is this?"
+
+SCRAMBLE RULES — quality scrambles are the entire point of this format:
+- The scrambled string must contain EXACTLY the same letters as the answer, all rearranged, ALL CAPS
+- Verify letter count before writing: FRANCE has 6 letters → scramble must have exactly 6 letters
+- AVOID leaving the first letter in place ("FRANCE" → "FRNACE" is too obvious)
+- AVOID leaving recognisable substrings intact ("SPAIN" → "SANIP" is bad — "SPA" is still visible)
+- AVOID impossible consonant clusters that are unreadable and unfun
+- AIM FOR scrambles that look like unfamiliar but vaguely pronounceable nonsense: "ECNRAF", "NIPSA", "TINYILA", "ITNENAGRA"
+- For longer names (7+ letters), scramble the start of the word most aggressively
+
+ROUND slide content:
+{
+  "round_number": 1,
+  "question": "What country is this?",
+  "scrambled": "ECNRAF",
+  "difficulty": "easy"
+}
+
+REVEAL slide content:
+{
+  "round_number": 1,
+  "question": "What country is this?",
+  "scoring_type": "difficulty",
+  "difficulty_tier": "easy",
+  "correct_answer": "France",
+  "scrambled": "ECNRAF",
+  "fun_fact": "France is the world's most visited country with over 90 million tourists yearly."
+}
+
+DIFFICULTY PROGRESSION:
+  * Round 1: World-famous country (France, Japan, Brazil, India) — short, clean scramble — difficulty_tier: "easy"
+  * Round 2: Well-known country — difficulty_tier: "easy"
+  * Round 3: Moderately known country, medium-length name — difficulty_tier: "medium"
+  * Round 4: Less common country, longer name, deceptive scramble — difficulty_tier: "hard"
+  * Round 5: Obscure country (Djibouti, Eswatini, Kiribati, Vanuatu) — maximally difficult scramble — difficulty_tier: "impossible"
+
+fun_fact: verified fact, max 18 words, about the country`,
+    },
   };
 
   const scoreSummaryGuide: Record<string, string> = {
@@ -369,6 +459,8 @@ FORMAT: GUESS THE HISTORICAL FIGURE
     'guess-the-person': `scoring_summary uses correct answers out of 5 AND which clue they needed. Example: "5/5 on clue 1 = history genius | 5/5 = historian | 3-4/5 = solid | 2 or below = brush up on history!"`,
     'fame-battle': `scoring_summary is based on how many picks matched the AI's result. Example: "5/5 = cultural genius | 4/5 = history buff | 3/5 = decent | 2 or below = brush up on your icons!"`,
     'civilization-fight': `scoring_summary is based on how many battles the audience predicted correctly. Example: "5/5 = military genius | 4/5 = sharp strategist | 3/5 = decent commander | 2 or below = stick to peacetime!"`,
+    'scrambled-capitals': `scoring_summary uses correct answers out of 5. Example: "5/5 = anagram genius | 4/5 = sharp mind | 3/5 = decent | 2 or below = study your capitals!"`,
+    'scrambled-countries': `scoring_summary uses correct answers out of 5. Example: "5/5 = anagram master | 4/5 = impressive | 3/5 = decent | 2 or below = keep studying your world map!"`,
   };
 
   const format = formatInstructions[format_type];
@@ -427,6 +519,13 @@ FORMAT: GUESS THE HISTORICAL FIGURE
   - Use iconic visual symbols of the era rather than maps where possible
 
 - Every image_prompt must describe the scene clearly (subject, composition, lighting) without ever naming the empire`
+    : (format_type === 'scrambled-capitals' || format_type === 'scrambled-countries')
+    ? `ROUND slides (SCRAMBLED — background must give ZERO hints about the specific answer):
+- CRITICAL: the image must contain nothing that could hint at which capital or country is scrambled
+- Use a very dark, minimal abstract background: dark satellite view of Earth from space, a near-black featureless globe, or an abstract dark geographic grid with no labels
+- The scrambled word text IS the entire visual puzzle — the background must recede completely and not compete
+- NO identifiable landmarks, flags, city skylines, coastlines, or geographic shapes
+- Style: near-black, barely-visible texture — almost entirely dark, just enough to feel alive`
     : `ROUND slides (question slides — do NOT reveal the answer):
 - Show a clean, minimal visual related to the topic or region WITHOUT giving away the specific answer
 - Geography/map rounds: show the REGION or continent — a clean aerial or satellite view. Do NOT show the specific country outlined or highlighted.

@@ -58,6 +58,12 @@ export default function GameOutline({ game, slides, scoringSystem, onSlidesChang
                 </div>
                 <p className="text-white text-sm font-medium">{round.content.question}</p>
 
+                {round.content.scrambled && (
+                  <p className="text-tk-cyan text-sm font-mono tracking-[0.3em] mt-1">
+                    {round.content.scrambled}
+                  </p>
+                )}
+
                 {round.content.clues && (
                   <div className="mt-2 space-y-1">
                     {round.content.clues.map((clue, ci) => (

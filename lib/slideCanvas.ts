@@ -423,6 +423,73 @@ function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
 }
 
+function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
+  const PAD = 60;
+  const scrambled = c.scrambled || '';
+  const len = scrambled.length;
+  const fontSize = len <= 5 ? 156 : len <= 7 ? 128 : len <= 9 ? 104 : 84;
+  const gap = len <= 5 ? 38 : len <= 7 ? 26 : len <= 9 ? 18 : 12;
+
+  // Round label + difficulty
+  ctx.font = '800 42px Inter, system-ui, sans-serif';
+  ctx.fillStyle = '#00f2ea';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  const rl = `ROUND ${c.round_number}`;
+  drawLine(ctx, rl, M + PAD, 220 + PAD, 'left');
+  if (c.difficulty) {
+    const dx = M + PAD + ctx.measureText(rl).width + 20;
+    const dt = (c.difficulty as string).toUpperCase();
+    ctx.font = '600 26px Inter, system-ui, sans-serif';
+    const dw = ctx.measureText(dt).width + 40;
+    fillRR(ctx, dx, 220 + PAD, dw, 46, 40, 'rgba(255,255,255,0.12)');
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    drawLine(ctx, dt, dx + dw / 2, 220 + PAD + 10);
+  }
+
+  // Question
+  ctx.font = '700 52px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'white';
+  drawWrapped(ctx, c.question || '', W / 2, 220 + PAD + 76, CW - PAD * 2, 62);
+
+  // Scrambled letters panel — centred vertically
+  ctx.font = `900 ${fontSize}px Inter, system-ui, sans-serif`;
+  // Measure total letter block width
+  const letters = scrambled.split('');
+  const widths = letters.map(l => ctx.measureText(l).width);
+  const totalLetterW = widths.reduce((s, w) => s + w, 0) + (letters.length - 1) * gap;
+  const panelPadX = 64, panelPadY = 52;
+  const panelW = Math.min(totalLetterW + panelPadX * 2, CW);
+  const panelH = fontSize + panelPadY * 2;
+  const panelX = (W - panelW) / 2;
+  const panelY = H / 2 - panelH / 2;
+
+  fillRR(ctx, panelX, panelY, panelW, panelH, 28, 'rgba(0,0,0,0.60)');
+  strokeRR(ctx, panelX, panelY, panelW, panelH, 28, 'rgba(0,242,234,0.18)', 1);
+
+  // Draw each letter individually for precise spacing
+  ctx.fillStyle = '#00f2ea';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,0.95)';
+  ctx.shadowBlur = 24;
+  const midY = panelY + panelH / 2;
+  let lx = W / 2 - totalLetterW / 2;
+  letters.forEach((letter, i) => {
+    ctx.textAlign = 'left';
+    ctx.fillText(letter, lx, midY);
+    lx += widths[i] + gap;
+  });
+  ctx.shadowBlur = 0;
+
+  // CTA
+  const cta = 'COMMENT YOUR ANSWER ↓';
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
+  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+}
+
 function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false) {
   const scoringType = c.scoring_type || (c.answers && c.answers.length > 1 ? 'pointless' : 'difficulty');
 
@@ -602,6 +669,17 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       y += starSz + 40;
     }
 
+    // Scramble reveal line
+    if (c.scrambled && c.correct_answer) {
+      ctx.font = '700 30px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.38)';
+      ctx.letterSpacing = '8px';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(`${c.scrambled} \u2192 ${c.correct_answer.toUpperCase()}`, W / 2, y);
+      ctx.letterSpacing = '0px';
+      y += 52;
+    }
+
     if (c.fun_fact) {
       ctx.font = 'italic 400 34px Inter, system-ui, sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.82)';
@@ -655,6 +733,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const isFightRound = formatType === 'civilization-fight' && slide.slide_type === 'round';
   const isFameBattleRound = formatType === 'fame-battle' && slide.slide_type === 'round';
   const isFameBattleReveal = formatType === 'fame-battle' && slide.slide_type === 'reveal';
+  const isScrambleRound = (formatType === 'scrambled-capitals' || formatType === 'scrambled-countries') && slide.slide_type === 'round';
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
   ctx.fillStyle = '#0a0a0a';
@@ -717,6 +796,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   else if (isFightRound)        { stdOverlay(ctx);   renderFightRound(ctx, content); }
   else if (isFameBattleRound)   { stdOverlay(ctx);   renderFameBattleRound(ctx, content); }
   else if (isFameBattleReveal)  { stdOverlay(ctx);   renderReveal(ctx, content, true); }
+  else if (isScrambleRound)     { stdOverlay(ctx);   renderScrambleRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }

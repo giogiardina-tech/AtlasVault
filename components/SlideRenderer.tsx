@@ -17,6 +17,7 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
   const isFightRound = format_type === 'civilization-fight' && slide_type === 'round';
   const isFameBattleRound = format_type === 'fame-battle' && slide_type === 'round';
   const isFameBattleReveal = format_type === 'fame-battle' && slide_type === 'reveal';
+  const isScrambleRound = (format_type === 'scrambled-capitals' || format_type === 'scrambled-countries') && slide_type === 'round';
   // Flag + empire rounds use top/bottom text layout so the image fills the middle
   const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
 
@@ -250,6 +251,51 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
               COMMENT WHO WAS MORE FAMOUS ↓
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // SCRAMBLE ROUNDS: large spaced letters as the visual centrepiece
+  if (isScrambleRound) {
+    const scrambled = content.scrambled || '';
+    const len = scrambled.length;
+    const letterFontSize = len <= 5 ? 156 : len <= 7 ? 128 : len <= 9 ? 104 : 84;
+    const letterSpacing = len <= 5 ? 38 : len <= 7 ? 26 : len <= 9 ? 18 : 12;
+    return (
+      <div style={containerStyle}>
+        <div style={bgStyle} />
+        <div style={overlayStyle} />
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '220px 80px 420px' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32 }}>
+            <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
+              ROUND {content.round_number}
+            </span>
+            {content.difficulty && (
+              <span style={{ background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', fontSize: 26, padding: '6px 18px', borderRadius: 40, textTransform: 'uppercase', letterSpacing: 2 }}>
+                {content.difficulty}
+              </span>
+            )}
+          </div>
+          {/* Question */}
+          <h2 style={{ color: 'white', fontSize: 52, fontWeight: 700, lineHeight: 1.2, marginBottom: 0, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
+            {content.question}
+          </h2>
+          {/* Scrambled letters — the hero */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(0,0,0,0.60)', border: '1px solid rgba(0,242,234,0.18)', borderRadius: 28, padding: '52px 64px', textAlign: 'center' }}>
+              <div style={{ color: '#00f2ea', fontSize: letterFontSize, fontWeight: 900, letterSpacing, lineHeight: 1, textShadow: '0 2px 24px rgba(0,0,0,0.95)' }}>
+                {scrambled}
+              </div>
+            </div>
+          </div>
+          {/* CTA */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
+              COMMENT YOUR ANSWER ↓
             </div>
           </div>
         </div>
@@ -511,6 +557,12 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
                   <span key={i} style={{ fontSize: 40, color: 'rgba(255,255,255,0.15)' }}>★</span>
                 ))}
                 <span style={{ color: tier.color, fontSize: 30, fontWeight: 800, marginLeft: 10, letterSpacing: 3 }}>{tier.label}</span>
+              </div>
+            )}
+            {/* Scramble reveal line — shows scrambled → ANSWER */}
+            {content.scrambled && content.correct_answer && (
+              <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: 30, fontWeight: 700, letterSpacing: 8 }}>
+                {content.scrambled} → {content.correct_answer.toUpperCase()}
               </div>
             )}
             {content.fun_fact && (

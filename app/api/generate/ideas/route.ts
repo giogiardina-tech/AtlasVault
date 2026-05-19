@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
     'guess-the-person': `"Three clues per person, hardest first — how quickly can you figure out who I'm describing?" / "Five historical figures, three clues each — real history fans get it on clue one."`,
     'civilization-fight': `"Five civilization matchups — pick your side before I reveal who actually wins." / "Rome vs Greece, Mongols vs Samurai — five battles, five results, how many do you get right?"`,
     'fame-battle': `"Five matchups — comment who you think was more famous before I reveal." / "Napoleon vs Cleopatra, Einstein vs Newton — five rounds, who left the bigger mark?"`,
+    'scrambled-capitals': `"Five capital cities scrambled — how many can you solve before I reveal?" / "NOLNOD is Round 1. Round 5 breaks everyone."`,
+    'scrambled-countries': `"Five countries, every letter scrambled — comment your answer before the reveal." / "Round 1 anyone can get. Round 5? Nobody."`,
   };
 
   const hookGuidance = formatHookExamples[format_type] || `"Five rounds, let's see how far you get." / "Easy start, impossible finish — how many can you get?"`;

@@ -86,6 +86,10 @@ function seedTemplates(db: DatabaseSync) {
       'Two civilizations, empires, or nations go head to head. Pick your side — then see who actually wins and why, backed by historical analysis.');
     insert.run('tmpl-012', 'Who Was More Famous?', 'People', 'fame-battle',
       'Two iconic historical figures go head to head. Who left the bigger mark on history? Comment your pick before the reveal.');
+    insert.run('tmpl-013', 'Scrambled Capitals', 'Geography', 'scrambled-capitals',
+      'Five capital cities scrambled letter by letter — easy to impossible. NOLNOD → London. Can you crack all five?');
+    insert.run('tmpl-014', 'Scrambled Countries', 'Geography', 'scrambled-countries',
+      'Five country names, every letter scrambled. ECNRAF → France. From obvious to brutally hard. How many can you get?');
     db.exec('COMMIT');
   } catch (e) {
     db.exec('ROLLBACK');

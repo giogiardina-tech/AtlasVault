@@ -12,7 +12,9 @@ export type FormatType =
   | 'country-by-clue'
   | 'guess-the-person'
   | 'civilization-fight'
-  | 'fame-battle';
+  | 'fame-battle'
+  | 'scrambled-capitals'
+  | 'scrambled-countries';
 
 export type SlideType = 'title' | 'round' | 'reveal' | 'score';
 export type GameStatus = 'draft' | 'ready';
@@ -78,6 +80,8 @@ export interface SlideContent {
   winner?: string;
   side_a_percent?: number;
   side_b_percent?: number;
+  // scramble game
+  scrambled?: string;
 }
 
 export interface Slide {
