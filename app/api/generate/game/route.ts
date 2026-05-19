@@ -94,13 +94,15 @@ export async function POST(req: NextRequest) {
   db.exec('BEGIN TRANSACTION');
   try {
     for (const slide of generated.slides) {
+      const ip = slide.image_prompt;
+      const imagePrompt = ip == null ? null : typeof ip === 'string' ? ip : JSON.stringify(ip);
       insertSlide.run(
         uuidv4(),
         gameId,
         slide.slide_index,
         slide.slide_type,
         JSON.stringify(slide.content),
-        slide.image_prompt
+        imagePrompt
       );
     }
     db.exec('COMMIT');
