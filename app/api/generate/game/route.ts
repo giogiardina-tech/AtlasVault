@@ -3,6 +3,7 @@ import { getOpenAI, buildGamePrompt } from '@/lib/openai';
 import { getDb } from '@/lib/db';
 import { GeneratedGame } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
+import { scrambleAnswer, validateScramble } from '@/lib/scramble';
 
 export const maxDuration = 60;
 
@@ -54,6 +55,27 @@ export async function POST(req: NextRequest) {
   });
 
   const generated: GeneratedGame = JSON.parse(response.choices[0].message.content!);
+
+  // For scramble formats: generate scramble deterministically from correct_answer.
+  // Build a per-round scramble map from reveal slides, then apply to both round + reveal.
+  const isScrambleFormat = format_type === 'scrambled-capitals' || format_type === 'scrambled-countries';
+  if (isScrambleFormat) {
+    const scrambleMap = new Map<number, string>();
+    for (const slide of generated.slides) {
+      if (slide.slide_type === 'reveal' && slide.content.correct_answer) {
+        let s = scrambleAnswer(slide.content.correct_answer);
+        // Re-scramble if validation fails (should never happen, but defensive)
+        if (!validateScramble(slide.content.correct_answer, s)) {
+          s = scrambleAnswer(slide.content.correct_answer);
+        }
+        if (slide.content.round_number != null) scrambleMap.set(slide.content.round_number, s);
+      }
+    }
+    for (const slide of generated.slides) {
+      const s = slide.content.round_number != null ? scrambleMap.get(slide.content.round_number) : undefined;
+      if (s) slide.content.scrambled = s;
+    }
+  }
 
   const gameId = uuidv4();
 

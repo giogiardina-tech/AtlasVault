@@ -258,20 +258,101 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
     );
   }
 
-  // SCRAMBLE ROUNDS: large spaced letters as the visual centrepiece
+  // SCRAMBLE ROUNDS: cinematic globe atmosphere + large spaced letters
   if (isScrambleRound) {
     const scrambled = content.scrambled || '';
     const len = scrambled.length;
-    const letterFontSize = len <= 5 ? 156 : len <= 7 ? 128 : len <= 9 ? 104 : 84;
-    const letterSpacing = len <= 5 ? 38 : len <= 7 ? 26 : len <= 9 ? 18 : 12;
+    // Scaled up 20–25% for visual dominance
+    const letterFontSize = len <= 5 ? 190 : len <= 7 ? 158 : len <= 9 ? 128 : 106;
+    const letterSpacing  = len <= 5 ?  56 : len <= 7 ?  42 : len <= 9 ?  30 :  22;
+
+    // Per-round background variety — light source + tint + glow
+    const rn = ((content.round_number as number) - 1) % 5;
+    const baseGrads = [
+      'linear-gradient(165deg, #020d1a 0%, #030f1c 40%, #020b16 68%, #010810 100%)',
+      'linear-gradient(195deg, #04081a 0%, #06091e 40%, #030a14 68%, #020812 100%)',
+      'linear-gradient(175deg, #020d12 0%, #031510 40%, #021108 68%, #011008 100%)',
+      'linear-gradient(155deg, #070410 0%, #0a0214 40%, #080310 68%, #060114 100%)',
+      'linear-gradient(185deg, #0e0608 0%, #12040a 40%, #0e0508 68%, #0a0406 100%)',
+    ];
+    const lightSources = [
+      'radial-gradient(ellipse 130% 90% at 115% 28%, rgba(0,100,180,0.30) 0%, rgba(0,50,100,0.06) 45%, transparent 65%)',
+      'radial-gradient(ellipse 130% 90% at -15% 32%, rgba(40,80,200,0.28) 0%, rgba(20,40,100,0.06) 45%, transparent 65%)',
+      'radial-gradient(ellipse 130% 90% at 50% -5%, rgba(0,160,120,0.26) 0%, rgba(0,80,60,0.06) 45%, transparent 65%)',
+      'radial-gradient(ellipse 130% 90% at 120% 75%, rgba(100,30,180,0.26) 0%, rgba(50,15,90,0.06) 45%, transparent 65%)',
+      'radial-gradient(ellipse 130% 90% at 30% 110%, rgba(160,80,20,0.24) 0%, rgba(80,40,10,0.06) 45%, transparent 65%)',
+    ];
+    const atmGlows = [
+      'radial-gradient(ellipse 65% 45% at 50% 40%, rgba(0,130,200,0.18) 0%, transparent 70%)',
+      'radial-gradient(ellipse 65% 45% at 40% 38%, rgba(40,80,200,0.16) 0%, transparent 70%)',
+      'radial-gradient(ellipse 65% 45% at 50% 35%, rgba(0,160,120,0.16) 0%, transparent 70%)',
+      'radial-gradient(ellipse 65% 45% at 60% 42%, rgba(100,30,180,0.15) 0%, transparent 70%)',
+      'radial-gradient(ellipse 65% 45% at 45% 45%, rgba(160,80,20,0.14) 0%, transparent 70%)',
+    ];
+    const gridRotations = [0, 12, -8, 22, -16];
+
     return (
       <div style={containerStyle}>
-        <div style={bgStyle} />
-        <div style={overlayStyle} />
-        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '220px 80px 420px' }}>
+        <style>{`
+          @keyframes avScrambleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-14px); }
+          }
+          @keyframes avShimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.70; }
+          }
+          @keyframes avAtmoPulse {
+            0%, 100% { opacity: 0.55; }
+            50% { opacity: 1; }
+          }
+          @keyframes avGlobeShift {
+            0%   { transform: translate(0px, 0px) rotate(${gridRotations[rn]}deg); }
+            33%  { transform: translate(8px, -6px) rotate(${gridRotations[rn]}deg); }
+            66%  { transform: translate(-6px, 5px) rotate(${gridRotations[rn]}deg); }
+            100% { transform: translate(0px, 0px) rotate(${gridRotations[rn]}deg); }
+          }
+        `}</style>
+
+        {/* AI satellite image — dimmed to subtle texture */}
+        <div style={{ ...bgStyle, filter: 'brightness(0.12) saturate(0.4)' }} />
+        {/* Per-round base gradient */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: baseGrads[rn] }} />
+        {/* Per-round directional light source */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: lightSources[rn] }} />
+
+        {/* Globe arc grid — rotated + drifting per round */}
+        <svg
+          viewBox="0 0 1080 1920"
+          style={{ position: 'absolute', inset: 0, zIndex: 3, width: '100%', height: '100%', transformOrigin: 'center center', animation: 'avGlobeShift 22s ease-in-out infinite' }}
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <circle cx="540" cy="960" r="500" fill="none" stroke="rgba(0,160,255,0.07)" strokeWidth="1.5" />
+          <ellipse cx="540" cy="618"  rx="390" ry="27" fill="none" stroke="rgba(0,160,255,0.065)" strokeWidth="1" />
+          <ellipse cx="540" cy="840"  rx="490" ry="38" fill="none" stroke="rgba(0,160,255,0.050)" strokeWidth="1" />
+          <ellipse cx="540" cy="960"  rx="500" ry="44" fill="none" stroke="rgba(0,160,255,0.055)" strokeWidth="1" />
+          <ellipse cx="540" cy="1080" rx="490" ry="38" fill="none" stroke="rgba(0,160,255,0.048)" strokeWidth="1" />
+          <ellipse cx="540" cy="1302" rx="390" ry="27" fill="none" stroke="rgba(0,160,255,0.038)" strokeWidth="1" />
+          <ellipse cx="540" cy="960" rx="28"  ry="500" fill="none" stroke="rgba(0,160,255,0.055)" strokeWidth="1" />
+          <ellipse cx="540" cy="960" rx="200" ry="500" fill="none" stroke="rgba(0,160,255,0.044)" strokeWidth="1" />
+          <ellipse cx="540" cy="960" rx="380" ry="500" fill="none" stroke="rgba(0,160,255,0.038)" strokeWidth="1" />
+          <ellipse cx="540" cy="960" rx="500" ry="500" fill="none" stroke="rgba(0,160,255,0.030)" strokeWidth="1" />
+        </svg>
+
+        {/* Per-round atmospheric glow */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 4, background: atmGlows[rn], animation: 'avAtmoPulse 8s ease-in-out infinite' }} />
+        {/* Horizon depth */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 5, background: 'radial-gradient(ellipse 100% 40% at 50% 103%, rgba(0,60,100,0.55) 0%, transparent 55%)' }} />
+        {/* Cinematic vignette */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 6, background: 'radial-gradient(ellipse 88% 68% at 50% 48%, transparent 0%, rgba(0,0,0,0.76) 100%)' }} />
+        {/* Top/bottom safe-zone darken */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 7, background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 14%, transparent 78%, rgba(0,0,0,0.75) 100%)' }} />
+
+        {/* Content — tighter layout, card pushed high */}
+        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '180px 80px 420px' }}>
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32 }}>
-            <span style={{ color: '#00f2ea', fontSize: 42, fontWeight: 800, letterSpacing: 4 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
+            <span style={{ color: '#00f2ea', fontSize: 40, fontWeight: 800, letterSpacing: 4 }}>
               ROUND {content.round_number}
             </span>
             {content.difficulty && (
@@ -280,21 +361,46 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
               </span>
             )}
           </div>
-          {/* Question */}
-          <h2 style={{ color: 'white', fontSize: 52, fontWeight: 700, lineHeight: 1.2, marginBottom: 0, textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
+          {/* Question — enlarged */}
+          <h2 style={{ color: 'white', fontSize: 64, fontWeight: 700, lineHeight: 1.1, marginBottom: 0, textShadow: '0 2px 20px rgba(0,0,0,0.95)' }}>
             {content.question}
           </h2>
-          {/* Scrambled letters — the hero */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ background: 'rgba(0,0,0,0.60)', border: '1px solid rgba(0,242,234,0.18)', borderRadius: 28, padding: '52px 64px', textAlign: 'center' }}>
-              <div style={{ color: '#00f2ea', fontSize: letterFontSize, fontWeight: 900, letterSpacing, lineHeight: 1, textShadow: '0 2px 24px rgba(0,0,0,0.95)' }}>
+          {/* Scramble hero — flex pushes it above true centre */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingBottom: 140 }}>
+            <div style={{
+              background: 'rgba(1,8,20,0.80)',
+              border: '1px solid rgba(0,160,255,0.30)',
+              borderRadius: 28,
+              padding: '44px 68px',
+              textAlign: 'center',
+              boxShadow: '0 0 90px rgba(0,100,200,0.20), 0 0 35px rgba(0,242,234,0.08), 0 32px 100px rgba(0,0,0,0.95)',
+              animation: 'avScrambleFloat 4s ease-in-out infinite',
+            }}>
+              <div style={{
+                color: '#00f2ea',
+                fontSize: letterFontSize,
+                fontWeight: 900,
+                letterSpacing,
+                lineHeight: 1,
+                textShadow: '0 0 50px rgba(0,242,234,0.40), 0 2px 24px rgba(0,0,0,0.95)',
+                animation: 'avShimmer 3s ease-in-out infinite',
+              }}>
                 {scrambled}
               </div>
             </div>
           </div>
           {/* CTA */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ background: 'rgba(255,45,85,0.85)', borderRadius: 60, padding: '20px 64px', color: 'white', fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #ff2d55 0%, #ff0040 100%)',
+              borderRadius: 60,
+              padding: '22px 72px',
+              color: 'white',
+              fontSize: 34,
+              fontWeight: 700,
+              letterSpacing: 2,
+              boxShadow: '0 8px 40px rgba(255,45,85,0.5)',
+            }}>
               COMMENT YOUR ANSWER ↓
             </div>
           </div>
@@ -539,12 +645,25 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
       <div style={containerStyle}>
         <div style={bgStyle} />
         <div style={overlayStyle} />
+        <style>{`
+          @keyframes avRevealPop {
+            0% { transform: scale(0.91); opacity: 0.6; }
+            65% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          @keyframes avRevealSweep {
+            0% { left: -100%; }
+            100% { left: 260%; }
+          }
+        `}</style>
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', padding: '100px 80px' }}>
           {header}
           {questionLine}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 28, background: 'rgba(0,0,0,0.6)', borderRadius: 24, padding: '56px 60px' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 28, background: 'rgba(0,0,0,0.75)', borderRadius: 24, padding: '56px 60px', position: 'relative', overflow: 'hidden' }}>
+            {/* One-shot highlight sweep on reveal */}
+            <div style={{ position: 'absolute', top: 0, bottom: 0, width: '55%', background: 'linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%)', animation: 'avRevealSweep 1.1s ease-in-out 0.15s 1 forwards', pointerEvents: 'none', zIndex: 0 }} />
             {/* Answer first and massive */}
-            <div style={{ color: '#00f2ea', fontSize: 130, fontWeight: 900, lineHeight: 1.0, textShadow: '0 2px 24px rgba(0,0,0,0.9)', letterSpacing: -2 }}>
+            <div style={{ color: content.scrambled ? '#ffd700' : '#00f2ea', fontSize: 148, fontWeight: 900, lineHeight: 1.0, textShadow: '0 2px 24px rgba(0,0,0,0.9)', letterSpacing: -2, animation: 'avRevealPop 0.55s ease-out forwards', position: 'relative', zIndex: 1 }}>
               {content.correct_answer}
             </div>
             {/* Tier badge below answer */}
@@ -561,9 +680,23 @@ export default function SlideRenderer({ slide, scale = 1, format_type }: Props) 
             )}
             {/* Scramble reveal line — shows scrambled → ANSWER */}
             {content.scrambled && content.correct_answer && (
-              <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: 30, fontWeight: 700, letterSpacing: 8 }}>
-                {content.scrambled} → {content.correct_answer.toUpperCase()}
-              </div>
+              <>
+                <style>{`
+                  @keyframes avGoldPulse {
+                    0%, 100% { text-shadow: 0 0 20px rgba(255,215,0,0.4); }
+                    50% { text-shadow: 0 0 50px rgba(255,215,0,0.75), 0 0 80px rgba(255,215,0,0.3); }
+                  }
+                `}</style>
+                <div style={{
+                  color: '#ffd700',
+                  fontSize: 38,
+                  fontWeight: 800,
+                  letterSpacing: 10,
+                  animation: 'avGoldPulse 2.5s ease-in-out infinite',
+                }}>
+                  {content.scrambled} → {content.correct_answer.toUpperCase()}
+                </div>
+              </>
             )}
             {content.fun_fact && (
               <p style={{ color: 'rgba(255,255,255,0.82)', fontSize: 36, lineHeight: 1.5, fontStyle: 'italic', maxWidth: 860 }}>

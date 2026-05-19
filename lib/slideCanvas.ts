@@ -424,70 +424,220 @@ function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
 }
 
 function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
-  const PAD = 60;
   const scrambled = c.scrambled || '';
-  const len = scrambled.length;
-  const fontSize = len <= 5 ? 156 : len <= 7 ? 128 : len <= 9 ? 104 : 84;
-  const gap = len <= 5 ? 38 : len <= 7 ? 26 : len <= 9 ? 18 : 12;
+  const charCount = scrambled.replace(/ /g, '').length;
+  const fontSize   = charCount <= 5 ? 176 : charCount <= 7 ? 148 : charCount <= 9 ? 118 : 96;
+  const letterGap  = charCount <= 5 ?  50 : charCount <= 7 ?  36 : charCount <= 9 ?  24 : 16;
+  const rn = (((c.round_number as number) ?? 1) - 1) % 5;
 
-  // Round label + difficulty
-  ctx.font = '800 42px Inter, system-ui, sans-serif';
+  // ── Background: Earth from space ──────────────────────────────────────────────
+
+  // 1. Deep space base
+  ctx.fillStyle = '#030c1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Earth globe — per-round position variation
+  const globeCenters: [number, number][] = [
+    [W / 2,       H * 0.37],
+    [W * 0.62,    H * 0.40],
+    [W * 0.38,    H * 0.38],
+    [W / 2,       H * 0.43],
+    [W * 0.55,    H * 0.35],
+  ];
+  const [gx, gy] = globeCenters[rn];
+  const gr = 440;
+
+  // Clip to globe body
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(gx, gy, gr, 0, Math.PI * 2);
+  ctx.clip();
+
+  // Ocean gradient — visible blue, not pure black
+  const ocean = ctx.createRadialGradient(gx - gr * 0.28, gy - gr * 0.22, 0, gx, gy, gr);
+  ocean.addColorStop(0, '#0d5080');
+  ocean.addColorStop(0.45, '#062e55');
+  ocean.addColorStop(1, '#021228');
+  ctx.fillStyle = ocean;
+  ctx.fillRect(gx - gr, gy - gr, gr * 2, gr * 2);
+
+  // Latitude rings — visible at 0.20 opacity
+  ctx.strokeStyle = 'rgba(80,180,255,0.20)';
+  ctx.lineWidth = 1.2;
+  [-0.76, -0.50, -0.25, 0, 0.25, 0.50, 0.76].forEach(factor => {
+    const dy = gr * factor;
+    const rx = Math.sqrt(Math.max(0, gr * gr - dy * dy));
+    const ry = rx * 0.12;
+    if (rx < 10) return;
+    ctx.beginPath();
+    ctx.ellipse(gx, gy + dy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // Meridians
+  ctx.strokeStyle = 'rgba(80,180,255,0.15)';
+  [0, 45, 90, 135].forEach(deg => {
+    const a = (deg * Math.PI) / 180;
+    ctx.beginPath();
+    ctx.ellipse(gx, gy, gr * 0.08, gr, a, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(gx, gy, gr * 0.55, gr, a, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // City lights — deterministic via seeded pseudo-random (no Math.random)
+  const seed = ((c.round_number as number) ?? 1);
+  const pseudo = (n: number) => Math.abs(Math.sin(n * seed * 127.1 + 311.7) * 43758.5453) % 1;
+  for (let i = 0; i < 300; i++) {
+    const angle = pseudo(i * 3) * Math.PI * 2;
+    const dist  = pseudo(i * 3 + 1) * gr * 0.92;
+    const lx    = gx + Math.cos(angle) * dist;
+    const ly    = gy + Math.sin(angle) * dist;
+    const alpha = pseudo(i * 3 + 2) * 0.55 + 0.20;
+    ctx.fillStyle = `rgba(255,230,120,${alpha.toFixed(2)})`;
+    ctx.fillRect(lx, ly, 2, 2);
+  }
+
+  ctx.restore(); // end globe clip
+
+  // Globe outline
+  ctx.strokeStyle = 'rgba(80,180,255,0.32)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(gx, gy, gr, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Atmospheric limb halo
+  const limb = ctx.createRadialGradient(gx, gy, gr * 0.86, gx, gy, gr * 1.14);
+  limb.addColorStop(0, 'transparent');
+  limb.addColorStop(0.5, 'rgba(0,120,220,0.24)');
+  limb.addColorStop(1, 'transparent');
+  ctx.fillStyle = limb;
+  ctx.fillRect(gx - gr * 1.2, gy - gr * 1.2, gr * 2.4, gr * 2.4);
+
+  // Vignette
+  const vig = ctx.createRadialGradient(W / 2, H * 0.46, 0, W / 2, H * 0.46, W * 0.92);
+  vig.addColorStop(0, 'transparent');
+  vig.addColorStop(1, 'rgba(0,0,0,0.82)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, W, H);
+
+  // Edge darkening for TikTok safe zones
+  const edges = ctx.createLinearGradient(0, 0, 0, H);
+  edges.addColorStop(0, 'rgba(0,0,0,0.68)');
+  edges.addColorStop(0.13, 'transparent');
+  edges.addColorStop(0.79, 'transparent');
+  edges.addColorStop(1, 'rgba(0,0,0,0.82)');
+  ctx.fillStyle = edges;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Content ──────────────────────────────────────────────────────────────────
+
+  // Round label
+  ctx.font = '800 40px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#00f2ea';
-  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
   const rl = `ROUND ${c.round_number}`;
-  drawLine(ctx, rl, M + PAD, 220 + PAD, 'left');
+  ctx.fillText(rl, M, 235);
   if (c.difficulty) {
-    const dx = M + PAD + ctx.measureText(rl).width + 20;
+    const dx = M + ctx.measureText(rl).width + 20;
     const dt = (c.difficulty as string).toUpperCase();
     ctx.font = '600 26px Inter, system-ui, sans-serif';
     const dw = ctx.measureText(dt).width + 40;
-    fillRR(ctx, dx, 220 + PAD, dw, 46, 40, 'rgba(255,255,255,0.12)');
+    fillRR(ctx, dx, 235, dw, 46, 40, 'rgba(255,255,255,0.12)');
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    drawLine(ctx, dt, dx + dw / 2, 220 + PAD + 10);
+    ctx.textAlign = 'center';
+    ctx.fillText(dt, dx + dw / 2, 247);
   }
 
   // Question
-  ctx.font = '700 52px Inter, system-ui, sans-serif';
+  ctx.font = '700 60px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
-  drawWrapped(ctx, c.question || '', W / 2, 220 + PAD + 76, CW - PAD * 2, 62);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  const qHeight = drawWrapped(ctx, c.question || '', W / 2, 295, CW, 72);
+  const cardY = 295 + qHeight + 44;
 
-  // Scrambled letters panel — centred vertically
+  // ── Scramble card: full-width, intentional layout ─────────────────────────────
+  const cardPadY = 44;
+  const labelRowH = 76;
+  const letterRowH = fontSize + 40;
+  const hintRowH   = 56;
+  const cardH = cardPadY + labelRowH + letterRowH + hintRowH + cardPadY;
+
+  fillRR(ctx, M, cardY, CW, cardH, 28, 'rgba(1,8,22,0.85)');
+  strokeRR(ctx, M, cardY, CW, cardH, 28, 'rgba(0,160,255,0.30)', 1.5);
+
+  // "UNSCRAMBLE ↓" label
+  ctx.font = '700 29px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(0,200,255,0.78)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.letterSpacing = '4px';
+  ctx.fillText('UNSCRAMBLE  \u2193', W / 2, cardY + cardPadY);
+  ctx.letterSpacing = '0px';
+
+  // Separator line
+  ctx.strokeStyle = 'rgba(0,160,255,0.16)';
+  ctx.lineWidth = 1;
+  const sepY = cardY + cardPadY + 48;
+  ctx.beginPath();
+  ctx.moveTo(M + 60, sepY);
+  ctx.lineTo(M + CW - 60, sepY);
+  ctx.stroke();
+
+  // Scrambled letters — word by word with precise per-character spacing
   ctx.font = `900 ${fontSize}px Inter, system-ui, sans-serif`;
-  // Measure total letter block width
-  const letters = scrambled.split('');
-  const widths = letters.map(l => ctx.measureText(l).width);
-  const totalLetterW = widths.reduce((s, w) => s + w, 0) + (letters.length - 1) * gap;
-  const panelPadX = 64, panelPadY = 52;
-  const panelW = Math.min(totalLetterW + panelPadX * 2, CW);
-  const panelH = fontSize + panelPadY * 2;
-  const panelX = (W - panelW) / 2;
-  const panelY = H / 2 - panelH / 2;
-
-  fillRR(ctx, panelX, panelY, panelW, panelH, 28, 'rgba(0,0,0,0.60)');
-  strokeRR(ctx, panelX, panelY, panelW, panelH, 28, 'rgba(0,242,234,0.18)', 1);
-
-  // Draw each letter individually for precise spacing
   ctx.fillStyle = '#00f2ea';
+  ctx.shadowColor = 'rgba(0,200,255,0.42)';
+  ctx.shadowBlur = 46;
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.shadowColor = 'rgba(0,0,0,0.95)';
-  ctx.shadowBlur = 24;
-  const midY = panelY + panelH / 2;
-  let lx = W / 2 - totalLetterW / 2;
-  letters.forEach((letter, i) => {
-    ctx.textAlign = 'left';
-    ctx.fillText(letter, lx, midY);
-    lx += widths[i] + gap;
+
+  const sWords = scrambled.split(' ');
+  const interWordGap = fontSize * 0.36;
+
+  // Measure total render width
+  let totalW = 0;
+  sWords.forEach((word, wi) => {
+    word.split('').forEach(ch => { totalW += ctx.measureText(ch).width; });
+    if (word.length > 1) totalW += (word.length - 1) * letterGap;
+    if (wi < sWords.length - 1) totalW += interWordGap;
   });
+
+  const lettersY = cardY + cardPadY + labelRowH + letterRowH / 2;
+  let curX = W / 2 - totalW / 2;
+
+  sWords.forEach((word, wi) => {
+    word.split('').forEach((ch, ci) => {
+      ctx.fillText(ch, curX, lettersY);
+      curX += ctx.measureText(ch).width;
+      if (ci < word.length - 1) curX += letterGap;
+    });
+    if (wi < sWords.length - 1) curX += interWordGap;
+  });
+
   ctx.shadowBlur = 0;
 
+  // Hint at bottom of card
+  ctx.font = '400 26px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(140,200,255,0.52)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('Every letter appears exactly once', W / 2, cardY + cardH - cardPadY);
+
   // CTA
-  const cta = 'COMMENT YOUR ANSWER ↓';
+  const cta = 'COMMENT YOUR ANSWER \u2193';
   ctx.font = '700 34px Inter, system-ui, sans-serif';
-  const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
-  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
+  ctx.textBaseline = 'middle';
+  const ctaW = ctx.measureText(cta).width + 120;
+  const ctaH = 84;
+  fillRR(ctx, W / 2 - ctaW / 2, H - 440, ctaW, ctaH, 60, '#ff2d55');
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText(cta, W / 2, H - 440 + ctaH / 2);
 }
 
 function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false) {
@@ -638,16 +788,31 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       impossible: { label: 'IMPOSSIBLE', color: '#ef4444', stars: 4 },
     };
     const tier = tiers[c.difficulty_tier || 'medium'];
-    fillRR(ctx, M, y, CW, H - y - 80, 24, 'rgba(0,0,0,0.6)');
+    fillRR(ctx, M, y, CW, H - y - 80, 24, c.scrambled ? 'rgba(0,0,0,0.82)' : 'rgba(0,0,0,0.6)');
     y += 60;
 
+    // Gold spot glow behind answer for scrambled formats
+    if (c.scrambled) {
+      const goldGlow = ctx.createRadialGradient(W / 2, y + 100, 0, W / 2, y + 100, 340);
+      goldGlow.addColorStop(0, 'rgba(255,200,0,0.18)');
+      goldGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = goldGlow;
+      ctx.fillRect(M, y, CW, 320);
+    }
+
     // Answer — massive and first
-    ctx.font = '900 120px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#00f2ea';
-    ctx.shadowColor = 'rgba(0,0,0,0.9)';
-    ctx.shadowBlur = 24;
+    ctx.font = '900 140px Inter, system-ui, sans-serif';
+    if (c.scrambled) {
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = 'rgba(255,215,0,0.6)';
+      ctx.shadowBlur = 60;
+    } else {
+      ctx.fillStyle = '#00f2ea';
+      ctx.shadowColor = 'rgba(0,0,0,0.9)';
+      ctx.shadowBlur = 24;
+    }
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 132) + 40;
+    y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 152) + 40;
     ctx.shadowBlur = 0;
 
     // Tier stars below answer
@@ -669,15 +834,20 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       y += starSz + 40;
     }
 
-    // Scramble reveal line
+    // Scramble transformation line — scrambled → ANSWER
     if (c.scrambled && c.correct_answer) {
-      ctx.font = '700 30px Inter, system-ui, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.38)';
-      ctx.letterSpacing = '8px';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(`${c.scrambled} \u2192 ${c.correct_answer.toUpperCase()}`, W / 2, y);
+      const transformLine = `${c.scrambled}  \u2192  ${c.correct_answer.toUpperCase()}`;
+      fillRR(ctx, M + 20, y, CW - 40, 80, 16, 'rgba(255,200,0,0.10)');
+      ctx.font = '700 40px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,215,0,0.88)';
+      ctx.letterSpacing = '6px';
+      ctx.shadowColor = 'rgba(255,215,0,0.50)';
+      ctx.shadowBlur = 24;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(transformLine, W / 2, y + 40);
       ctx.letterSpacing = '0px';
-      y += 52;
+      ctx.shadowBlur = 0;
+      y += 100;
     }
 
     if (c.fun_fact) {
@@ -796,7 +966,7 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   else if (isFightRound)        { stdOverlay(ctx);   renderFightRound(ctx, content); }
   else if (isFameBattleRound)   { stdOverlay(ctx);   renderFameBattleRound(ctx, content); }
   else if (isFameBattleReveal)  { stdOverlay(ctx);   renderReveal(ctx, content, true); }
-  else if (isScrambleRound)     { stdOverlay(ctx);   renderScrambleRound(ctx, content); }
+  else if (isScrambleRound)     { renderScrambleRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
   else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }
