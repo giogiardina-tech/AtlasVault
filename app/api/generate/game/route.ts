@@ -8,6 +8,7 @@ import { scrambleAnswer, validateScramble } from '@/lib/scramble';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  try {
   const { category, format_type, template_id, title, hook, difficulty = 'medium' } = await req.json();
   const openai = getOpenAI();
   const db = getDb();
@@ -45,13 +46,14 @@ export async function POST(req: NextRequest) {
   }
 
   const prompt = buildGamePrompt(category, format_type, title, hook, Array.from(new Set(usedSubjects)), difficulty);
+  console.log(`[generate/game] format=${format_type} prompt_chars=${prompt.length}`);
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
     response_format: { type: 'json_object' },
-    max_tokens: 4000,
+    max_tokens: 6000,
   });
 
   const generated: GeneratedGame = JSON.parse(response.choices[0].message.content!);
@@ -118,4 +120,9 @@ export async function POST(req: NextRequest) {
     slides,
     scoring_system: generated.scoring_system,
   });
+  } catch (err: any) {
+    const msg = err?.message ?? String(err);
+    console.error('[generate/game] Error:', msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

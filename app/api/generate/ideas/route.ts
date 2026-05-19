@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getOpenAI } from '@/lib/openai';
 
 export async function POST(req: NextRequest) {
+  try {
   const { category, format_type, template_name } = await req.json();
   const openai = getOpenAI();
 
@@ -74,4 +75,9 @@ Return ONLY this JSON (no markdown, no explanation):
 
   const parsed = JSON.parse(response.choices[0].message.content!);
   return NextResponse.json({ ideas: parsed.ideas || [] });
+  } catch (err: any) {
+    const msg = err?.message ?? String(err);
+    console.error('[generate/ideas] Error:', msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
