@@ -204,12 +204,14 @@ FORMAT: GUESS THE COUNTRY FROM THE MAP
       revealType: 'difficulty',
       instructions: `
 FORMAT: GUESS THE EMPIRE (OR DEFUNCT STATE)
-- 5 rounds featuring historical empires, ancient civilisations, OR modern countries that no longer exist:
-  * Round 1: Famous empire or defunct state everyone knows — difficulty_tier: "easy"
-  * Round 2: Well-known empire or defunct state — difficulty_tier: "easy"
-  * Round 3: Known to history enthusiasts — difficulty_tier: "medium"
-  * Round 4: Specialist knowledge — difficulty_tier: "hard"
-  * Round 5: Obscure ancient empire or lesser-known defunct state — difficulty_tier: "impossible"
+- 5 rounds featuring historical empires, ancient civilisations, OR modern countries that no longer exist
+- ALL 5 rounds use the SAME difficulty_tier — do NOT escalate. Set every round's difficulty_tier to: "${difficulty === 'easy' ? 'easy' : difficulty === 'hard' ? 'hard' : 'medium'}"
+- Subject selection for this difficulty:
+${difficulty === 'easy'
+  ? `  * Pick empires any engaged adult knows instantly — Roman, Mongol, Ottoman, Egyptian, Soviet Union, British Empire, Byzantine, Aztec, Inca, Ming Dynasty, etc.\n  * Vary the era and region across all 5 rounds`
+  : difficulty === 'hard'
+  ? `  * Pick specialist-knowledge empires and defunct states — lesser-known ancient kingdoms, regional powers, short-lived political entities, obscure colonial or post-colonial states\n  * Vary the era and region across all 5 rounds`
+  : `  * Pick moderately known empires — familiar to history enthusiasts but not obvious to casual viewers — Mughal, Macedonian, Umayyad, Mali, Austro-Hungarian, Mauryan, Safavid, Khmer, etc.\n  * Vary the era and region across all 5 rounds`}
 - SUBJECT POOL — draw from all of these, not just ancient empires:
   * Ancient/classical empires: Roman, Mongol, Ottoman, Persian, Egyptian, Greek/Macedonian, Byzantine, Mayan, Aztec, Inca, Han, Mughal, Mali, Viking…
   * Colonial empires: British, Spanish, Portuguese, French, Dutch…
@@ -221,9 +223,25 @@ FORMAT: GUESS THE EMPIRE (OR DEFUNCT STATE)
   * "Which federation of six republics dissolved in the 1990s following a series of devastating civil wars?"
   * "Which superpower controlled much of Eastern Europe, Central Asia, and Siberia until its collapse in 1991?"
   * "Which empire ringed the entire Mediterranean Sea at its peak in the 2nd century AD?"
-- CRITICAL: Every round slide content must include TWO image prompt fields:
-  * "map_prompt": a vivid description for an aged parchment territory map (describe only by geography, e.g. "Aged dark parchment historical map, territory covering Central Asia, China, Persia and reaching into Eastern Europe filled with warm amber wash, surrounding regions near-black, no text")
-  * "feature_prompt": a vivid cinematic description of the empire's most iconic landmark or cultural symbol WITHOUT naming the empire (e.g. "The Great Pyramids of Giza at dusk with the Sphinx in the foreground, warm golden light, dramatic orange and purple sky, cinematic composition")
+- CRITICAL: Every round slide content must include TWO completely separate image prompt fields — keep them distinct in both content and style:
+  * "feature_prompt": a museum-quality archival close-up of the empire's most iconic artifact, ruin, monument, inscription, coin, armor, sculpture, or cultural symbol. Style: dark background, precise museum/archive lighting, muted historical tones (deep charcoal, gold, bronze, slate), sharp detail. MUST NOT contain any map, border, territory, region, geography, or political visual. Examples by empire:
+    - Roman: "Close-up of a Roman legionary's bronze helmet and cheek guards on a dark stone surface, dramatic museum side-lighting, deep shadows, worn patina"
+    - Mongol: "Ornate Mongolian composite bow with leather quiver and bronze-tipped arrows arranged on dark velvet, museum display lighting, muted gold and brown"
+    - Ottoman: "Detailed Iznik ceramic tile pattern in cobalt blue and white, museum archive photograph, dark surround, pristine glaze"
+    - Egyptian: "Ancient Egyptian canopic jar in carved alabaster on black background, dramatic overhead museum lighting, ochre and cream tones"
+    - Aztec: "Close-up of an Aztec obsidian ceremonial blade with carved serpent handle, dark stone surface, sharp museum lighting, deep black and jade tones"
+    - Byzantine: "Gold Byzantine mosaic fragment showing a haloed figure, museum lighting, rich gold tesserae against dark background"
+    - Persian: "Carved stone relief of an Achaemenid soldier in profile, Persepolis-style, museum archive photograph, charcoal and sand tones"
+    - Viking: "Ornate Viking silver brooch with interlaced knotwork on dark linen, museum close-up, cool northern light"
+    - Inca: "Inca gold mask with geometric relief decoration on dark velvet, warm side-lighting, rich gold against near-black"
+    - Mughal: "Intricate Mughal jade dagger hilt inlaid with rubies and gold, museum display, deep green and gold tones, dark background"
+    - Qin/Han/Chinese dynasties: "Terracotta warrior head fragment, close-up, dramatic shadow, museum photograph, ochre and grey clay tones"
+    - Mali/West African empires: "Ancient gold Ashanti weight in the form of a bird, dark background, warm museum lighting, burnished gold"
+    - Soviet Union: "Vintage Soviet cosmonaut helmet visor on dark background, chrome reflection, archival photograph quality"
+    - East Germany: "Rusted East German Trabant car door handle detail, peeling paint, archival close-up, muted grey and rust tones"
+  * "map_prompt": a premium dark historical atlas map. Style: deep navy or near-black background, empire territory shown as a subtle translucent gold or bronze wash, clean cartographic boundary lines, minimal aged-paper texture (subtle, not cracked or orange). Describe the territory by geography only — no empire name. NO orange parchment, NO bright amber, NO fantasy map look, NO cracked textures, NO messy borders. Examples:
+    - "Dark navy museum-quality historical atlas, vast territory spanning Central Asia through China and Persia filled with translucent gold wash, surrounding regions near-black charcoal, fine hairline cartographic borders, no text"
+    - "Premium dark atlas map, territory covering most of Western Europe and the British Isles shown in a subtle bronze highlight against deep charcoal, clean cartographic style, no labels"
 - The top-level image_prompt field should be set to the feature_prompt value
 - Reveal: empire name + peak period dates as the fun_fact (e.g. "At its peak in 117 AD, the Roman Empire covered 5 million km²")`,
     },
@@ -469,36 +487,38 @@ fun_fact: verified fact, max 18 words, about the country`,
 - The flag image is fetched automatically from a CDN using country_code — do NOT write a real image_prompt
 - Set image_prompt to a short description only, e.g. "flag of Canada" or "flag of Japan" — it will not be used for generation`
     : format_type === 'guess-the-empire'
-    ? `ROUND slides (GUESS THE EMPIRE — clean image hinting at the empire, NO text or labels anywhere):
-- CRITICAL: absolutely NO text, NO empire names, NO country names, NO city names, NO labels, NO captions anywhere in the image
-- STYLE: clean documentary photograph or restrained historical illustration — natural light, muted realistic tones. NOT cinematic concept art, NOT fantasy illustration.
-- For each empire choose the MOST iconic and recognisable option:
+    ? `ROUND slides (GUESS THE EMPIRE — two separate image prompts per round, NO text or labels in either):
+- CRITICAL: absolutely NO text, NO empire names, NO country names, NO city names, NO labels anywhere in either image
+- The round slide content JSON will contain BOTH "feature_prompt" and "map_prompt" fields — write both precisely
 
-  ICONIC IMAGERY (preferred when an empire has a famous landmark or cultural symbol):
-  - Egyptian → the Great Pyramids of Giza at dusk with the Sphinx, warm golden sand, clear sky
-  - Roman → the Colosseum at dusk or Roman aqueducts across a landscape
-  - Greek/Hellenistic → the Parthenon on the Acropolis at golden hour, marble columns
-  - Ottoman → the Blue Mosque or Hagia Sophia silhouette at sunset over the Bosphorus
-  - Aztec → the Pyramid of the Sun at Teotihuacan, clear sky
-  - Inca → Machu Picchu in mountain mist
-  - Viking → a Viking longship at sea under a Northern sky
-  - Silk Road empires (Tang, Abbasid…) → a desert caravan of camels at sunset with golden dunes
-  - Mughal → the Taj Mahal at dawn reflected in still water
-  - Persian/Achaemenid → Persepolis stone columns and carved reliefs
-  - Mali → a saharan gold market scene or ancient mud-brick mosque
-  - Byzantine → gilded mosaics or the Hagia Sophia interior
+FEATURE PROMPT STYLE (for iconic artifact/monument/symbol images):
+- Dark background with museum-quality archive lighting — deep charcoal, black, or dark slate surroundings
+- Subject: close-up of a specific, recognisable historical artifact, ruin, carved stone, coin, weapon, ceramic, statue, mosaic, or cultural object associated with that empire
+- Tone: muted, precise, archival — NOT bright, NOT cinematic concept art, NOT fantasy illustration
+- MUST NOT depict any map, territory outline, border, region, political geography, or cartographic element whatsoever
+- Examples:
+  * Roman: bronze eagle legionary standard, a Roman gladius sword on dark stone, Colosseum arches at dusk
+  * Egyptian: carved limestone hieroglyph slab, alabaster canopic jar, pharaoh death mask detail
+  * Mongol: composite war bow with arrow, bronze stirrups on dark velvet, ornate leather saddle
+  * Ottoman: Iznik tile panel in cobalt and white, a curved yatağan sword, sultan's tugra seal
+  * Viking: runic stone carving, silver armring on dark linen, iron sword hilt with twisted grip
+  * Aztec: obsidian blade, carved sun stone fragment, jade mosaic mask
+  * Byzantine: gold mosaic haloed portrait, jewelled reliquary close-up
+  * Soviet: vintage cosmonaut helmet visor, Sputnik satellite model on dark background
 
-  TERRITORY MAP (use when the empire's sheer scale is the defining characteristic, e.g. Mongol, British, Spanish, Portuguese, Soviet Union):
-  - Style: aged dark parchment map with ONLY the empire territory filled in warm amber/sepia wash, surrounding regions dark. Describe coverage by continent/region — never the empire name.
+MAP PROMPT STYLE (for territory/atlas images):
+- Deep navy or near-black background — premium dark historical atlas aesthetic
+- Empire territory shown as a clean translucent gold, bronze, or warm teal wash — subtle, not garish
+- Fine cartographic hairline borders — clean and precise, not messy blobs
+- Minimal aged-paper texture if used — barely visible, never orange, never cracked
+- Surrounding regions in dark charcoal or near-black
+- NO orange parchment, NO bright amber, NO cracked fantasy-map textures, NO muddy borders
+- Describe the geographic coverage by continent/region only — never the empire name
+- Examples:
+  * "Premium dark atlas, territory spanning the British Isles, Western Europe, South Asia, and coastal Africa filled in a translucent warm gold wash, surrounding regions near-black, clean cartographic lines, no text"
+  * "Dark navy historical atlas, vast territory from Eastern Europe across Central Asia to the Pacific coast marked in subtle bronze, surrounding regions charcoal, fine border lines, no labels"
 
-  MODERN DEFUNCT STATES (Soviet Union, East Germany, Yugoslavia, Czechoslovakia, etc.):
-  - Soviet Union → a cosmonaut floating in space against a dark starfield, or a Soviet rocket on a launch pad
-  - East Germany → the Berlin Wall with watchtowers and searchlights at night
-  - Yugoslavia → the Adriatic coastline or mountain landscape spanning the Balkans
-  - Austro-Hungarian Empire → the imperial architecture of Vienna or Budapest at golden hour
-  - Use iconic visual symbols of the era rather than maps where possible
-
-- Every image_prompt must describe the scene clearly (subject, composition, lighting) without ever naming the empire`
+- Every image_prompt must describe the scene without ever naming the empire`
     : (format_type === 'scrambled-capitals' || format_type === 'scrambled-countries')
     ? `ROUND slides (SCRAMBLED — background must give ZERO hints about the specific answer):
 - CRITICAL: the image must contain nothing that could identify the specific capital or country being scrambled
