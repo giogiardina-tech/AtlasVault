@@ -86,6 +86,51 @@ function drawLine(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
   ctx.fillText(text, x, y);
 }
 
+/**
+ * Reduce font size until text fits on a single line within maxW.
+ * Sets ctx.font to the winning font and returns the chosen size.
+ */
+function fitText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  fontFn: (sz: number) => string,
+  maxW: number,
+  maxSz: number,
+  minSz = 22
+): number {
+  let sz = maxSz;
+  while (sz > minSz) {
+    ctx.font = fontFn(sz);
+    if (ctx.measureText(text).width <= maxW) break;
+    sz -= 2;
+  }
+  return sz;
+}
+
+/**
+ * Reduce font size until wrapped text fits within maxLines lines inside maxW.
+ * Sets ctx.font to the winning font and returns size, wrapped lines, and line height.
+ */
+function fitWrapped(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  fontFn: (sz: number) => string,
+  maxW: number,
+  maxLines: number,
+  maxSz: number,
+  minSz = 22
+): { sz: number; lines: string[]; lineH: number } {
+  let sz = maxSz;
+  while (sz > minSz) {
+    ctx.font = fontFn(sz);
+    const lines = wrapLines(ctx, text, maxW);
+    if (lines.length <= maxLines) return { sz, lines, lineH: Math.round(sz * 1.2) };
+    sz -= 4;
+  }
+  ctx.font = fontFn(sz);
+  return { sz, lines: wrapLines(ctx, text, maxW), lineH: Math.round(sz * 1.2) };
+}
+
 // ─── Overlays ─────────────────────────────────────────────────────────────────
 
 const titleOverlay = (ctx: CanvasRenderingContext2D) =>
@@ -348,10 +393,14 @@ function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const aY = centerY - boxH - 60;
   fillRR(ctx, M, aY, boxW, boxH, 20, 'rgba(20,0,5,0.55)');
   strokeRR(ctx, M, aY, boxW, boxH, 20, 'rgba(255,45,85,0.55)', 3);
-  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  const { sz: _saSz, lines: _saLines, lineH: _saLH } = fitWrapped(
+    ctx, c.side_a || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
+    boxW - PAD * 2, 3, 68, 26
+  );
+  ctx.font = `900 ${_saSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 34, boxW - PAD * 2, 80);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  { const _saTH = _saLines.length * _saLH; _saLines.forEach((ln, i) => ctx.fillText(ln, W / 2, aY + (boxH - _saTH) / 2 + i * _saLH)); }
 
   // VS
   ctx.font = '900 80px Inter, system-ui, sans-serif';
@@ -363,10 +412,14 @@ function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const bY = centerY + 60;
   fillRR(ctx, M, bY, boxW, boxH, 20, 'rgba(0,5,20,0.55)');
   strokeRR(ctx, M, bY, boxW, boxH, 20, 'rgba(0,120,255,0.55)', 3);
-  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  const { sz: _sbSz, lines: _sbLines, lineH: _sbLH } = fitWrapped(
+    ctx, c.side_b || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
+    boxW - PAD * 2, 3, 68, 26
+  );
+  ctx.font = `900 ${_sbSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 34, boxW - PAD * 2, 80);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  { const _sbTH = _sbLines.length * _sbLH; _sbLines.forEach((ln, i) => ctx.fillText(ln, W / 2, bY + (boxH - _sbTH) / 2 + i * _sbLH)); }
 
   // CTA
   const cta = 'COMMENT YOUR PICK ↓';
@@ -393,10 +446,14 @@ function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const aY = centerY - boxH - 60;
   fillRR(ctx, M, aY, boxW, boxH, 20, 'rgba(30,0,60,0.55)');
   strokeRR(ctx, M, aY, boxW, boxH, 20, 'rgba(160,80,255,0.55)', 3);
-  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  const { sz: _saSz, lines: _saLines, lineH: _saLH } = fitWrapped(
+    ctx, c.side_a || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
+    boxW - PAD * 2, 3, 68, 26
+  );
+  ctx.font = `900 ${_saSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_a || '', W / 2, aY + boxH / 2 - 34, boxW - PAD * 2, 80);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  { const _saTH = _saLines.length * _saLH; _saLines.forEach((ln, i) => ctx.fillText(ln, W / 2, aY + (boxH - _saTH) / 2 + i * _saLH)); }
 
   // VS
   ctx.font = '900 80px Inter, system-ui, sans-serif';
@@ -408,10 +465,14 @@ function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const bY = centerY + 60;
   fillRR(ctx, M, bY, boxW, boxH, 20, 'rgba(40,25,0,0.55)');
   strokeRR(ctx, M, bY, boxW, boxH, 20, 'rgba(220,160,0,0.55)', 3);
-  ctx.font = '900 68px Inter, system-ui, sans-serif';
+  const { sz: _sbSz, lines: _sbLines, lineH: _sbLH } = fitWrapped(
+    ctx, c.side_b || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
+    boxW - PAD * 2, 3, 68, 26
+  );
+  ctx.font = `900 ${_sbSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  drawWrapped(ctx, c.side_b || '', W / 2, bY + boxH / 2 - 34, boxW - PAD * 2, 80);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  { const _sbTH = _sbLines.length * _sbLH; _sbLines.forEach((ln, i) => ctx.fillText(ln, W / 2, bY + (boxH - _sbTH) / 2 + i * _sbLH)); }
 
   // CTA
   const cta = 'COMMENT WHO WAS MORE FAMOUS ↓';
@@ -426,8 +487,26 @@ function renderFameBattleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
 function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const scrambled = c.scrambled || '';
   const charCount = scrambled.replace(/ /g, '').length;
-  const fontSize   = charCount <= 5 ? 176 : charCount <= 7 ? 148 : charCount <= 9 ? 118 : 96;
-  const letterGap  = charCount <= 5 ?  50 : charCount <= 7 ?  36 : charCount <= 9 ?  24 : 16;
+  let fontSize   = charCount <= 5 ? 176 : charCount <= 7 ? 148 : charCount <= 9 ? 118 : 96;
+  let letterGap  = charCount <= 5 ?  50 : charCount <= 7 ?  36 : charCount <= 9 ?  24 : 16;
+  // Pre-measure and scale down if scramble overflows the card width
+  {
+    const _sw = scrambled.split(' ');
+    ctx.font = `900 ${fontSize}px Inter, system-ui, sans-serif`;
+    const _iwg = fontSize * 0.36;
+    let _tw = 0;
+    _sw.forEach((w, wi) => {
+      w.split('').forEach(ch => { _tw += ctx.measureText(ch).width; });
+      if (w.length > 1) _tw += (w.length - 1) * letterGap;
+      if (wi < _sw.length - 1) _tw += _iwg;
+    });
+    const _avail = CW - 120;
+    if (_tw > _avail) {
+      const _scale = _avail / _tw;
+      fontSize = Math.max(52, Math.floor(fontSize * _scale));
+      letterGap = Math.max(8, Math.floor(letterGap * _scale));
+    }
+  }
   const rn = (((c.round_number as number) ?? 1) - 1) % 5;
 
   // ── Background: Earth from space ──────────────────────────────────────────────
@@ -664,11 +743,13 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     const aPercent = c.side_a_percent ?? 50;
     const bPercent = c.side_b_percent ?? 50;
 
-    // Winner announcement
-    ctx.font = '900 50px Inter, system-ui, sans-serif';
+    // Winner announcement — auto-fit so long names don't overflow
+    const _winStr = `★ ${c.winner} WINS`;
+    const _winSz = fitText(ctx, _winStr, sz => `900 ${sz}px Inter, system-ui, sans-serif`, CW - 40, 50, 24);
+    ctx.font = `900 ${_winSz}px Inter, system-ui, sans-serif`;
     ctx.fillStyle = '#ffd700';
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.fillText(`★ ${c.winner} WINS`, W / 2, y);
+    ctx.fillText(_winStr, W / 2, y);
     y += 80;
 
     // Panel
@@ -676,8 +757,10 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     fillRR(ctx, M, y, CW, panelH, 28, 'rgba(0,0,0,0.6)');
     let py = y + 48;
 
-    // Side A
-    ctx.font = `${aWins ? '900' : '600'} 44px Inter, system-ui, sans-serif`;
+    // Side A — auto-fit name so it doesn't overlap the percentage label
+    const _sideNameMaxW = CW - 96 - 150;
+    const _saRevSz = fitText(ctx, c.side_a, sz => `${aWins ? '900' : '600'} ${sz}px Inter, system-ui, sans-serif`, _sideNameMaxW, 44, 22);
+    ctx.font = `${aWins ? '900' : '600'} ${_saRevSz}px Inter, system-ui, sans-serif`;
     ctx.fillStyle = aWins ? '#ffd700' : 'rgba(255,255,255,0.75)';
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     ctx.fillText(c.side_a, M + 48, py);
@@ -690,8 +773,9 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     fillRR(ctx, M + 48, py, Math.max(18, (aPercent / 100) * (CW - 96)), 18, 9, aWins ? (isFame ? '#a050ff' : '#ff2d55') : (isFame ? 'rgba(160,80,255,0.4)' : 'rgba(255,45,85,0.4)'));
     py += 56;
 
-    // Side B
-    ctx.font = `${!aWins ? '900' : '600'} 44px Inter, system-ui, sans-serif`;
+    // Side B — auto-fit name
+    const _sbRevSz = fitText(ctx, c.side_b, sz => `${!aWins ? '900' : '600'} ${sz}px Inter, system-ui, sans-serif`, _sideNameMaxW, 44, 22);
+    ctx.font = `${!aWins ? '900' : '600'} ${_sbRevSz}px Inter, system-ui, sans-serif`;
     ctx.fillStyle = !aWins ? '#ffd700' : 'rgba(255,255,255,0.75)';
     ctx.textAlign = 'left'; ctx.textBaseline = 'top';
     ctx.fillText(c.side_b, M + 48, py);
@@ -723,10 +807,12 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
 
     c.answers.forEach(ans => {
       const barW = Math.max(4, (ans.points / maxPts) * (CW - 96));
-      ctx.font = `${ans.is_pointless ? 800 : 600} 36px Inter, system-ui, sans-serif`;
+      const _ansText = ans.text + (ans.is_pointless ? ' ★' : '');
+      const _ptlSz = fitText(ctx, _ansText, sz => `${ans.is_pointless ? 800 : 600} ${sz}px Inter, system-ui, sans-serif`, CW - 96 - 150, 36, 20);
+      ctx.font = `${ans.is_pointless ? 800 : 600} ${_ptlSz}px Inter, system-ui, sans-serif`;
       ctx.fillStyle = ans.is_pointless ? '#00f2ea' : 'white';
       ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText(ans.text + (ans.is_pointless ? ' ★' : ''), M + 48, y);
+      ctx.fillText(_ansText, M + 48, y);
       ctx.font = '700 36px Inter, system-ui, sans-serif';
       ctx.fillStyle = ans.is_pointless ? '#00f2ea' : 'rgba(255,255,255,0.7)';
       ctx.textAlign = 'right';
@@ -758,7 +844,10 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       ctx.fillStyle = '#00f2ea';
       ctx.textAlign = 'left'; ctx.textBaseline = 'top';
       ctx.fillText(String(i + 1), M + 48, y);
-      ctx.font = '700 38px Inter, system-ui, sans-serif';
+      // Event name: auto-fit so long names don't overrun the year label
+      const _evMaxW = CW - 200; // 100px left offset + 100px right margin for year
+      const _evSz = fitText(ctx, item.event, sz => `700 ${sz}px Inter, system-ui, sans-serif`, _evMaxW, 38, 20);
+      ctx.font = `700 ${_evSz}px Inter, system-ui, sans-serif`;
       ctx.fillStyle = 'white';
       ctx.fillText(item.event, M + 100, y);
       ctx.font = '800 34px Inter, system-ui, sans-serif';
@@ -800,8 +889,11 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       ctx.fillRect(M, y, CW, 320);
     }
 
-    // Answer — massive and first
-    ctx.font = '900 140px Inter, system-ui, sans-serif';
+    // Answer — auto-fit to max 2 lines so long names never overflow
+    const { sz: _ansSz, lines: _ansLines, lineH: _ansLH } = fitWrapped(
+      ctx, c.correct_answer || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
+      CW - 80, 2, 140, 52
+    );
     if (c.scrambled) {
       ctx.fillStyle = '#ffd700';
       ctx.shadowColor = 'rgba(255,215,0,0.6)';
@@ -812,7 +904,8 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       ctx.shadowBlur = 24;
     }
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    y += drawWrapped(ctx, c.correct_answer || '', W / 2, y, CW - 80, 152) + 40;
+    _ansLines.forEach((ln, i) => ctx.fillText(ln, W / 2, y + i * _ansLH));
+    y += _ansLines.length * _ansLH + 40;
     ctx.shadowBlur = 0;
 
     // Tier stars below answer
@@ -837,10 +930,11 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     // Scramble transformation line — scrambled → ANSWER
     if (c.scrambled && c.correct_answer) {
       const transformLine = `${c.scrambled}  \u2192  ${c.correct_answer.toUpperCase()}`;
+      const _trSz = fitText(ctx, transformLine, sz => `700 ${sz}px Inter, system-ui, sans-serif`, CW - 80, 40, 18);
       fillRR(ctx, M + 20, y, CW - 40, 80, 16, 'rgba(255,200,0,0.10)');
-      ctx.font = '700 40px Inter, system-ui, sans-serif';
+      ctx.font = `700 ${_trSz}px Inter, system-ui, sans-serif`;
       ctx.fillStyle = 'rgba(255,215,0,0.88)';
-      ctx.letterSpacing = '6px';
+      ctx.letterSpacing = '4px';
       ctx.shadowColor = 'rgba(255,215,0,0.50)';
       ctx.shadowBlur = 24;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
