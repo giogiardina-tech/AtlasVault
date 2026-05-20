@@ -22,23 +22,44 @@ export function buildGamePrompt(
 ): string {
   const difficultyInstructions: Record<string, string> = {
     easy: `CONTENT DIFFICULTY LEVEL: EASY
-- Use the most famous, universally recognised countries/flags/empires/capitals/events
-- Rounds 1–2: things any schoolchild worldwide knows (France, China, Roman Empire, Paris)
-- Round 3: things most adults know
-- Round 4: things a geography/history enthusiast knows
-- Round 5 ("impossible"): genuinely tricky but guessable by any geography or history fan`,
+- Use famous, universally recognised countries, flags, empires, capitals, events, and figures
+- GEOGRAPHIC SPREAD REQUIRED: do NOT pick only European or American content — include at least one round from Africa, Asia, or South America
+- Content examples per category (use as inspiration, not a fixed list):
+  * Flags: USA, Japan, Brazil, Canada, Australia, South Africa — vary continents, not just Western Europe
+  * Capitals: London, Tokyo, Paris, Beijing, Cairo, Nairobi — span multiple continents
+  * Empires: Roman, British, Mongol, Ottoman, Aztec, Egyptian — vary era and region
+  * Historical figures: Cleopatra, Gandhi, Napoleon, Einstein, Mansa Musa — vary culture and era
+  * Countries: France, India, China, Brazil, Nigeria — NOT only Europe
+- Rounds 1–2: instantly recognisable by any adult worldwide
+- Rounds 3–4: most engaged adults know this with some thought
+- Round 5 ("impossible"): genuinely tricky but guessable by any geography or history enthusiast`,
+
     medium: `CONTENT DIFFICULTY LEVEL: MEDIUM
-- Mix of well-known and lesser-known content across all 5 rounds
-- Rounds 1–2: well-known but not the most obvious choices
+- Mix of well-known and lesser-known content — avoid the most obvious choices
+- GEOGRAPHIC SPREAD REQUIRED: include at least one from Africa, at least one from Asia, at least one from the Americas — not all Europe
+- Content examples per category (use as inspiration, not a fixed list):
+  * Flags: Nigeria, Thailand, South Korea, Argentina, Poland, Ethiopia — not just G7 nations
+  * Capitals: Accra, Jakarta, Bogotá, Warsaw, Nairobi, Hanoi — genuinely diverse continents
+  * Empires: Mughal, Umayyad, Mali, Austro-Hungarian, Khmer, Safavid — moderate knowledge tier
+  * Figures: Mansa Musa, Genghis Khan, Catherine the Great, Qin Shi Huang, Simón Bolívar, Saladin
+  * Countries: Peru, Vietnam, Morocco, Ukraine, Tanzania — broad geographic spread
+- Rounds 1–2: well-known but not the most obvious or overused choices
 - Round 3: moderately known to an engaged general audience
 - Round 4: requires genuine knowledge of the subject
 - Round 5 ("impossible"): genuinely obscure to most people`,
+
     hard: `CONTENT DIFFICULTY LEVEL: HARD
-- Avoid the obvious, over-used examples — use less commonly known content throughout
-- Round 1 ("easy"): things geography/history enthusiasts know but casual viewers likely do not
-- Round 2: requires real interest in the subject
-- Rounds 3–4: specialist knowledge territory
-- Round 5 ("impossible"): extremely obscure — tiny nations, ancient or regional empires, surprise capitals, visually similar or rarely seen flags of sovereign countries`,
+- Avoid all common, overused examples throughout every round
+- GEOGRAPHIC SPREAD REQUIRED: actively seek non-European content — African kingdoms, Southeast Asian empires, Pacific nations, Central Asian states, Pre-Columbian Americas
+- Content examples per category (use as inspiration, not a fixed list):
+  * Flags: Bhutan, Kyrgyzstan, Eswatini, Vanuatu, Turkmenistan, Comoros — not recognisable European flags
+  * Capitals: Ngerulmud, Naypyidaw, Malabo, Asmara, Dili, Moroni — genuinely obscure
+  * Empires: Songhai, Aksumite, Gupta, Timurid, Champa, Chimú — specialist territory
+  * Figures: Sundiata Keita, Yi Sun-sin, Pachacuti, Razia Sultana, Timur, Prithviraj Chauhan — non-Western focus
+  * Countries: Palau, São Tomé, Lesotho, Tuvalu, Suriname — obscure sovereign nations
+- Round 1 ("easy"): things enthusiasts know but casual viewers likely do not
+- Rounds 2–3: requires real interest in the subject
+- Rounds 4–5: specialist knowledge — tiny nations, ancient regional empires, visually similar or rare flags`,
   };
   // Reveal structure varies per scoring type — define them clearly
   const revealStructures: Record<string, string> = {
@@ -170,6 +191,11 @@ FORMAT: GUESS THE FLAG — EASY TO IMPOSSIBLE
   * Round 4: Lesser-known sovereign nation — difficulty_tier: "hard"
   * Round 5: Obscure sovereign nation or visually confusing flag of a real country — difficulty_tier: "impossible"
 - CRITICAL: Every round slide AND its paired reveal slide must include "country_code": "xx" — the ISO 3166-1 alpha-2 code (2 lowercase letters) for the featured country (e.g. "us", "gb", "jp", "br", "ng")
+- VARIETY RULES:
+  * Spread across at least 3 continents — do NOT pick only European or North American flags
+  * Include at least one African flag and at least one Asian flag
+  * For medium/hard tiers: consider flags with distinctive but less-known designs — Bhutan (dragon), Mozambique (AK-47), Kiribati (rising sun over waves), Nepal (double pennant), Sri Lanka (lion)
+  * Avoid always defaulting to USA/UK/France/Germany for easy rounds — Brazil, Japan, Canada, South Africa, Australia are also instantly recognisable
 - Reveal: the country name + a fun fact about what the flag's symbols mean`,
     },
 
@@ -183,7 +209,13 @@ FORMAT: EASY TO IMPOSSIBLE — ${category.toUpperCase()} EDITION
   * Round 3: Geography/history enthusiasts know this — difficulty_tier: "medium"
   * Round 4: Only dedicated nerds know this — difficulty_tier: "hard"
   * Round 5: Almost nobody knows this — difficulty_tier: "impossible"
-- Reveal: the correct answer + a surprising fun fact`,
+- Reveal: the correct answer + a surprising fun fact
+- VARIETY RULES:
+  * Do NOT set all 5 questions in the same region or culture — spread geographically
+  * Include at least one question about Africa, one about Asia, and one about the Americas across the 5 rounds
+  * For geography category: use countries from different continents, not all Europe
+  * For history category: span multiple eras and civilisations, not just Western history
+  * Avoid defaulting to the most overused examples per tier — find fresh, interesting content`,
     },
 
     'country-from-map': {
@@ -192,11 +224,17 @@ FORMAT: EASY TO IMPOSSIBLE — ${category.toUpperCase()} EDITION
 FORMAT: GUESS THE COUNTRY FROM THE MAP
 - 5 rounds, difficulty increases:
   * Round 1: Very distinctive shape — difficulty_tier: "easy"
+    Examples: Italy (boot), Australia (vast island), Japan (island chain), Chile (long strip), Norway (fjord coast)
   * Round 2: Recognisable shape — difficulty_tier: "easy"
+    Examples: India (subcontinent triangle), Brazil (large irregular), Turkey (rectangular with peninsula), Vietnam (S-curve)
   * Round 3: Moderately known shape — difficulty_tier: "medium"
+    Examples: Zambia, Iraq, Myanmar, Colombia, Cameroon, Madagascar
   * Round 4: Hard to distinguish — difficulty_tier: "hard"
-  * Round 5: Tiny or very obscure territory — difficulty_tier: "impossible"
+    Examples: Mali, Niger, Bolivia, Botswana, Paraguay, Laos, Romania
+  * Round 5: Tiny, landlocked, or obscure shape — difficulty_tier: "impossible"
+    Examples: Lesotho, Swaziland/Eswatini, Rwanda, Kosovo, Djibouti, Belize, Luxembourg
 - Image prompts: dark map with ONLY the featured country glowing/highlighted, surroundings in dark grey
+- VARIETY RULES: spread across at least 3 continents — do NOT pick all European countries
 - Reveal: country name + its capital city as the fun_fact`,
     },
 
@@ -254,7 +292,13 @@ FORMAT: PUT HISTORICAL EVENTS IN ORDER
 - Difficulty increases — later rounds use events that are counterintuitively ordered or very close in time
 - ROUND slide: "events" array lists the 4 events in SCRAMBLED order (no dates shown)
 - REVEAL slide: "correct_order" array lists them oldest → newest with exact years
-- The challenge: audiences often assume the wrong order`,
+- The challenge: audiences often assume the wrong order
+- VARIETY RULES:
+  * Do NOT set all 5 rounds in European or Western history — include at least 2 rounds focused on Asian, African, or American civilisations
+  * Spread events across multiple eras: ancient, medieval, early modern, and modern history
+  * Include at least one round where the correct order is genuinely counterintuitive (e.g. events most people assume happened in the wrong sequence)
+  * Mix civilisations and regions within rounds — not all 4 events from the same country or culture
+  * EXAMPLES of good round themes: rise of Asian empires, African kingdoms timeline, Pre-Columbian Americas, Age of Exploration, scientific revolutions, world wars milestones, independence movements — vary per game`,
     },
 
     'guess-the-capital': {
@@ -266,8 +310,13 @@ FORMAT: GUESS THE CAPITAL CITY
   * Round 2: Well-known capital — difficulty_tier: "easy"
   * Round 3: Moderate difficulty — difficulty_tier: "medium"
   * Round 4: Capital people often get wrong — difficulty_tier: "hard"
-  * Round 5: Capital that surprises everyone (Canberra not Sydney, Astana not Almaty, Dodoma not Dar es Salaam) — difficulty_tier: "impossible"
-- Reveal: the correct capital + a fun_fact explaining why people get it wrong`,
+  * Round 5: Capital that surprises everyone (Canberra not Sydney, Astana not Almaty, Dodoma not Dar es Salaam, Malabo not Lagos, Ngerulmud not Koror) — difficulty_tier: "impossible"
+- VARIETY RULES:
+  * Spread capitals across at least 3 different continents — do NOT pick only European capitals
+  * Include at least one African capital and at least one Asian capital
+  * For harder rounds, prioritise capitals people commonly get wrong: Belmopan (not Belize City), Wellington (often confused with Auckland), Pretoria/Cape Town/Bloemfontein (South Africa's three capitals), Sri Jayawardenepura Kotte (not Colombo)
+  * Do NOT default to Paris, London, Berlin, Rome, Madrid for easy rounds — choose from a broader pool: Tokyo, Cairo, Nairobi, Buenos Aires, Bangkok
+- Reveal: the correct capital + a fun_fact explaining what makes it surprising or why people get it wrong`,
     },
 
     'partial-flag': {
@@ -276,12 +325,18 @@ FORMAT: GUESS THE CAPITAL CITY
 FORMAT: PARTIAL FLAG CHALLENGE — GUESS THE FLAG FROM A ZOOMED CROP
 - CRITICAL: Use SOVEREIGN COUNTRIES ONLY — no territories, dependencies, or autonomous regions
 - 5 rounds using a DIFFERENT country each round, escalating from well-known to obscure flags:
-  * Round 1: a very famous, instantly recognisable flag (USA, UK, Canada, Japan, Brazil…) — difficulty_tier: "easy"
-  * Round 2: a well-known flag most people would recognise — difficulty_tier: "easy"
-  * Round 3: a moderately known flag — difficulty_tier: "medium"
-  * Round 4: a less common flag most people would struggle with — difficulty_tier: "hard"
-  * Round 5: an obscure flag very few people could identify — difficulty_tier: "impossible"
+  * Round 1: very famous, instantly recognisable flag — difficulty_tier: "easy"
+    Examples: USA, Canada, Japan, Australia, Brazil, South Africa — vary per game, not always USA/UK
+  * Round 2: well-known flag most people would recognise — difficulty_tier: "easy"
+    Examples: Sweden, Mexico, Argentina, India, South Korea, Turkey
+  * Round 3: moderately known flag — difficulty_tier: "medium"
+    Examples: Thailand, Malaysia, Colombia, Ethiopia, Philippines, Kazakhstan
+  * Round 4: less common flag most people would struggle with — difficulty_tier: "hard"
+    Examples: Benin, Kyrgyzstan, Papua New Guinea, Eritrea, Djibouti, Maldives
+  * Round 5: obscure flag very few people could identify — difficulty_tier: "impossible"
+    Examples: Comoros, Kiribati, Vanuatu, Turkmenistan, Sao Tome and Principe, Nauru, Tuvalu
 - CRITICAL: Every round slide AND its paired reveal slide must include "country_code": "xx" — the ISO 3166-1 alpha-2 code (2 lowercase letters) for the featured country (e.g. "us", "gb", "jp", "br", "ng")
+- VARIETY RULES: spread across at least 3 continents — do NOT pick only European flags
 - Question for every round: "Which country does this flag belong to?"
 - Reveal: full country name + a fun_fact about what the flag's symbols represent`,
     },
@@ -300,7 +355,12 @@ FORMAT: NAME A COUNTRY BY CLUE
   * GOOD: "South America. One of the largest countries on Earth. Famous for its rainforests."
 - Difficulty increases across rounds (Round 1: famous country, Round 5: very obscure)
 - "clues" array in ROUND content: [clue1, clue2, clue3]
-- Reveal: the mystery country + clue_giveaway (which clue most crack it from) + fun_fact (max 18 words)`,
+- Reveal: the mystery country + clue_giveaway (which clue most crack it from) + fun_fact (max 18 words)
+- VARIETY RULES:
+  * Spread across at least 3 different continents — do NOT use only European countries
+  * Include at least one African country, at least one Asian country, and at least one from the Americas
+  * For harder rounds: use genuinely underrepresented countries — Mauritania, Timor-Leste, Suriname, Djibouti, Nauru, Vanuatu, Guinea-Bissau
+  * Make clues culturally informative, not just geographic — include a unique cultural or historical clue in each set`,
     },
 
     'fame-battle': {
@@ -312,10 +372,16 @@ FORMAT: WHO WAS MORE FAMOUS? — FAME BATTLE
 - NO difficulty field — every round stands on its own, omit "difficulty" from round slide content entirely
 - Matchup quality rules:
   * Mix obvious crowd-pleasers with surprising or controversial matchups that spark debate
-  * Include at least one cross-field matchup (e.g. Napoleon vs Shakespeare)
+  * Include at least one cross-field matchup (e.g. Napoleon vs Shakespeare, Einstein vs Darwin)
   * Include at least one matchup where the result is genuinely surprising or counterintuitive
   * Include figures from non-Western history — not just European or American icons
-  * Avoid obvious mismatches where the answer is too easy (e.g. Hitler vs an obscure figure)
+  * Avoid obvious mismatches where the answer is too easy
+- VARIETY RULES — MANDATORY:
+  * At least 2 of 5 matchups must feature non-Western figures (not exclusively European or American)
+  * Include at least one woman in the entire game
+  * Spread eras: include at least one ancient matchup, one medieval, one modern
+  * Non-Western figure pool: Mansa Musa, Genghis Khan, Saladin, Wu Zetian, Cleopatra, Ashoka, Qin Shi Huang, Akbar the Great, Sundiata Keita, Simón Bolívar, Tokugawa Ieyasu, Pachacuti, Ibn Battuta, Zheng He, Suleiman the Magnificent, Shaka Zulu, Razia Sultana
+  * Do NOT fill all 5 rounds with Western figures only — Napoleon, Caesar, Einstein, da Vinci, Shakespeare are overused
 - ROUND slide content must include:
   * "side_a": full name of first person (e.g. "Napoleon Bonaparte", "Cleopatra")
   * "side_b": full name of second person (e.g. "Julius Caesar", "Marie Curie")
@@ -394,7 +460,13 @@ FORMAT: GUESS THE HISTORICAL FIGURE
 - Clues in first-person: "I led the largest land empire in history" / "They called me the Great"
 - "clues" array in ROUND content: [clue1_hardest, clue2_medium, clue3_easiest]
 - Reveal: full name + fun_fact (max 18 words — one surprising verified fact)
-- Cover a wide range of history: ancient rulers, scientists, artists, explorers, revolutionaries — not just Western figures`,
+- VARIETY RULES — MANDATORY:
+  * At least 2 of 5 figures must be non-Western (not European or North American)
+  * Spread across at least 3 different eras: ancient, medieval, early modern, modern
+  * Include at least one woman
+  * Include figures from multiple fields: rulers, scientists, artists, explorers, philosophers, revolutionaries, religious leaders
+  * Non-Western figure pool to draw from (not exhaustive): Mansa Musa, Sundiata Keita, Hatshepsut, Shaka Zulu, Yaa Asantewaa, Qin Shi Huang, Wu Zetian, Genghis Khan, Kublai Khan, Tokugawa Ieyasu, Ashoka, Akbar the Great, Saladin, Suleiman the Magnificent, Ibn Battuta, Pachacuti, Montezuma II, Simón Bolívar, Yi Sun-sin, Zheng He, Razia Sultana, Nzinga of Ndongo
+  * Do NOT always default to Napoleon, Einstein, Cleopatra, Columbus, Shakespeare — vary per game`,
     },
 
     'scrambled-capitals': {
@@ -423,11 +495,16 @@ REVEAL slide content:
 }
 
 DIFFICULTY PROGRESSION:
-  * Round 1: World-famous capital (Paris, Tokyo, London, Rome) — short name — difficulty_tier: "easy"
+  * Round 1: World-famous capital — short, easy-to-scramble name — difficulty_tier: "easy"
+    Pool: Tokyo, Cairo, Seoul, Lima, Accra, Oslo, Hanoi, Doha, Dhaka, Riyadh — NOT always Paris/London/Rome (overused)
   * Round 2: Well-known capital — difficulty_tier: "easy"
+    Pool: Bogotá, Nairobi, Bangkok, Jakarta, Warsaw, Ankara, Caracas, Algiers, Havana, Manila
   * Round 3: Moderately known capital, medium-length name — difficulty_tier: "medium"
-  * Round 4: Lesser-known capital, longer name — difficulty_tier: "hard"
-  * Round 5: Obscure capital (Astana, Dodoma, Naypyidaw, Malabo) — difficulty_tier: "impossible"
+    Pool: Reykjavik, Kampala, Kathmandu, Ulaanbaatar, Tegucigalpa, Khartoum, Ouagadougou, Lilongwe
+  * Round 4: Lesser-known capital, longer or trickier name — difficulty_tier: "hard"
+    Pool: Antananarivo, Yamoussoukro, Niamey, N'Djamena, Nouakchott, Paramaribo, Sucre, Bishkek
+  * Round 5: Very obscure capital — difficulty_tier: "impossible"
+    Pool: Naypyidaw, Malabo, Moroni, Ngerulmud, Funafuti, Vaduz, San Marino, Apia, Palikir
 
 fun_fact: verified fact, max 18 words, about the capital city or its country`,
     },
@@ -458,11 +535,16 @@ REVEAL slide content:
 }
 
 DIFFICULTY PROGRESSION:
-  * Round 1: World-famous country (France, Japan, Brazil, India) — short, clean name — difficulty_tier: "easy"
+  * Round 1: World-famous country — short, clean name — difficulty_tier: "easy"
+    Pool: Chad, Cuba, Iran, Iraq, Mali, Peru, Togo, Laos, Fiji, Oman, Kenya, Ghana — avoid France/Japan/Brazil/India (too overused, vary per game)
   * Round 2: Well-known country — difficulty_tier: "easy"
+    Pool: Chile, Sudan, Libya, Nepal, Syria, Niger, Qatar, Yemen, Uganda, Serbia, Latvia, Jordan
   * Round 3: Moderately known country, medium-length name — difficulty_tier: "medium"
+    Pool: Zambia, Rwanda, Kosovo, Belize, Guyana, Malawi, Bhutan, Gambia, Estonia, Croatia, Bolivia, Albania
   * Round 4: Less common country, longer name — difficulty_tier: "hard"
-  * Round 5: Obscure country (Djibouti, Eswatini, Kiribati, Vanuatu) — difficulty_tier: "impossible"
+    Pool: Djibouti, Eritrea, Burundi, Namibia, Botswana, Maldives, Suriname, Honduras, Kyrgyzstan, Tajikistan
+  * Round 5: Obscure or long-named country — difficulty_tier: "impossible"
+    Pool: Eswatini, Kiribati, Vanuatu, Comoros, Tuvalu, Nauru, Palau, Micronesia, São Tomé and Príncipe, Equatorial Guinea
 
 fun_fact: verified fact, max 18 words, about the country`,
     },
@@ -562,7 +644,7 @@ MAP PROMPT STYLE (for territory/atlas images):
 - Order rounds: a simple historical scene — muted, archival aesthetic, no specific dates or names visible`;
 
   const exclusionBlock = usedSubjects.length > 0
-    ? `\nALREADY USED IN PREVIOUS GAMES — DO NOT REPEAT ANY OF THESE:\n${usedSubjects.join(', ')}\nEvery answer, country, flag, empire, capital, and event in this game must be completely different from the above.\n`
+    ? `\nSTRICT EXCLUSION — BANNED FROM THIS GAME (already used in recent games):\n${usedSubjects.join(', ')}\n⚠️ DO NOT USE ANY OF THESE under any circumstances — not as answers, not as distractors, not as supporting examples. Every country, flag, capital, empire, figure, and event in this game must be 100% different from every item listed above. Repeating them defeats the entire purpose of content variety.\n`
     : '';
 
   return `You are an expert TikTok trivia game designer with deep knowledge of history, geography, and world cultures. Create a complete, engaging trivia game in JSON format.
@@ -574,6 +656,14 @@ HOOK: "${hook}"
 CATEGORY: ${category}
 
 ${difficultyInstructions[difficulty]}
+
+GLOBAL DIVERSITY REQUIREMENTS (apply to every game, every mode):
+- GEOGRAPHIC BALANCE: No more than 2 rounds may feature content from the same continent. Spread across at least 3 different continents.
+- CULTURAL BALANCE: Do not default to European or North American examples. Actively include Africa, Asia, South America, Middle East, and Pacific content.
+- ERA BALANCE (historical modes): Spread across at least 3 different historical eras. Do not cluster all rounds in the same century or period.
+- NO INTERNAL REPETITION: Every entity within this single game (country, flag, empire, person, event, capital) must be unique — no duplicates.
+- SURPRISE FACTOR: At least one round must genuinely surprise the audience — a counterintuitive answer, an unexpected winner, or a fact most people confidently get wrong.
+- AVOID LAZY DEFAULTS: Do not default to France/Germany/Italy/Spain/UK for geography, Roman/Greek for ancient history, or USA/UK for flags. These are the most overused — choose them only when the difficulty tier absolutely demands it.
 ${exclusionBlock}
 ${instructions}
 
