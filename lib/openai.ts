@@ -328,20 +328,44 @@ FORMAT: WHO WAS MORE FAMOUS? — FAME BATTLE
       revealType: 'fight',
       instructions: `
 FORMAT: CIVILIZATION FIGHT — WHO WOULD WIN?
-- 5 rounds, each pitting two civilizations, empires, armies, or nations against each other in a hypothetical all-out war at their respective peaks
-- Matchups can span any era and type: ancient empires, medieval kingdoms, colonial powers, modern defunct states, or even cross-era hypotheticals
-- NO difficulty field — every round stands on its own, omit "difficulty" from round slide content entirely
-- Matchup quality rules:
-  * Mix obvious crowd-pleasing matchups with surprising or unexpected ones
-  * Include at least one cross-era or cross-geography hypothetical (e.g. Mongols vs. Napoleon's France)
-  * Include at least one matchup that is genuinely close — not every round should be a blowout
-  * Include at least one modern defunct state (Soviet Union, Ottoman Empire, Nazi Germany, Austro-Hungarian Empire, etc.)
-  * Avoid repeating matchups from obvious well-known games — be creative
-- ROUND slide content must include:
-  * "side_a": full name of first civilization/empire/nation (e.g. "Roman Empire", "Soviet Union")
-  * "side_b": full name of second civilization/empire/nation
-  * "question": always exactly "Who wins in an all-out war?"
-- REVEAL slide: AI-informed win percentages based on military strength, numbers, technology, logistics, terrain advantage, and historical context. The fun_fact must explain in 1-2 punchy sentences WHY the winner wins — the key deciding factors that most people wouldn't think of.`,
+- 5 rounds, each pitting two armies, states, nations, or civilizations against each other at their respective peaks
+- Matchups can be historical conflicts OR cross-era hypotheticals — make it clear in the question which type it is
+- NO difficulty field — omit "difficulty" from round slide content entirely
+
+MATCHUP POOL — draw from ALL of these categories across 5 rounds. Do NOT default to European or ancient-only matchups:
+  Ancient:           Roman Empire, Han Dynasty, Achaemenid Persian Empire, Macedonian Empire, Carthage, Ancient Egypt, Hittites, Assyrian Empire, Mauryan Empire, Xiongnu, Scythians, Spartans, Athenians, Ptolemaic Egypt, Seleucid Empire
+  Medieval:          Byzantine Empire, Abbasid Caliphate, Mongol Empire, Viking raiders, Samurai clans (feudal Japan), Crusader states, Holy Roman Empire, Song Dynasty, Delhi Sultanate, Mali Empire, Kingdom of Kongo, Aztec Empire, Inca Empire, Khmer Empire
+  Early Modern:      Ottoman Empire, Safavid Empire, Mughal Empire, Ming Dynasty, Spanish Empire, British Empire (colonial era), Napoleonic France, Kingdom of Prussia, Zulu Kingdom, Maratha Confederacy, Tokugawa Japan, Qing Dynasty
+  Modern:            USA, USSR/Soviet Union, Nazi Germany, Imperial Japan, British Empire (WWI/WWII), France under Napoleon III, Imperial Russia, Confederate States, Union Army, German Empire (WWI), Austro-Hungarian Empire, Meiji Japan
+  Contemporary:      Modern United States military, Modern China (PLA), NATO alliance, Russia (modern), Israel Defence Forces, North Korea, Modern Turkey
+  Indigenous/Pre-Columbian: Aztec Triple Alliance, Inca Empire, Maya city-states, Iroquois Confederacy, Mississippian culture, Mapuche warriors, Apache Nation
+  Nomadic/Tribal:    Mongol horde, Scythians, Huns, Xiongnu, Berber tribes, Sikh Khalsa, Zulu impis, Sioux warriors, Comanche raiders
+  City-States:       Sparta, Athens, Carthage, Venice, Genoa, Singapore (modern)
+  Empires (any era): any empire listed above, plus Timurid Empire, Sasanian Empire, Gupta Empire, Aksumite Empire, Ethiopian Empire
+
+VARIETY RULES — for each game of 5 rounds:
+  * Spread across at least 3 different eras (ancient, medieval, modern, etc.)
+  * Spread across at least 3 different world regions (not all European)
+  * Include at least one cross-era hypothetical matchup (e.g. Mongols vs. Napoleonic France)
+  * Include at least one matchup involving Asia, Africa, or the Americas
+  * Include at least one matchup that is genuinely close and debatable — not a blowout
+  * Include at least one matchup that is surprising or counterintuitive
+  * Later rounds (4–5) should be more unexpected and comment-worthy than earlier ones
+  * NEVER use the same civilization twice in one game
+  * AVOID defaulting to Roman vs Greek, Roman vs anyone, or all-European matchups
+
+QUESTION field: choose the most fitting phrasing for each matchup:
+  * Historical conflicts: "Who wins this real war?"
+  * Cross-era hypotheticals: "Who wins in an all-out war at their peak?"
+  * Strength comparisons: "Who was the stronger military power?"
+  * Choose the most engaging phrasing — not always the same question every round
+
+ROUND slide content must include:
+  * "side_a": full name (e.g. "Mongol Empire", "United States", "Zulu Kingdom")
+  * "side_b": full name
+  * "question": the matchup question for this round (see QUESTION field above)
+
+REVEAL slide: win percentages based on military strength, numbers, technology, logistics, terrain, and historical/strategic context. fun_fact: 1–2 punchy sentences explaining the key deciding factor — something most people would not have considered.`,
     },
 
     'guess-the-person': {

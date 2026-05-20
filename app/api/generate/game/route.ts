@@ -187,9 +187,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // For fame-battle: the LLM puts side_a/side_b only in reveal slides, not round slides.
+  // For fame-battle and civilization-fight: the LLM puts side_a/side_b only in reveal slides.
   // Copy them from each reveal into its paired round so the question slide can display both names.
-  if (format_type === 'fame-battle') {
+  if (format_type === 'fame-battle' || format_type === 'civilization-fight') {
     const sidesByRound = new Map<number, { side_a: string; side_b: string }>();
     for (const slide of generated.slides) {
       if (slide.slide_type === 'reveal' && slide.content.side_a && slide.content.side_b && slide.content.round_number != null) {
