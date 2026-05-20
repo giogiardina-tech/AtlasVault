@@ -154,15 +154,22 @@ export default function Home() {
     const roundSlides = slides.filter((s) => s.slide_type === 'round');
     await Promise.all(roundSlides.map(async (s) => {
       const choice = empireChoices[s.id] ?? 'feature';
+      const revealSlide = slides.find((r) => r.slide_type === 'reveal' && r.content.round_number === s.content.round_number);
+      const empireName = revealSlide?.content.correct_answer ?? `Round ${s.content.round_number}`;
       const prompt = choice === 'map' ? s.content.map_prompt : s.content.feature_prompt;
+      console.log(`[empire-choices] Round ${s.content.round_number} "${empireName}" mode=${choice} prompt=${prompt ? `"${prompt.substring(0, 80)}..."` : 'MISSING — will use original'}`);
       if (!prompt) return;
       await fetch(`/api/games/${currentGame.id}/slides`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slide_id: s.id, image_prompt: prompt }),
       });
-      setSlides((prev) => prev.map((sl) => sl.id === s.id ? { ...sl, image_prompt: prompt } : sl));
     }));
+    // Re-fetch from server so ImageGenerator receives the DB-committed prompts,
+    // not potentially stale React state from the Promise.all above.
+    const freshRes = await fetch(`/api/games/${currentGame.id}/slides`);
+    const freshSlides = await freshRes.json();
+    setSlides(freshSlides);
     setLoading(false);
     setStep('generating');
   };

@@ -91,11 +91,30 @@ export async function POST(req: NextRequest) {
     VALUES (?, ?, ?, ?, ?, ?, 'pending')
   `);
 
+  const isEmpire = format_type === 'guess-the-empire';
+
+  // For Empire round slides: the LLM sometimes returns image_prompt as an object
+  // {feature_prompt, map_prompt} instead of a flat string. Normalise to feature_prompt string.
+  if (isEmpire) {
+    for (const slide of generated.slides) {
+      if (slide.slide_type !== 'round') continue;
+      const ip = slide.image_prompt;
+      if (!ip || typeof ip !== 'string') {
+        // Pull feature_prompt from content; fall back to map_prompt
+        slide.image_prompt = slide.content.feature_prompt
+          ?? (typeof ip === 'object' && ip !== null ? (ip as any).feature_prompt : null)
+          ?? slide.content.map_prompt
+          ?? null;
+      }
+      console.log(`[empire/generate] round=${slide.content.round_number} image_prompt="${String(slide.image_prompt).substring(0, 80)}..."`);
+    }
+  }
+
   db.exec('BEGIN TRANSACTION');
   try {
     for (const slide of generated.slides) {
       const ip = slide.image_prompt;
-      const imagePrompt = ip == null ? null : typeof ip === 'string' ? ip : JSON.stringify(ip);
+      const imagePrompt = ip == null ? null : typeof ip === 'string' ? ip : null;
       insertSlide.run(
         uuidv4(),
         gameId,

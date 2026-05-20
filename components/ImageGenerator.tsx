@@ -44,6 +44,7 @@ export default function ImageGenerator({ gameId, slides, onProgress, onComplete 
           : undefined;
 
         try {
+          console.log(`[image-gen] slide=${slide.slide_index} type=${slide.slide_type} prompt="${(slide.image_prompt ?? 'NULL').substring(0, 100)}"`);
           const res = await fetch('/api/generate/image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

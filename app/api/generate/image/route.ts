@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       buffer = Buffer.from(await flagRes.arrayBuffer());
     } else {
       const safePrompt = `${image_prompt} — CRITICAL: absolutely no text, no words, no labels, no country names, no empire names, no captions, no annotations anywhere in the image. Pure visual only.`;
+    console.log(`[generate/image] slide_id=${slide_id} slide_index=${slide_index} prompt="${safePrompt.substring(0, 120)}"`);
       const response = await openai.images.generate({
         model: 'gpt-image-1' as any,
         prompt: safePrompt,
