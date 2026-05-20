@@ -187,6 +187,29 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // For fame-battle: the LLM puts side_a/side_b only in reveal slides, not round slides.
+  // Copy them from each reveal into its paired round so the question slide can display both names.
+  if (format_type === 'fame-battle') {
+    const sidesByRound = new Map<number, { side_a: string; side_b: string }>();
+    for (const slide of generated.slides) {
+      if (slide.slide_type === 'reveal' && slide.content.side_a && slide.content.side_b && slide.content.round_number != null) {
+        sidesByRound.set(slide.content.round_number as number, {
+          side_a: slide.content.side_a as string,
+          side_b: slide.content.side_b as string,
+        });
+      }
+    }
+    for (const slide of generated.slides) {
+      if (slide.slide_type !== 'round') continue;
+      const rn = slide.content.round_number as number;
+      const sides = sidesByRound.get(rn);
+      if (sides) {
+        slide.content.side_a = sides.side_a;
+        slide.content.side_b = sides.side_b;
+      }
+    }
+  }
+
   // For Empire mode: build reliable feature_prompt and map_prompt from the empire name.
   // The LLM frequently omits image_prompt or returns it as an object — do not rely on it.
   // Instead, derive the empire name from the paired reveal slide and build prompts here.
