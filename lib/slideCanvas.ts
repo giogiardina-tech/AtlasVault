@@ -249,93 +249,120 @@ function renderTitle(ctx: CanvasRenderingContext2D, c: SlideContent) {
 
 function renderRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const PAD = 60;
-  const TOP_SAFE = 220;   // below TikTok top chrome
-  const BOT_SAFE = 1480;  // above TikTok bottom chrome (H - 440)
   const hasExtra = !!(c.clues || c.events);
-  const panelH = hasExtra ? 1100 : 600;
-  // Centre the panel but clamp inside TikTok safe zone
-  const panelY = Math.max(TOP_SAFE, Math.min(H / 2 - panelH / 2, BOT_SAFE - panelH));
-  fillRR(ctx, M, panelY, CW, panelH, 28, 'rgba(0,0,0,0.6)');
-  let y = panelY + PAD;
 
-  // Round label
-  ctx.font = '800 42px Inter, system-ui, sans-serif';
+  // ── Round badge — upper safe zone ─────────────────────────────────────────
+  const roundLabel = `ROUND ${c.round_number}`;
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const rlW = ctx.measureText(roundLabel).width + 56;
+  fillRR(ctx, W / 2 - rlW / 2, 268, rlW, 52, 40, 'rgba(0,242,234,0.16)');
   ctx.fillStyle = '#00f2ea';
-  const rl = `ROUND ${c.round_number}`;
-  drawLine(ctx, rl, M + PAD, y, 'left');
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(roundLabel, W / 2, 294);
+
+  // Difficulty pill below badge
+  let diffBottom = 336;
   if (c.difficulty) {
-    const dx = M + PAD + ctx.measureText(rl).width + 20;
     const dt = (c.difficulty as string).toUpperCase();
-    ctx.font = '600 26px Inter, system-ui, sans-serif';
-    const dw = ctx.measureText(dt).width + 40;
-    fillRR(ctx, dx, y, dw, 46, 40, 'rgba(255,255,255,0.15)');
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
-    drawLine(ctx, dt, dx + dw / 2, y + 10);
+    ctx.font = '600 22px Inter, system-ui, sans-serif';
+    const dw = ctx.measureText(dt).width + 36;
+    fillRR(ctx, W / 2 - dw / 2, diffBottom, dw, 38, 40, 'rgba(255,255,255,0.10)');
+    ctx.fillStyle = 'rgba(255,255,255,0.58)';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(dt, W / 2, diffBottom + 19);
+    diffBottom += 52;
   }
-  y += 60 + 40;
 
-  ctx.font = '800 72px Inter, system-ui, sans-serif';
+  // ── Question — vertically centered in content zone ─────────────────────────
+  const maxQLines = hasExtra ? 2 : 3;
+  const { sz: qSz, lines: qLines, lineH: qLH } = fitWrapped(
+    ctx, c.question || '', sz => `800 ${sz}px Inter, system-ui, sans-serif`,
+    CW - PAD * 2, maxQLines, hasExtra ? 66 : 82, 28
+  );
+  const questionTotalH = qLines.length * qLH;
+  const questionCenterY = hasExtra ? 660 : H / 2;
+  const questionY = Math.max(diffBottom + 24, questionCenterY - questionTotalH / 2);
+
+  ctx.font = `800 ${qSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  y += drawWrapped(ctx, c.question || '', W / 2, y, CW - PAD * 2, 84) + (hasExtra ? 40 : 0);
+  ctx.shadowColor = 'rgba(0,0,0,0.92)'; ctx.shadowBlur = 28;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  qLines.forEach((ln, i) => ctx.fillText(ln, W / 2, questionY + i * qLH));
+  ctx.shadowBlur = 0;
 
+  let y = questionY + questionTotalH + 48;
+
+  // ── Clues ─────────────────────────────────────────────────────────────────
   if (c.clues) {
+    const clueCardH = Math.min(H - 500 - y, 720);
+    fillRR(ctx, M, y, CW, clueCardH, 24, 'rgba(0,0,0,0.42)');
+    y += PAD;
     c.clues.forEach((clue, i) => {
-      ctx.font = '700 36px Inter, system-ui, sans-serif';
+      ctx.font = '700 34px Inter, system-ui, sans-serif';
       ctx.fillStyle = '#ff2d55';
       drawLine(ctx, `${i + 1}.`, M + PAD, y, 'left');
-      ctx.font = '400 36px Inter, system-ui, sans-serif';
-      ctx.fillStyle = 'white';
-      const h = drawWrapped(ctx, clue, M + PAD + 60, y, CW - PAD * 2 - 60, 46, 'left');
-      y += Math.max(h, 46) + 16;
-    });
-  }
-
-  if (c.events) {
-    c.events.forEach((ev, i) => {
-      const letter = String.fromCharCode(65 + i);
-      fillRR(ctx, M + PAD, y, 56, 56, 8, 'rgba(0,242,234,0.15)');
-      ctx.font = '700 34px Inter, system-ui, sans-serif';
-      ctx.fillStyle = '#00f2ea';
-      drawLine(ctx, letter, M + PAD + 28, y + 10);
       ctx.font = '400 34px Inter, system-ui, sans-serif';
       ctx.fillStyle = 'white';
-      const h = drawWrapped(ctx, ev, M + PAD + 80, y, CW - PAD * 2 - 80, 44, 'left');
-      y += Math.max(h, 56) + 20;
+      const h = drawWrapped(ctx, clue, M + PAD + 60, y, CW - PAD * 2 - 60, 44, 'left');
+      y += Math.max(h, 44) + 16;
     });
   }
 
-  // CTA — at H-420 to stay above TikTok bottom chrome
+  // ── Events ────────────────────────────────────────────────────────────────
+  if (c.events) {
+    const evCardH = Math.min(H - 500 - y, 740);
+    fillRR(ctx, M, y, CW, evCardH, 24, 'rgba(0,0,0,0.42)');
+    y += PAD;
+    c.events.forEach((ev, i) => {
+      const letter = String.fromCharCode(65 + i);
+      fillRR(ctx, M + PAD, y, 52, 52, 8, 'rgba(0,242,234,0.15)');
+      ctx.font = '700 32px Inter, system-ui, sans-serif';
+      ctx.fillStyle = '#00f2ea';
+      drawLine(ctx, letter, M + PAD + 26, y + 10);
+      ctx.font = '400 32px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'white';
+      const h = drawWrapped(ctx, ev, M + PAD + 76, y, CW - PAD * 2 - 76, 42, 'left');
+      y += Math.max(h, 52) + 20;
+    });
+  }
+
+  // ── CTA — lower safe zone ─────────────────────────────────────────────────
   const cta = 'COMMENT YOUR ANSWER ↓';
   ctx.font = '700 34px Inter, system-ui, sans-serif';
   const ctaW = ctx.measureText(cta).width + 120, ctaH = 80;
-  fillRR(ctx, W / 2 - ctaW / 2, H - 420, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
+  fillRR(ctx, W / 2 - ctaW / 2, H - 460, ctaW, ctaH, 60, 'rgba(255,45,85,0.85)');
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(cta, W / 2, H - 420 + ctaH / 2);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(cta, W / 2, H - 460 + ctaH / 2);
 }
 
 function renderPartialFlagRoundText(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const tierColors: Record<string, string> = { easy: '#22c55e', medium: '#f59e0b', hard: '#f97316', impossible: '#ef4444' };
   const tierColor = tierColors[c.difficulty as string] ?? 'rgba(255,255,255,0.4)';
 
-  // Round label
-  ctx.font = '800 40px Inter, system-ui, sans-serif';
+  // Round badge — top safe zone, dark pill for contrast against any flag
+  const roundLabel = `ROUND ${c.round_number}`;
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const rlW = ctx.measureText(roundLabel).width + 56;
+  fillRR(ctx, W / 2 - rlW / 2, 262, rlW, 52, 40, 'rgba(0,0,0,0.62)');
   ctx.fillStyle = '#00f2ea';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.fillText(`ROUND ${c.round_number}`, W / 2, 240);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(roundLabel, W / 2, 288);
 
-  // Question
-  ctx.font = '800 54px Inter, system-ui, sans-serif';
+  // Question — centered between badge and flag card (card top ≈ 770)
+  ctx.font = '700 52px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
-  drawWrapped(ctx, 'Which country does this flag belong to?', W / 2, 304, CW, 66);
+  ctx.shadowColor = 'rgba(0,0,0,0.95)'; ctx.shadowBlur = 28;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  drawWrapped(ctx, 'Which country does this flag belong to?', W / 2, 478, CW - 40, 62);
+  ctx.shadowBlur = 0;
 
   // Difficulty label above CTA
   if (c.difficulty) {
     ctx.font = '700 28px Inter, system-ui, sans-serif';
     ctx.fillStyle = tierColor;
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.fillText((c.difficulty as string).toUpperCase(), W / 2, H - 420 - 60);
+    ctx.fillText((c.difficulty as string).toUpperCase(), W / 2, H - 420 - 56);
   }
 
   // CTA
@@ -349,32 +376,35 @@ function renderPartialFlagRoundText(ctx: CanvasRenderingContext2D, c: SlideConte
 }
 
 function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpire = false) {
-  // Top panel — starts at 220px to clear TikTok top chrome
-  const topY = 220;
-  const qFontSize = isEmpire ? 52 : 64;
-  const lineH = isEmpire ? 64 : 76;
-  const panelH = isEmpire ? 380 : 300;
-  fillRR(ctx, M, topY, CW, panelH, 24, 'rgba(0,0,0,0.72)');
-  let y = topY + 36;
-
-  ctx.font = '800 40px Inter, system-ui, sans-serif';
+  // Round badge — small dark pill in top safe zone, no heavy panel
+  const roundLabel = `ROUND ${c.round_number}`;
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const rlW = ctx.measureText(roundLabel).width + 56;
+  fillRR(ctx, W / 2 - rlW / 2, 268, rlW, 52, 40, 'rgba(0,0,0,0.65)');
   ctx.fillStyle = '#00f2ea';
-  drawLine(ctx, `ROUND ${c.round_number}`, W / 2, y);
-  y += 56;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(roundLabel, W / 2, 294);
 
-  ctx.font = `800 ${qFontSize}px Inter, system-ui, sans-serif`;
+  // Question — strong text shadow for readability over flag image
+  const { sz: qSz, lines: qLines, lineH: qLH } = fitWrapped(
+    ctx, c.question || '', sz => `800 ${sz}px Inter, system-ui, sans-serif`,
+    CW - 80, 2, 64, 30
+  );
+  ctx.font = `800 ${qSz}px Inter, system-ui, sans-serif`;
   ctx.fillStyle = 'white';
-  drawWrapped(ctx, c.question || '', W / 2, y, CW - 80, lineH);
+  ctx.shadowColor = 'rgba(0,0,0,0.95)'; ctx.shadowBlur = 36;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  qLines.forEach((ln, i) => ctx.fillText(ln, W / 2, 340 + i * qLH));
+  ctx.shadowBlur = 0;
 
-  // CTA — bottom at H - 420 to clear TikTok bottom chrome
+  // CTA — bottom safe zone
   const cta = 'COMMENT YOUR ANSWER ↓';
   ctx.font = '700 36px Inter, system-ui, sans-serif';
   const ctaW = ctx.measureText(cta).width + 128;
   const ctaY = H - 420;
   fillRR(ctx, W / 2 - ctaW / 2, ctaY, ctaW, 80, 60, 'rgba(255,45,85,0.9)');
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(cta, W / 2, ctaY + 40);
 }
 
@@ -390,9 +420,9 @@ const EMPIRE_CTAS = [
 function renderEmpireRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const rn = ((c.round_number as number) ?? 1) - 1;
 
-  // Cinematic glass panel — lower opacity, generous radius, subtle gold border
-  const topY = 208;
+  // Cinematic glass panel — centered vertically, generous radius, subtle gold border
   const panelH = 450;
+  const topY = Math.max(260, H / 2 - panelH / 2);
   fillRR(ctx, M, topY, CW, panelH, 36, 'rgba(8,4,18,0.54)');
   strokeRR(ctx, M, topY, CW, panelH, 36, 'rgba(255,200,80,0.22)', 1.5);
 
@@ -689,39 +719,58 @@ function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
 
   // ── Content ──────────────────────────────────────────────────────────────────
 
-  // Round label
-  ctx.font = '800 40px Inter, system-ui, sans-serif';
+  // Pre-calculate card height for vertical centering
+  const cardPadY = 44;
+  const labelRowH = 76;
+  const letterRowH = fontSize + 40;
+  const hintRowH = 56;
+  const _cardH = cardPadY + labelRowH + letterRowH + hintRowH + cardPadY;
+
+  // Pre-measure question height
+  ctx.font = '700 60px Inter, system-ui, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  const _preQLines = wrapLines(ctx, c.question || '', CW);
+  const _preQLH = 72;
+  const _preQH = _preQLines.length * _preQLH;
+
+  // Round badge — stays in top dark zone for readability
+  const roundLabel = `ROUND ${c.round_number}`;
+  ctx.font = '700 34px Inter, system-ui, sans-serif';
+  const rlW = ctx.measureText(roundLabel).width + 56;
+  fillRR(ctx, W / 2 - rlW / 2, 256, rlW, 52, 40, 'rgba(0,0,0,0.65)');
   ctx.fillStyle = '#00f2ea';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  const rl = `ROUND ${c.round_number}`;
-  ctx.fillText(rl, M, 235);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(roundLabel, W / 2, 282);
+
+  let _badgeBottom = 316;
   if (c.difficulty) {
-    const dx = M + ctx.measureText(rl).width + 20;
     const dt = (c.difficulty as string).toUpperCase();
-    ctx.font = '600 26px Inter, system-ui, sans-serif';
-    const dw = ctx.measureText(dt).width + 40;
-    fillRR(ctx, dx, 235, dw, 46, 40, 'rgba(255,255,255,0.12)');
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.textAlign = 'center';
-    ctx.fillText(dt, dx + dw / 2, 247);
+    ctx.font = '600 22px Inter, system-ui, sans-serif';
+    const dw = ctx.measureText(dt).width + 36;
+    fillRR(ctx, W / 2 - dw / 2, _badgeBottom, dw, 38, 40, 'rgba(255,255,255,0.10)');
+    ctx.fillStyle = 'rgba(255,255,255,0.60)';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(dt, W / 2, _badgeBottom + 19);
+    _badgeBottom += 52;
   }
+
+  // Center (question + card) block in the space between badge and CTA area
+  const _contentH = _preQH + 44 + _cardH;
+  const _spaceTop = _badgeBottom + 40;
+  const _spaceBot = H - 480;
+  const questionY = Math.max(_spaceTop, Math.round((_spaceTop + _spaceBot) / 2 - _contentH / 2));
+  const cardY = questionY + _preQH + 44;
 
   // Question
   ctx.font = '700 60px Inter, system-ui, sans-serif';
   ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  const qHeight = drawWrapped(ctx, c.question || '', W / 2, 295, CW, 72);
-  const cardY = 295 + qHeight + 44;
+  ctx.shadowColor = 'rgba(0,0,0,0.92)'; ctx.shadowBlur = 24;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  _preQLines.forEach((ln, i) => ctx.fillText(ln, W / 2, questionY + i * _preQLH));
+  ctx.shadowBlur = 0;
 
   // ── Scramble card: full-width, intentional layout ─────────────────────────────
-  const cardPadY = 44;
-  const labelRowH = 76;
-  const letterRowH = fontSize + 40;
-  const hintRowH   = 56;
-  const cardH = cardPadY + labelRowH + letterRowH + hintRowH + cardPadY;
-
+  const cardH = _cardH;
   fillRR(ctx, M, cardY, CW, cardH, 28, 'rgba(1,8,22,0.85)');
   strokeRR(ctx, M, cardY, CW, cardH, 28, 'rgba(0,160,255,0.30)', 1.5);
 
@@ -798,9 +847,9 @@ function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
 function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false, isEmpire = false) {
   const scoringType = c.scoring_type || (c.answers && c.answers.length > 1 ? 'pointless' : 'difficulty');
 
-  // Header
-  let y = 100;
-  ctx.font = '800 36px Inter, system-ui, sans-serif';
+  // Header — top of safe area
+  let y = 220;
+  ctx.font = '800 34px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#00f2ea';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
@@ -808,11 +857,12 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
   ctx.fillText(`ROUND ${c.round_number}`, M, y);
   ctx.fillStyle = '#ff2d55';
   ctx.fillText(' REVEAL', M + rnW, y);
-  y += 56;
+  y += 52;
 
-  ctx.font = '600 36px Inter, system-ui, sans-serif';
-  ctx.fillStyle = 'white';
-  y += drawWrapped(ctx, c.question || '', W / 2, y, CW, 46) + 28;
+  ctx.font = '500 36px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.78)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  y += drawWrapped(ctx, c.question || '', W / 2, y, CW - 40, 46) + 24;
 
   if (scoringType === 'fight' && c.side_a && c.side_b) {
     const aWins = c.winner === c.side_a;
@@ -945,7 +995,7 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
     ctx.fillText(`${c.max_points || 4}/${c.max_points || 4} = perfect`, W / 2, y + 76);
 
   } else {
-    // Difficulty mode — answer dominates
+    // Difficulty mode — answer dominates center of screen
     const tiers: Record<string, { label: string; color: string; stars: number }> = {
       easy: { label: 'EASY', color: '#22c55e', stars: 1 },
       medium: { label: 'MEDIUM', color: '#f59e0b', stars: 2 },
@@ -953,23 +1003,33 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       impossible: { label: 'IMPOSSIBLE', color: '#ef4444', stars: 4 },
     };
     const tier = tiers[c.difficulty_tier || 'medium'];
-    fillRR(ctx, M, y, CW, H - y - 80, 24, c.scrambled ? 'rgba(0,0,0,0.82)' : isEmpire ? 'rgba(6,2,14,0.78)' : 'rgba(0,0,0,0.6)');
-    y += 60;
 
-    // Atmospheric glow — gold for scrambled/empire, absent otherwise
-    if (c.scrambled || isEmpire) {
-      const goldGlow = ctx.createRadialGradient(W / 2, y + 110, 0, W / 2, y + 110, isEmpire ? 420 : 340);
-      goldGlow.addColorStop(0, isEmpire ? 'rgba(255,200,40,0.22)' : 'rgba(255,200,0,0.18)');
-      goldGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = goldGlow;
-      ctx.fillRect(M, y, CW, 360);
-    }
-
-    // Answer — auto-fit to max 2 lines so long names never overflow
+    // Pre-measure answer so we can anchor it at screen center
     const { sz: _ansSz, lines: _ansLines, lineH: _ansLH } = fitWrapped(
       ctx, c.correct_answer || '', sz => `900 ${sz}px Inter, system-ui, sans-serif`,
       CW - 80, 2, 140, 52
     );
+    const _ansBlockH = _ansLines.length * _ansLH;
+    // Place answer slightly above center to leave breathing room for stars/fact below
+    const _ansY = Math.max(y + 40, H / 2 - _ansBlockH / 2 - 60);
+
+    // Panel behind the centered content block
+    const _panelTop = Math.max(y, _ansY - 80);
+    fillRR(ctx, M, _panelTop, CW, H - _panelTop - 80, 24,
+      c.scrambled ? 'rgba(0,0,0,0.82)' : isEmpire ? 'rgba(6,2,14,0.78)' : 'rgba(0,0,0,0.60)');
+
+    // Atmospheric glow centered on answer
+    if (c.scrambled || isEmpire) {
+      const _glowCY = _ansY + _ansBlockH / 2;
+      const goldGlow = ctx.createRadialGradient(W / 2, _glowCY, 0, W / 2, _glowCY, isEmpire ? 420 : 340);
+      goldGlow.addColorStop(0, isEmpire ? 'rgba(255,200,40,0.22)' : 'rgba(255,200,0,0.18)');
+      goldGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = goldGlow;
+      ctx.fillRect(M, _panelTop, CW, H - _panelTop - 80);
+    }
+
+    // Answer — anchored at vertical center
+    ctx.font = `900 ${_ansSz}px Inter, system-ui, sans-serif`;
     if (c.scrambled) {
       ctx.fillStyle = '#ffd700';
       ctx.shadowColor = 'rgba(255,215,0,0.6)';
@@ -984,9 +1044,10 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       ctx.shadowBlur = 24;
     }
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    _ansLines.forEach((ln, i) => ctx.fillText(ln, W / 2, y + i * _ansLH));
-    y += _ansLines.length * _ansLH + 40;
+    _ansLines.forEach((ln, i) => ctx.fillText(ln, W / 2, _ansY + i * _ansLH));
     ctx.shadowBlur = 0;
+
+    let _py = _ansY + _ansBlockH + 40;
 
     // Tier stars below answer
     if (tier) {
@@ -998,37 +1059,37 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       for (let i = 0; i < 4; i++) {
         ctx.fillStyle = i < tier.stars ? tier.color : 'rgba(255,255,255,0.15)';
         ctx.textAlign = 'left';
-        ctx.fillText('★', sx, y);
+        ctx.fillText('★', sx, _py);
         sx += starSz + gap;
       }
       ctx.font = '800 30px Inter, system-ui, sans-serif';
       ctx.fillStyle = tier.color;
-      ctx.fillText(tier.label, sx + 8, y + 8);
-      y += starSz + 40;
+      ctx.fillText(tier.label, sx + 8, _py + 8);
+      _py += starSz + 40;
     }
 
     // Scramble transformation line — scrambled → ANSWER
     if (c.scrambled && c.correct_answer) {
       const transformLine = `${c.scrambled}  \u2192  ${c.correct_answer.toUpperCase()}`;
       const _trSz = fitText(ctx, transformLine, sz => `700 ${sz}px Inter, system-ui, sans-serif`, CW - 80, 40, 18);
-      fillRR(ctx, M + 20, y, CW - 40, 80, 16, 'rgba(255,200,0,0.10)');
+      fillRR(ctx, M + 20, _py, CW - 40, 80, 16, 'rgba(255,200,0,0.10)');
       ctx.font = `700 ${_trSz}px Inter, system-ui, sans-serif`;
       ctx.fillStyle = 'rgba(255,215,0,0.88)';
       ctx.letterSpacing = '4px';
       ctx.shadowColor = 'rgba(255,215,0,0.50)';
       ctx.shadowBlur = 24;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(transformLine, W / 2, y + 40);
+      ctx.fillText(transformLine, W / 2, _py + 40);
       ctx.letterSpacing = '0px';
       ctx.shadowBlur = 0;
-      y += 100;
+      _py += 100;
     }
 
     if (c.fun_fact) {
       ctx.font = 'italic 400 34px Inter, system-ui, sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.82)';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      drawWrapped(ctx, `"${c.fun_fact}"`, W / 2, y, CW - 80, 48);
+      drawWrapped(ctx, `"${c.fun_fact}"`, W / 2, _py, CW - 80, 48);
     }
   }
 }
