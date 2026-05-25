@@ -11,108 +11,213 @@ export const maxDuration = 60;
 // Called server-side after LLM generation. Never rely on the LLM to produce
 // image prompts for Empire mode — it consistently omits or mis-formats them.
 
-function empireIconicPrompt(empire: string): string {
+// Visual style palettes — rotated by round number to prevent visual repetition
+const ICONIC_STYLES = [
+  'cinematic wide shot, golden hour dramatic light, deep shadows, atmospheric haze, no text, no maps',
+  'museum archive close-up, dramatic raking side-light, deep shadows, dark background, no text, no maps',
+  'cinematic oil painting style, dramatic chiaroscuro lighting, rich historical atmosphere, no text, no maps',
+  'archival documentary photograph, natural environmental light, muted historical tones, no text, no maps',
+  'ancient manuscript illumination aesthetic, rich gold and dark ground, ornate detail, no text, no maps',
+];
+
+function empireIconicPrompt(empire: string, roundNum = 1): string {
   const e = empire.toLowerCase();
+  const style = ICONIC_STYLES[(roundNum - 1) % ICONIC_STYLES.length];
+
   if (e.includes('roman') || e.includes('rome'))
-    return 'Ancient Roman Colosseum stone arches at dusk from low angle, warm amber light, archival documentary photograph, no text, no maps';
+    return `Colosseum stone arches and vaulted corridors from low angle, warm amber dusk light, ${style}`;
   if (e.includes('mongol'))
-    return 'Ornate Mongolian composite bow with leather quiver and bronze-tipped arrows on dark velvet, museum display lighting, muted gold and brown tones, no text, no maps';
+    return `Mongolian horse archer riding at full gallop across the open steppe, dust cloud, low horizon, ${style}`;
   if (e.includes('ottoman'))
-    return 'Intricate Iznik ceramic tile panel in cobalt blue and white, museum archive photograph, dark background, no text, no maps';
+    return `Blue Mosque domed silhouette against a deep crimson sunset, Istanbul skyline, minarets, ${style}`;
   if (e.includes('persian') || e.includes('achaemenid'))
-    return 'Carved stone relief of soldiers in procession at Persepolis, close-up, museum archive photograph, charcoal and sand tones, no text, no maps';
+    return `Persepolis carved stone relief — soldiers and tribute-bearers in grand procession, ${style}`;
   if (e.includes('egypt') || e.includes('egyptian'))
-    return 'Ancient Egyptian alabaster canopic jar on black background, dramatic overhead museum lighting, ochre and cream tones, no text, no maps';
+    return `Great Sphinx at dawn, pyramids of Giza behind, long raking shadow, desert atmosphere, ${style}`;
   if (e.includes('aztec'))
-    return 'Close-up of an Aztec obsidian ceremonial blade with carved serpent, dark stone surface, sharp museum lighting, no text, no maps';
+    return `Stepped Aztec pyramid rising from jungle mist at dawn, stone temples, tropical atmosphere, ${style}`;
   if (e.includes('inca'))
-    return 'Inca gold sun mask with geometric relief decoration on dark velvet, warm side-lighting, rich gold tones, no text, no maps';
+    return `Machu Picchu stone terraces in mountain mist, dramatic Andean peaks behind, ${style}`;
   if (e.includes('viking') || e.includes('norse'))
-    return 'Ornate Viking silver brooch with interlaced knotwork on dark linen, museum close-up, cool northern light, no text, no maps';
+    return `Viking longship prow on a dark fjord, carved dragon head, mist and grey northern sea, ${style}`;
   if (e.includes('byzantine'))
-    return 'Gold Byzantine mosaic fragment showing a haloed figure, museum lighting, rich gold tesserae on dark background, no text, no maps';
+    return `Hagia Sophia interior — golden dome and shafts of light through high windows, mosaic, ${style}`;
   if (e.includes('mughal'))
-    return 'Intricate Mughal jade dagger hilt inlaid with rubies and gold on dark background, museum display lighting, no text, no maps';
-  if (e.includes('qin') || e.includes('han') || e.includes('ming') || e.includes('tang') || e.includes('chinese') || e.includes('china'))
-    return 'Terracotta warrior head fragment, close-up, dramatic museum shadow, ochre and grey clay tones, no text, no maps';
+    return `Taj Mahal reflected in still water at pre-dawn, pale marble, deep indigo sky, ${style}`;
+  if (e.includes('qin') || e.includes('han') || e.includes('ming') || e.includes('tang'))
+    return `Rows of Terracotta Warriors in excavation pit, dramatic raking light, clay soldiers, ${style}`;
+  if (e.includes('chinese') || e.includes('china'))
+    return `Great Wall of China snaking over misty mountain ridges at dawn, watchtower silhouette, ${style}`;
   if (e.includes('greek') || e.includes('macedon') || e.includes('hellenist') || e.includes('alexandr'))
-    return 'Marble Greek Corinthian helmet with cheek guards on dark stone, museum side-lighting, cool grey and white tones, no text, no maps';
+    return `Parthenon columns at dusk on the Acropolis, warm golden light, long shadows, Athens, ${style}`;
   if (e.includes('babylon') || e.includes('babylonian'))
-    return 'Glazed blue brick detail from the Ishtar Gate, cobalt and turquoise against dark background, museum archive style, no text, no maps';
-  if (e.includes('sumerian') || e.includes('sumer'))
-    return 'Ancient cuneiform clay tablet fragment on dark museum surface, warm side-lighting, ochre clay tones, no text, no maps';
+    return `Reconstructed Ishtar Gate — glazed cobalt and turquoise brickwork, massive arched gateway, ${style}`;
+  if (e.includes('sumerian') || e.includes('sumer') || e.includes('akkad'))
+    return `Ancient ziggurat stepped pyramid rising from Mesopotamian plain, desert atmosphere, ${style}`;
+  if (e.includes('hittite'))
+    return `Carved Hittite stone lion gateway at Hattusa, massive basalt sculpture, ${style}`;
+  if (e.includes('assyrian') || e.includes('assyria'))
+    return `Winged Assyrian lamassu bull statue with human head, carved stone, monumental gateway, ${style}`;
   if (e.includes('mayan') || e.includes('maya'))
-    return 'Carved Mayan stone glyph panel, museum archive photograph, dark stone tones, no text, no maps';
+    return `Chichen Itza pyramid rising from jungle at low sun, long shadows on stone steps, ${style}`;
+  if (e.includes('khmer'))
+    return `Angkor Wat towers reflected in moat at sunrise, stone temple silhouette, mist and jungle, ${style}`;
+  if (e.includes('majapahit') || e.includes('srivijaya') || e.includes('sailendra'))
+    return `Ancient Javanese stone temple — Borobudur stupa tiers rising from tropical jungle, ${style}`;
   if (e.includes('british') && !e.includes('byzantin'))
-    return 'Victorian-era brass compass and sextant on aged leather, museum archive photograph, warm gold and brown tones, no text, no maps';
+    return `HMS Victory tall ship hull at low angle, cannon ports, aged dark oak, dramatic naval scene, ${style}`;
   if (e.includes('spanish') || e.includes('spain'))
-    return 'Spanish conquistador steel helmet on dark velvet, museum display lighting, silver and shadow, no text, no maps';
+    return `Spanish galleon at sea — billowing sails, ocean spray, dramatic stormy light, ${style}`;
   if (e.includes('portuguese') || e.includes('portugal'))
-    return 'Portuguese Age of Discovery bronze astrolabe on dark background, museum close-up, warm gold tones, no text, no maps';
+    return `Portuguese caravel at anchor in a tropical harbour, ocean horizon, Age of Discovery, ${style}`;
   if (e.includes('french') || e.includes('napoleon'))
-    return 'Napoleonic-era bicorne hat on dark velvet, museum display, black and gold tones, no text, no maps';
+    return `Napoleon's Grande Armée soldiers marching — silhouettes with rifles and tricornes, ${style}`;
   if (e.includes('austro') || e.includes('habsburg'))
-    return 'Ornate Austro-Hungarian imperial double-headed eagle crest in gilded metal, dark background, museum lighting, no text, no maps';
+    return `Schönbrunn Palace grand facade and gardens in Vienna, imperial grandeur, ${style}`;
   if (e.includes('soviet') || e.includes('ussr'))
-    return 'Vintage Soviet cosmonaut helmet visor on dark background, chrome reflection, archival photograph quality, no text, no maps';
-  if (e.includes('mali') || e.includes('songhai') || e.includes('ghana'))
-    return 'Ancient gold Ashanti weight in the form of a bird on dark velvet, warm museum lighting, burnished gold, no text, no maps';
+    return `Soviet Sputnik satellite model against deep black void, chrome sphere with antennas, ${style}`;
+  if (e.includes('mali') || e.includes('songhai'))
+    return `Djinguereber Mosque mud-brick towers in Timbuktu, West African architecture, ${style}`;
+  if (e.includes('ghana') && !e.includes('great'))
+    return `Ancient gold trade weights and scales on dark velvet — Akan goldsmith's tools, ${style}`;
+  if (e.includes('aksum') || e.includes('aksumite'))
+    return `Tall stone obelisk of Aksum rising against blue Ethiopian sky, ancient carved stele, ${style}`;
+  if (e.includes('nubian') || e.includes('kush') || e.includes('meroe'))
+    return `Nubian pyramids of Meroe — steep narrow pyramids in the Sudanese desert at dawn, ${style}`;
+  if (e.includes('benin') && !e.includes('republic'))
+    return `Carved Benin bronze plaque — intricate relief of warrior king with attendants, ${style}`;
+  if (e.includes('zulu'))
+    return `Zulu warriors in traditional regalia — isigqoko headdress, cowhide shield, dramatic, ${style}`;
+  if (e.includes('kongo') || e.includes('congo'))
+    return `Ancient Kongo ceremonial nkisi power figure in carved wood, dark velvet, ${style}`;
+  if (e.includes('chola'))
+    return `Brihadeeswarar Temple gopuram rising over South Indian landscape, ornate stone, ${style}`;
+  if (e.includes('maratha'))
+    return `Raigad fort silhouette on mountain ridgeline at sunset, Maratha stronghold, ${style}`;
+  if (e.includes('sikh'))
+    return `Golden Temple Amritsar reflected in the holy sarovar at night, glowing gold, ${style}`;
+  if (e.includes('timurid') || e.includes('timur') || e.includes('tamerlane'))
+    return `Timurid tilework dome — turquoise and cobalt geometric mosaic, Samarkand, ${style}`;
+  if (e.includes('safavid'))
+    return `Shah Mosque Isfahan interior — turquoise and gold tilework, vaulted iwan, ${style}`;
+  if (e.includes('umayyad') || e.includes('abbasid') || e.includes('fatimid'))
+    return `Islamic calligraphy carved in stone — intricate Arabic script on dark marble, ${style}`;
+  if (e.includes('holy roman'))
+    return `Cologne Cathedral Gothic spires at dusk — massive stone facade, medieval grandeur, ${style}`;
+  if (e.includes('frankish') || e.includes('charlemagne'))
+    return `Carolingian chapel of Aachen interior — octagonal dome, gold and marble, ${style}`;
   if (e.includes('nabatean') || e.includes('nabataean'))
-    return 'Petra rose-red carved sandstone facade detail, close-up, museum archive photograph, warm rose and sand tones, no text, no maps';
+    return `Petra Treasury facade carved from rose-red sandstone cliff, Jordan, ${style}`;
+  if (e.includes('carthag'))
+    return `Ancient harbour of Carthage from above — circular cothon, Punic warships, ${style}`;
   if (e.includes('east german') || e.includes('gdr'))
-    return 'Rusted East German Trabant car badge detail, peeling paint, archival close-up, muted grey and rust tones, no text, no maps';
+    return `Berlin Wall concrete slabs — graffiti, barbed wire, guard tower in mist, ${style}`;
   if (e.includes('yugoslav'))
-    return 'Yugoslav partisan rifle and red star medal on dark linen, archival museum photograph, muted steel and red tones, no text, no maps';
-  return `Ancient artifact or monument associated with the ${empire}, museum archive close-up photograph, dark background, dramatic side lighting, muted historical tones, no text, no maps, no borders`;
+    return `Yugoslav Federal Assembly building Belgrade — socialist architecture, red star, ${style}`;
+  if (e.includes('tokugawa') || (e.includes('japan') && !e.includes('imperial')))
+    return `Himeji Castle white tenshu rising above cherry blossoms, feudal Japan, ${style}`;
+  if (e.includes('aztec triple') || e.includes('triple alliance'))
+    return `Tenochtitlan aerial reconstruction — massive stepped pyramid at centre of lake city, ${style}`;
+  return `Ancient monument or architectural marvel associated with the ${empire}, dramatic atmosphere, ${style}`;
 }
 
-function empireTerritoryPrompt(empire: string): string {
+const MAP_STYLES = [
+  'deep navy background, translucent warm gold territory wash, fine hairline cartographic borders, no text, no labels',
+  'dark aged vellum atlas style, rich amber ink territory, subtle texture, clean boundary lines, no text, no labels',
+  'tactical campaign map, deep charcoal background, luminous gold territory highlight, minimal borders, no text, no labels',
+  'dark topographic satellite style, shaded terrain relief, glowing gold boundary trace, deep navy, no text, no labels',
+  'Renaissance cartography aesthetic, deep indigo background, warm gold geometric territory outline, no text, no labels',
+];
+
+function empireTerritoryPrompt(empire: string, roundNum = 1): string {
   const e = empire.toLowerCase();
+  const mapStyle = MAP_STYLES[(roundNum - 1) % MAP_STYLES.length];
+
   if (e.includes('roman') || e.includes('rome'))
-    return 'Dark historical atlas, territory covering Mediterranean basin, Western Europe, North Africa, and Middle East in translucent gold wash, deep navy background, fine cartographic lines, no text';
+    return `Historical atlas — Roman territory encircling the Mediterranean basin, spanning Western Europe, North Africa, and the Middle East, ${mapStyle}`;
   if (e.includes('mongol'))
-    return 'Dark historical atlas, vast territory from Eastern Europe across Central Asia, Persia, and China to Korea in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — vast Mongol territory from Eastern Europe and Russia across Central Asia, Persia, and China to Korea, ${mapStyle}`;
   if (e.includes('ottoman'))
-    return 'Dark historical atlas, territory covering Anatolia, Middle East, North Africa, and southeastern Europe in translucent gold wash, navy background, no text';
+    return `Historical atlas — Ottoman territory covering Anatolia, the Levant, Mesopotamia, North Africa, and southeastern Europe, ${mapStyle}`;
   if (e.includes('persian') || e.includes('achaemenid'))
-    return 'Dark historical atlas, territory spanning Persia, Mesopotamia, Anatolia, Egypt, and Indus valley in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — Achaemenid territory spanning Persia, Mesopotamia, Anatolia, Egypt, and the Indus valley, ${mapStyle}`;
   if (e.includes('egypt') || e.includes('egyptian'))
-    return 'Dark historical atlas, territory along the Nile River and North Africa in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Egyptian territory concentrated along the Nile River from the Delta to Nubia, with Sinai and Levant, ${mapStyle}`;
   if (e.includes('aztec'))
-    return 'Dark historical atlas, territory in central Mexico and Mesoamerica in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Aztec territory in central Mexico, Valley of Mexico to the Gulf Coast and Pacific, ${mapStyle}`;
   if (e.includes('inca'))
-    return 'Dark historical atlas, territory running along western South America and the Andes in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Inca territory stretching 4,000 km along western South America — Andes coast from Colombia to Chile, ${mapStyle}`;
   if (e.includes('viking') || e.includes('norse'))
-    return 'Dark historical atlas, territory covering Scandinavia with routes to Britain, Iceland, Greenland, and eastern Europe in translucent gold wash, navy background, no text';
+    return `Historical atlas — Norse territory and raiding routes covering Scandinavia, Britain, Iceland, Greenland, and the Russian river systems, ${mapStyle}`;
   if (e.includes('british') && !e.includes('byzantin'))
-    return 'Dark historical atlas, vast empire territory across India, Australia, Canada, and Africa in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — British Empire territory across India, Australia, Canada, Southern Africa, and coastal trading ports worldwide, ${mapStyle}`;
   if (e.includes('mughal'))
-    return 'Dark historical atlas, territory covering the Indian subcontinent in translucent gold wash, surrounding charcoal, navy background, no text';
-  if (e.includes('qin') || e.includes('han') || e.includes('ming') || e.includes('tang') || e.includes('chinese') || e.includes('china'))
-    return 'Dark historical atlas, territory covering ancient China and surrounding regions in translucent gold wash, navy background, no text';
+    return `Historical atlas — Mughal territory covering the entire Indian subcontinent from Kabul to Bengal and the Deccan, ${mapStyle}`;
+  if (e.includes('qin') || e.includes('han') || e.includes('ming') || e.includes('tang'))
+    return `Historical atlas — Chinese dynastic territory covering eastern China, with extent varying by dynasty — from Yellow River heartland to southern coasts and Central Asia, ${mapStyle}`;
+  if (e.includes('chinese') || e.includes('china'))
+    return `Historical atlas — Chinese territory at imperial peak — Yellow River and Yangtze basins, Manchuria, and Central Asian corridors, ${mapStyle}`;
   if (e.includes('greek') || e.includes('macedon') || e.includes('hellenist') || e.includes('alexandr'))
-    return 'Dark historical atlas, territory covering Greece, Persia, Egypt, and extending to India in translucent gold wash, deep navy background, no text';
-  if (e.includes('babylon') || e.includes('babylonian') || e.includes('sumerian'))
-    return 'Dark historical atlas, territory in Mesopotamia between Tigris and Euphrates rivers in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Macedonian/Hellenistic territory from Greece and Egypt across Persia to the Indus River valley, ${mapStyle}`;
+  if (e.includes('babylon') || e.includes('babylonian') || e.includes('sumerian') || e.includes('akkad'))
+    return `Historical atlas — Mesopotamian territory between the Tigris and Euphrates rivers, Fertile Crescent from Persia to the Levant, ${mapStyle}`;
+  if (e.includes('hittite'))
+    return `Historical atlas — Hittite territory in Anatolia (modern Turkey) and northern Levant, ${mapStyle}`;
+  if (e.includes('assyrian') || e.includes('assyria'))
+    return `Historical atlas — Assyrian territory covering Mesopotamia, Levant, Egypt, and eastern Anatolia, ${mapStyle}`;
   if (e.includes('mayan') || e.includes('maya'))
-    return 'Dark historical atlas, territory covering Yucatan Peninsula and Central America in translucent gold wash, surrounding charcoal, navy background, no text';
-  if (e.includes('mali') || e.includes('songhai') || e.includes('ghana'))
-    return 'Dark historical atlas, territory in West Africa along the Niger River in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Maya territory across the Yucatan Peninsula, Guatemala, and lowland Central America, ${mapStyle}`;
+  if (e.includes('khmer'))
+    return `Historical atlas — Khmer Empire territory covering most of mainland Southeast Asia — Cambodia, Thailand, Laos, and Vietnam, ${mapStyle}`;
+  if (e.includes('majapahit'))
+    return `Historical atlas — Majapahit territory across the Indonesian archipelago and Malay Peninsula, ${mapStyle}`;
+  if (e.includes('srivijaya'))
+    return `Historical atlas — Srivijaya maritime territory controlling the Strait of Malacca and island Southeast Asia, ${mapStyle}`;
+  if (e.includes('mali'))
+    return `Historical atlas — Mali Empire territory across West Africa — Sahel from the Atlantic to the Niger Bend, ${mapStyle}`;
+  if (e.includes('songhai'))
+    return `Historical atlas — Songhai Empire territory in West Africa — upper Niger River bend through the Sahel, ${mapStyle}`;
+  if (e.includes('aksum') || e.includes('aksumite'))
+    return `Historical atlas — Aksumite territory in the Horn of Africa — Ethiopia, Eritrea, and southern Arabian Peninsula, ${mapStyle}`;
+  if (e.includes('nubian') || e.includes('kush') || e.includes('meroe'))
+    return `Historical atlas — Nubian/Kush territory along the upper Nile in Sudan and northern Ethiopia, ${mapStyle}`;
+  if (e.includes('zulu'))
+    return `Historical atlas — Zulu Kingdom territory in southeastern Africa — KwaZulu-Natal coastal region, ${mapStyle}`;
+  if (e.includes('chola'))
+    return `Historical atlas — Chola territory covering South India, Sri Lanka, and maritime routes to Southeast Asia, ${mapStyle}`;
+  if (e.includes('timurid') || e.includes('timur') || e.includes('tamerlane'))
+    return `Historical atlas — Timurid territory spanning Central Asia, Persia, Afghanistan, and northern India, ${mapStyle}`;
+  if (e.includes('safavid'))
+    return `Historical atlas — Safavid territory covering Persia, Azerbaijan, Iraq, and parts of the Caucasus, ${mapStyle}`;
+  if (e.includes('umayyad'))
+    return `Historical atlas — Umayyad Caliphate territory from Iberia across North Africa, Arabia, Persia, and into Central Asia, ${mapStyle}`;
+  if (e.includes('abbasid'))
+    return `Historical atlas — Abbasid Caliphate territory centered on Mesopotamia, stretching from North Africa to Central Asia, ${mapStyle}`;
+  if (e.includes('fatimid'))
+    return `Historical atlas — Fatimid territory covering North Africa, Egypt, the Levant, and Sicily, ${mapStyle}`;
   if (e.includes('spanish') || e.includes('spain'))
-    return 'Dark historical atlas, empire territory across the Americas, Caribbean, and parts of Europe in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — Spanish Empire territory across the Americas from Mexico to Patagonia, Caribbean, and Philippines, ${mapStyle}`;
   if (e.includes('portuguese') || e.includes('portugal'))
-    return 'Dark historical atlas, coastal territories along Africa, Brazil, and South Asia in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — Portuguese Empire coastal territories along West Africa, East Africa, Brazil, Goa, and Southeast Asia, ${mapStyle}`;
   if (e.includes('soviet') || e.includes('ussr'))
-    return 'Dark historical atlas, territory covering Russia, Central Asia, Eastern Europe and Siberia in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — Soviet territory covering Russia, Ukraine, Central Asian republics, the Caucasus, and Siberia, ${mapStyle}`;
   if (e.includes('austro') || e.includes('habsburg'))
-    return 'Dark historical atlas, territory covering Central Europe, Austria, Hungary, and Balkans in translucent gold wash, navy background, no text';
+    return `Historical atlas — Austro-Hungarian territory in Central Europe — Austria, Hungary, Bohemia, Galicia, and the Balkans, ${mapStyle}`;
   if (e.includes('french') || e.includes('napoleon'))
-    return 'Dark historical atlas, territory covering Western Europe and parts of North Africa in translucent gold wash, deep navy background, no text';
+    return `Historical atlas — Napoleonic French territory and client states across Western and Central Europe, ${mapStyle}`;
+  if (e.includes('holy roman'))
+    return `Historical atlas — Holy Roman Empire territory in Central Europe — Germany, Austria, northern Italy, and Bohemia, ${mapStyle}`;
   if (e.includes('nabatean') || e.includes('nabataean'))
-    return 'Dark historical atlas, territory in the Levant and northern Arabia in translucent gold wash, surrounding charcoal, navy background, no text';
+    return `Historical atlas — Nabataean territory in the Levant, Sinai, and northern Arabia, ${mapStyle}`;
   if (e.includes('yugoslav'))
-    return 'Dark historical atlas, territory covering the Balkans and Adriatic coast in translucent gold wash, surrounding charcoal, navy background, no text';
-  return `Dark historical atlas, territory of the ${empire} at its peak in translucent gold wash, surrounding regions deep charcoal, navy background, fine cartographic lines, no text, no labels`;
+    return `Historical atlas — Yugoslav territory across the Balkans — Slovenia, Croatia, Bosnia, Serbia, Montenegro, Macedonia, ${mapStyle}`;
+  if (e.includes('tokugawa') || (e.includes('japan') && !e.includes('imperial')))
+    return `Historical atlas — Tokugawa Japan — the Japanese home islands with domain boundaries, ${mapStyle}`;
+  if (e.includes('carthag'))
+    return `Historical atlas — Carthaginian territory covering North Africa, Iberia, Sardinia, and Sicily, ${mapStyle}`;
+  if (e.includes('maratha'))
+    return `Historical atlas — Maratha Confederacy territory across the Indian subcontinent from Maharashtra to Delhi, ${mapStyle}`;
+  return `Historical atlas — territory of the ${empire} at its peak extent, surrounding regions deep charcoal, ${mapStyle}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -224,8 +329,8 @@ export async function POST(req: NextRequest) {
       if (slide.slide_type !== 'round') continue;
       const rn = slide.content.round_number as number;
       const empireName = empireByRound.get(rn) ?? 'this historical empire';
-      const fp = empireIconicPrompt(empireName);
-      const mp = empireTerritoryPrompt(empireName);
+      const fp = empireIconicPrompt(empireName, rn);
+      const mp = empireTerritoryPrompt(empireName, rn);
       slide.content.feature_prompt = fp;
       slide.content.map_prompt = mp;
       // Default image_prompt is the iconic feature; user can switch to territory map later.

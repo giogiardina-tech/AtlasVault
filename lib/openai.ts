@@ -242,46 +242,71 @@ FORMAT: GUESS THE COUNTRY FROM THE MAP
       revealType: 'difficulty',
       instructions: `
 FORMAT: GUESS THE EMPIRE (OR DEFUNCT STATE)
-- 5 rounds featuring historical empires, ancient civilisations, OR modern countries that no longer exist
+- 5 rounds featuring historical empires, ancient civilisations, dynasties, caliphates, tribal confederations, maritime empires, or modern countries that no longer exist
 - ALL 5 rounds use the SAME difficulty_tier — do NOT escalate. Set every round's difficulty_tier to: "${difficulty === 'easy' ? 'easy' : difficulty === 'hard' ? 'hard' : 'medium'}"
-- Subject selection for this difficulty:
+
+SUBJECT SELECTION for this difficulty:
 ${difficulty === 'easy'
-  ? `  * Pick empires any engaged adult knows instantly — Roman, Mongol, Ottoman, Egyptian, Soviet Union, British Empire, Byzantine, Aztec, Inca, Ming Dynasty, etc.\n  * Vary the era and region across all 5 rounds`
+  ? `  * Famous empires any engaged adult knows — spread across continents and eras\n  * Pool: Roman, Mongol, Ottoman, Egyptian, British, Byzantine, Aztec, Inca, Ming Dynasty, Persian/Achaemenid, Soviet Union, Macedonian/Alexander, Mauryan, Viking/Norse, Qin Dynasty\n  * NEVER pick more than 1 European empire per game — diversify globally`
   : difficulty === 'hard'
-  ? `  * Pick specialist-knowledge empires and defunct states — lesser-known ancient kingdoms, regional powers, short-lived political entities, obscure colonial or post-colonial states\n  * Vary the era and region across all 5 rounds`
-  : `  * Pick moderately known empires — familiar to history enthusiasts but not obvious to casual viewers — Mughal, Macedonian, Umayyad, Mali, Austro-Hungarian, Mauryan, Safavid, Khmer, etc.\n  * Vary the era and region across all 5 rounds`}
-- SUBJECT POOL — draw from all of these, not just ancient empires:
-  * Ancient/classical empires: Roman, Mongol, Ottoman, Persian, Egyptian, Greek/Macedonian, Byzantine, Mayan, Aztec, Inca, Han, Mughal, Mali, Viking…
-  * Colonial empires: British, Spanish, Portuguese, French, Dutch…
-  * Modern defunct states: Soviet Union, East Germany (GDR), Yugoslavia, Czechoslovakia, Ottoman Empire (modern era), Austro-Hungarian Empire, Weimar Republic, Confederate States, Republic of Texas, USSR satellite states…
-  * Any sovereign country or political entity that no longer exists today
-- QUESTION FIELD: write a geographic or historical hint describing the entity WITHOUT naming it. Mention territory, era, or defining characteristics. Examples:
-  * "Which empire once controlled territory stretching from Eastern Europe all the way to China and Korea?"
-  * "Which country occupied the eastern half of Germany from 1949 until reunification in 1990?"
-  * "Which federation of six republics dissolved in the 1990s following a series of devastating civil wars?"
-  * "Which superpower controlled much of Eastern Europe, Central Asia, and Siberia until its collapse in 1991?"
-  * "Which empire ringed the entire Mediterranean Sea at its peak in the 2nd century AD?"
-- CRITICAL: Every round slide content must include TWO completely separate image prompt fields — keep them distinct in both content and style:
-  * "feature_prompt": a museum-quality archival close-up of the empire's most iconic artifact, ruin, monument, inscription, coin, armor, sculpture, or cultural symbol. Style: dark background, precise museum/archive lighting, muted historical tones (deep charcoal, gold, bronze, slate), sharp detail. MUST NOT contain any map, border, territory, region, geography, or political visual. Examples by empire:
-    - Roman: "Close-up of a Roman legionary's bronze helmet and cheek guards on a dark stone surface, dramatic museum side-lighting, deep shadows, worn patina"
-    - Mongol: "Ornate Mongolian composite bow with leather quiver and bronze-tipped arrows arranged on dark velvet, museum display lighting, muted gold and brown"
-    - Ottoman: "Detailed Iznik ceramic tile pattern in cobalt blue and white, museum archive photograph, dark surround, pristine glaze"
-    - Egyptian: "Ancient Egyptian canopic jar in carved alabaster on black background, dramatic overhead museum lighting, ochre and cream tones"
-    - Aztec: "Close-up of an Aztec obsidian ceremonial blade with carved serpent handle, dark stone surface, sharp museum lighting, deep black and jade tones"
-    - Byzantine: "Gold Byzantine mosaic fragment showing a haloed figure, museum lighting, rich gold tesserae against dark background"
-    - Persian: "Carved stone relief of an Achaemenid soldier in profile, Persepolis-style, museum archive photograph, charcoal and sand tones"
-    - Viking: "Ornate Viking silver brooch with interlaced knotwork on dark linen, museum close-up, cool northern light"
-    - Inca: "Inca gold mask with geometric relief decoration on dark velvet, warm side-lighting, rich gold against near-black"
-    - Mughal: "Intricate Mughal jade dagger hilt inlaid with rubies and gold, museum display, deep green and gold tones, dark background"
-    - Qin/Han/Chinese dynasties: "Terracotta warrior head fragment, close-up, dramatic shadow, museum photograph, ochre and grey clay tones"
-    - Mali/West African empires: "Ancient gold Ashanti weight in the form of a bird, dark background, warm museum lighting, burnished gold"
-    - Soviet Union: "Vintage Soviet cosmonaut helmet visor on dark background, chrome reflection, archival photograph quality"
-    - East Germany: "Rusted East German Trabant car door handle detail, peeling paint, archival close-up, muted grey and rust tones"
-  * "map_prompt": a premium dark historical atlas map. Style: deep navy or near-black background, empire territory shown as a subtle translucent gold or bronze wash, clean cartographic boundary lines, minimal aged-paper texture (subtle, not cracked or orange). Describe the territory by geography only — no empire name. NO orange parchment, NO bright amber, NO fantasy map look, NO cracked textures, NO messy borders. Examples:
-    - "Dark navy museum-quality historical atlas, vast territory spanning Central Asia through China and Persia filled with translucent gold wash, surrounding regions near-black charcoal, fine hairline cartographic borders, no text"
-    - "Premium dark atlas map, territory covering most of Western Europe and the British Isles shown in a subtle bronze highlight against deep charcoal, clean cartographic style, no labels"
-- The top-level image_prompt field should be set to the feature_prompt value
-- Reveal: empire name + peak period dates as the fun_fact (e.g. "At its peak in 117 AD, the Roman Empire covered 5 million km²")`,
+  ? `  * Specialist-knowledge empires — lesser-known kingdoms, short-lived states, regional powers\n  * Pool: Srivijaya, Majapahit, Sailendra, Khmer, Timurid, Ilkhanate, Seleucid, Fatimid, Almohad, Kanem-Bornu, Chimú, Toltec, Moche, Scythian, Aksumite, Nubian/Kush, Gupta, Maratha, Sikh Empire, Zand Dynasty, Rashtrakuta, Chola, Pallava, Chalukya, Pagan Kingdom\n  * Must span at least 3 different continents`
+  : `  * Moderately known empires — familiar to history enthusiasts, not obvious to casual viewers\n  * Pool: Mughal, Umayyad, Abbasid, Safavid, Mali, Songhai, Austro-Hungarian, Khmer, Akkadian, Babylonian, Hittite, Assyrian, Carthaginian, Nabataean, Kingdom of Kongo, Zulu Kingdom, Benin Kingdom, Maratha, Tokugawa Japan, Timurid, Fatimid Caliphate, Aksumite, Holy Roman Empire, Frankish Empire, Seleucid, Chola Empire\n  * Vary the era and region across all 5 rounds`}
+
+EXPANDED SUBJECT POOL — draw from ALL of these. Rotate globally, do NOT default to European or Roman-centric content:
+  * Ancient/classical: Roman, Persian/Achaemenid, Egyptian, Greek/Macedonian, Qin/Han/Tang/Ming, Mauryan, Gupta, Chola, Carthaginian, Hittite, Assyrian, Babylonian/Akkadian, Sumerian, Scythian, Nubian/Kush, Aksumite, Nabataean
+  * Medieval Asian: Mongol, Mughal, Ottoman, Khmer, Majapahit, Srivijaya, Sailendra, Timurid, Ilkhanate, Delhi Sultanate, Vijayanagara, Tokugawa Japan, Pagan Kingdom, Chola, Rashtrakuta, Song/Yuan Dynasty, Jurchen Jin
+  * Medieval Islamic: Umayyad, Abbasid, Fatimid, Safavid, Almohad, Mamluk, Ayyubid, Ghaznavid, Hafsid, Zengid
+  * African empires: Mali, Songhai, Aksumite, Nubian/Kush, Kingdom of Kongo, Benin Kingdom, Kanem-Bornu, Zulu Kingdom, Dahomey, Great Zimbabwe, Swahili Coast city-states
+  * Americas: Aztec/Triple Alliance, Inca, Maya, Chimú, Toltec, Moche, Mississippian, Zapotec, Mixtec, Muisca
+  * European empires: Byzantine, Holy Roman Empire, Frankish Empire (Charlemagne), Viking/Norse, British, Spanish, Portuguese, Austro-Hungarian, Napoleonic France, Tsarist Russia
+  * Colonial/modern: British, Spanish, Portuguese, Dutch, French, Ottoman (modern era), East Germany, Yugoslavia, Confederate States, Soviet Union
+  * Maritime: Srivijaya, Majapahit, Venetian Republic, Genoese Republic, Polynesian chiefdoms, Chola maritime empire
+
+QUESTION FIELD — SHORT, PUNCHY, MAX 12 WORDS. Built for TikTok instant readability:
+- Describe the empire WITHOUT naming it — geographic, cultural, or era hints only
+- Lead with "Which empire…", "Which civilization…", "Which power…", or "Which kingdom…"
+- GOOD examples (7–12 words, instantly readable):
+  * "Which empire ruled the Silk Road at its peak?"
+  * "Which civilization built Machu Picchu in the Andes?"
+  * "Which empire once surrounded the entire Mediterranean Sea?"
+  * "Which kingdom dominated West Africa's gold and salt trade?"
+  * "Which empire stretched from Iberia to the Philippines?"
+  * "Which power built the largest contiguous land empire ever?"
+  * "Which caliphate united Arabia, Persia, Egypt, and Spain?"
+  * "Which civilization built Angkor Wat deep in the jungle?"
+  * "Which superpower collapsed in 1991?"
+  * "Which empire built an 8,000-km road network in the jungle?"
+  * "Which maritime empire controlled the spice trade for centuries?"
+  * "Which kingdom ruled Sub-Saharan Africa's richest gold reserves?"
+- BAD (too long, too wordy — NEVER write these):
+  * "Which empire, renowned for its pyramids and elaborate hieroglyphic writing system, dominated the Nile valley?"
+  * "Which federation of six republics dissolved following a series of devastating civil wars during the 1990s?"
+
+CRITICAL — IMAGE PROMPTS: Every round slide content must include TWO completely separate fields:
+
+"feature_prompt" — ICONIC FEATURE image (NEVER a map, border, territory, or geography):
+  - Cinematic and atmospheric: architecture, monuments, ruins, soldiers, cultural scenes, environments, weapons, artifacts
+  - VARY the visual style across rounds — do NOT use museum close-up for every round:
+    * Round 1 style: cinematic wide shot of architecture or landscape at dramatic lighting
+    * Round 2 style: close-up artifact or cultural object with museum-quality lighting
+    * Round 3 style: cinematic environmental scene — soldiers, ruins at dawn, jungle temple, steppe horizon
+    * Round 4 style: ancient manuscript or relief carving detail, rich texture and dark background
+    * Round 5 style: documentary photograph aesthetic — natural light, real location feel
+  - Dark, rich, cinematic aesthetic throughout — absolutely NO bright stock photography look
+  - MUST NOT depict any map, territory outline, border, region, or cartographic element
+
+"map_prompt" — TERRITORY MAP image (ONLY for Territory Map selection):
+  - Dark historical atlas showing the empire's actual geographic territory
+  - Be geographically specific — describe the exact regions covered, NOT a generic "Europe" or "Mediterranean" view
+  - Style: deep navy background, translucent gold or warm amber wash over territory, fine cartographic lines, no text
+  - Vary the map aesthetic across rounds: some dark navy atlas, some aged vellum, some tactical military style
+
+- The top-level image_prompt field = the feature_prompt value
+- fun_fact: ONE punchy sentence, MAX 15 words. A surprising or impressive fact only.
+  * GOOD: "At its peak, controlled 24 million km² — the largest empire ever."
+  * GOOD: "Built 50,000 miles of paved roads across three continents."
+  * GOOD: "Controlled over 40% of the world's GDP at its height."
+  * BAD: Multi-sentence explanations, generic dates without context`,
     },
 
     'historical-order': {

@@ -378,6 +378,82 @@ function renderFlagRound(ctx: CanvasRenderingContext2D, c: SlideContent, isEmpir
   ctx.fillText(cta, W / 2, ctaY + 40);
 }
 
+// CTA phrases — rotated per round for variety
+const EMPIRE_CTAS = [
+  'NAME THE EMPIRE ↓',
+  'COMMENT BEFORE REVEAL ↓',
+  'ONLY HISTORY NERDS KNOW THIS ↓',
+  "DON'T CHEAT ↓",
+  'YOU GET 5 SECONDS ↓',
+];
+
+function renderEmpireRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
+  const rn = ((c.round_number as number) ?? 1) - 1;
+
+  // Cinematic glass panel — lower opacity, generous radius, subtle gold border
+  const topY = 208;
+  const panelH = 450;
+  fillRR(ctx, M, topY, CW, panelH, 36, 'rgba(8,4,18,0.54)');
+  strokeRR(ctx, M, topY, CW, panelH, 36, 'rgba(255,200,80,0.22)', 1.5);
+
+  let y = topY + 46;
+
+  // Round badge — warm gold with letter spacing
+  ctx.font = '700 30px Inter, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,200,80,0.88)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.letterSpacing = '5px';
+  ctx.fillText(`ROUND ${c.round_number}`, W / 2, y);
+  ctx.letterSpacing = '0px';
+  y += 48;
+
+  // Subtle gold divider
+  ctx.strokeStyle = 'rgba(255,200,80,0.16)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(M + 120, y); ctx.lineTo(M + CW - 120, y);
+  ctx.stroke();
+  y += 28;
+
+  // Question — auto-fit, bold white with strong text shadow
+  const { sz: qSz, lines: qLines, lineH: qLH } = fitWrapped(
+    ctx, c.question || '', sz => `800 ${sz}px Inter, system-ui, sans-serif`,
+    CW - 100, 3, 62, 26
+  );
+  ctx.font = `800 ${qSz}px Inter, system-ui, sans-serif`;
+  ctx.fillStyle = 'white';
+  ctx.shadowColor = 'rgba(0,0,0,0.95)';
+  ctx.shadowBlur = 22;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  qLines.forEach((ln, i) => ctx.fillText(ln, W / 2, y + i * qLH));
+  ctx.shadowBlur = 0;
+  y += qLines.length * qLH + 22;
+
+  // Difficulty tier label
+  if (c.difficulty) {
+    const TIER_COLORS: Record<string, string> = {
+      easy: '#22c55e', medium: '#f59e0b', hard: '#f97316', impossible: '#ef4444',
+    };
+    const tc = TIER_COLORS[c.difficulty as string] ?? 'rgba(255,255,255,0.35)';
+    ctx.font = '600 19px Inter, system-ui, sans-serif';
+    ctx.fillStyle = tc;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.letterSpacing = '3px';
+    ctx.fillText((c.difficulty as string).toUpperCase(), W / 2, y);
+    ctx.letterSpacing = '0px';
+  }
+
+  // Rotating CTA — amber/gold pill
+  const ctaText = EMPIRE_CTAS[rn % EMPIRE_CTAS.length];
+  ctx.font = '700 28px Inter, system-ui, sans-serif';
+  const ctaW = ctx.measureText(ctaText).width + 112, ctaH = 74;
+  const ctaY = H - 420;
+  fillRR(ctx, W / 2 - ctaW / 2, ctaY, ctaW, ctaH, 60, 'rgba(175,98,12,0.92)');
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(ctaText, W / 2, ctaY + ctaH / 2);
+}
+
 function renderFightRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   const PAD = 60;
   // Round label
@@ -719,7 +795,7 @@ function renderScrambleRound(ctx: CanvasRenderingContext2D, c: SlideContent) {
   ctx.fillText(cta, W / 2, H - 440 + ctaH / 2);
 }
 
-function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false) {
+function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = false, isEmpire = false) {
   const scoringType = c.scoring_type || (c.answers && c.answers.length > 1 ? 'pointless' : 'difficulty');
 
   // Header
@@ -877,16 +953,16 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       impossible: { label: 'IMPOSSIBLE', color: '#ef4444', stars: 4 },
     };
     const tier = tiers[c.difficulty_tier || 'medium'];
-    fillRR(ctx, M, y, CW, H - y - 80, 24, c.scrambled ? 'rgba(0,0,0,0.82)' : 'rgba(0,0,0,0.6)');
+    fillRR(ctx, M, y, CW, H - y - 80, 24, c.scrambled ? 'rgba(0,0,0,0.82)' : isEmpire ? 'rgba(6,2,14,0.78)' : 'rgba(0,0,0,0.6)');
     y += 60;
 
-    // Gold spot glow behind answer for scrambled formats
-    if (c.scrambled) {
-      const goldGlow = ctx.createRadialGradient(W / 2, y + 100, 0, W / 2, y + 100, 340);
-      goldGlow.addColorStop(0, 'rgba(255,200,0,0.18)');
+    // Atmospheric glow — gold for scrambled/empire, absent otherwise
+    if (c.scrambled || isEmpire) {
+      const goldGlow = ctx.createRadialGradient(W / 2, y + 110, 0, W / 2, y + 110, isEmpire ? 420 : 340);
+      goldGlow.addColorStop(0, isEmpire ? 'rgba(255,200,40,0.22)' : 'rgba(255,200,0,0.18)');
       goldGlow.addColorStop(1, 'transparent');
       ctx.fillStyle = goldGlow;
-      ctx.fillRect(M, y, CW, 320);
+      ctx.fillRect(M, y, CW, 360);
     }
 
     // Answer — auto-fit to max 2 lines so long names never overflow
@@ -898,6 +974,10 @@ function renderReveal(ctx: CanvasRenderingContext2D, c: SlideContent, isFame = f
       ctx.fillStyle = '#ffd700';
       ctx.shadowColor = 'rgba(255,215,0,0.6)';
       ctx.shadowBlur = 60;
+    } else if (isEmpire) {
+      ctx.fillStyle = '#ffd700';
+      ctx.shadowColor = 'rgba(255,200,0,0.75)';
+      ctx.shadowBlur = 72;
     } else {
       ctx.fillStyle = '#00f2ea';
       ctx.shadowColor = 'rgba(0,0,0,0.9)';
@@ -998,7 +1078,8 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
   const isFameBattleRound = formatType === 'fame-battle' && slide.slide_type === 'round';
   const isFameBattleReveal = formatType === 'fame-battle' && slide.slide_type === 'reveal';
   const isScrambleRound = (formatType === 'scrambled-capitals' || formatType === 'scrambled-countries') && slide.slide_type === 'round';
-  const isFlagStyleRound = isFlagRound || isPartialFlagRound || isEmpireRound;
+  const isFlagStyleRound = isFlagRound || isPartialFlagRound; // empire has its own renderer
+  const isEmpireReveal = formatType === 'guess-the-empire' && slide.slide_type === 'reveal';
 
   ctx.fillStyle = '#0a0a0a';
   ctx.fillRect(0, 0, W, H);
@@ -1056,13 +1137,14 @@ export async function renderSlideToBlob(slide: Slide, formatType: string): Promi
 
   if (slide_type === 'title') { renderTitle(ctx, content); }
   else if (isPartialFlagRound)  { renderPartialFlagRoundText(ctx, content); }
-  else if (isFlagStyleRound)    { flagOverlay(ctx);  renderFlagRound(ctx, content, isEmpireRound); }
+  else if (isEmpireRound)       { flagOverlay(ctx);  renderEmpireRound(ctx, content); }
+  else if (isFlagStyleRound)    { flagOverlay(ctx);  renderFlagRound(ctx, content); }
   else if (isFightRound)        { stdOverlay(ctx);   renderFightRound(ctx, content); }
   else if (isFameBattleRound)   { stdOverlay(ctx);   renderFameBattleRound(ctx, content); }
   else if (isFameBattleReveal)  { stdOverlay(ctx);   renderReveal(ctx, content, true); }
   else if (isScrambleRound)     { renderScrambleRound(ctx, content); }
   else if (slide_type === 'round')  { stdOverlay(ctx); renderRound(ctx, content); }
-  else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content); }
+  else if (slide_type === 'reveal') { stdOverlay(ctx); renderReveal(ctx, content, false, isEmpireReveal); }
   else if (slide_type === 'score')  { titleOverlay(ctx); renderScore(ctx, content); }
 
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
