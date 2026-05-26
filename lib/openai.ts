@@ -432,83 +432,104 @@ FORMAT: WHO WAS MORE FAMOUS? — FAME BATTLE
 FORMAT: CIVILIZATION FIGHT — ULTIMATE HISTORICAL BATTLES
 - 5 rounds, each pitting two distinct civilizations, armies, cultures, or kingdoms against each other at their historical peak
 - Matchups can be real historical conflicts OR compelling cross-era hypotheticals — both are valid
-- The audience votes in comments — matchups MUST be debatable, not obvious blowouts
+- The audience votes in comments — matchups MUST make people want to argue
 - NO difficulty field — omit entirely from round slide content
 
-CIVILIZATION POOL — draw from ALL of these. usedSubjects lists civilizations already used recently — NEVER repeat them:
+ENGAGEMENT PRIORITY — optimise in this order:
+  1. Recognition — at least one side most TikTok viewers have heard of
+  2. Debate — result must be genuinely arguable
+  3. Surprise — the lesser-known side should feel cool and unexpected
+  4. Variety — spread eras, regions, cultures
+  5. Historical accuracy — percentages and facts must be defensible
+
+MATCHUP BALANCE FORMULA — primary pattern for most rounds:
+  RECOGNIZABLE CIVILIZATION  vs  SURPRISING/LESSER-KNOWN CIVILIZATION
+
+  60–70% of rounds: one side from the RECOGNIZABLE TIER + one side that surprises the audience
+  30–40% of rounds: both sides can be well-known OR both can be specialist-level
+  Target comment reactions: "No way Rome loses this" / "People sleep on Mali Empire" / "Khmer Empire would destroy them"
+
+RECOGNIZABLE TIER — at least one side per game (ideally 3–4 rounds) should feature one of these:
+  Rome (Republic or Empire), Vikings/Norse, Mongols, Ancient Egypt, Sparta, Greece/Macedon, Ottoman Empire,
+  Samurai Japan, Aztecs, Inca, Maya, Persians/Achaemenid, Byzantine Empire, Crusaders, Zulu Kingdom,
+  British Empire, Napoleonic France, Soviet Union, Imperial Japan, Chinese dynasties (Han / Tang / Ming / Qing),
+  Mongol Empire, Spanish Empire, British Empire, American military, Huns, Celts, Carthage
+
+CIVILIZATION POOL — full roster to draw from. usedSubjects lists recently used — NEVER repeat them:
 
   AFRICA:
-    Mali Empire, Songhai Empire, Kingdom of Kongo, Benin Kingdom, Aksumite Kingdom, Kingdom of Kush/Meroe, Zulu Kingdom, Dahomey Kingdom, Carthage, Kanem-Bornu, Ashanti Confederation, Nubian Kingdom, Almohad Caliphate, Fatimid Caliphate, Swahili City-States (Kilwa), Great Zimbabwe, Garamantes, Kingdom of Numidia
+    Mali Empire, Songhai Empire, Kingdom of Kongo, Benin Kingdom, Aksumite Kingdom, Kingdom of Kush/Meroe,
+    Zulu Kingdom, Dahomey Kingdom, Carthage, Kanem-Bornu, Ashanti Confederation, Nubian Kingdom,
+    Almohad Caliphate, Fatimid Caliphate, Swahili City-States (Kilwa), Great Zimbabwe
 
   THE AMERICAS:
-    Aztec Triple Alliance, Inca Empire, Maya city-states, Olmec Civilization, Chimú Empire, Toltec Civilization, Moche warriors, Zapotec Civilization, Mississippian Culture, Muisca Confederation, Wari Empire, Iroquois Confederacy, Mapuche warriors, Apache raiders, Comanche cavalry, Sioux warriors, Cherokee Nation
+    Aztec Triple Alliance, Inca Empire, Maya city-states, Chimú Empire, Toltec Civilization, Moche warriors,
+    Zapotec Civilization, Iroquois Confederacy, Mapuche warriors, Apache raiders, Comanche cavalry, Sioux warriors
 
   ANCIENT NEAR EAST / MIDDLE EAST:
-    Achaemenid Persia, Sassanid Persia, Parthian Empire, Assyrian Empire, Babylonian Empire, Hittite Empire, Umayyad Caliphate, Abbasid Caliphate, Ayyubid Sultanate, Mamluk Sultanate, Seljuk Sultanate, Nabataean Kingdom, Safavid Persia, Ottoman Empire, Timurid Empire, Ghaznavid Empire, Crusader States, Palmyra
+    Achaemenid Persia, Sassanid Persia, Parthian Empire, Assyrian Empire, Babylonian Empire, Hittite Empire,
+    Umayyad Caliphate, Abbasid Caliphate, Ayyubid Sultanate, Mamluk Sultanate, Seljuk Sultanate,
+    Safavid Persia, Ottoman Empire, Timurid Empire, Crusader States, Palmyra
 
   EUROPE:
-    Roman Republic, Roman Empire, Byzantine Empire, Macedonian Empire (Alexander), Sparta, Athens, Vikings/Norse, Franks (Charlemagne), Holy Roman Empire, Austro-Hungarian Empire, Napoleonic France, Tsarist Russia, Soviet Union, British Empire, Spanish Empire, Portuguese Empire, Normans, Celts, Visigoths
+    Roman Republic, Roman Empire, Byzantine Empire, Macedonian Empire (Alexander), Sparta, Athens,
+    Vikings/Norse, Franks (Charlemagne), Holy Roman Empire, Napoleonic France, Tsarist Russia,
+    Soviet Union, British Empire, Spanish Empire, Portuguese Empire, Normans, Celts
 
   CENTRAL ASIA / STEPPE:
-    Mongol Empire, Golden Horde, Ilkhanate, Timurid Empire, Huns, Scythians, Xiongnu, Göktürks, Khazar Khaganate, Saka Kingdom
+    Mongol Empire, Golden Horde, Huns, Scythians, Xiongnu, Göktürks, Ilkhanate, Khazar Khaganate
 
   SOUTH / SOUTHEAST ASIA:
-    Mauryan Empire, Gupta Empire, Chola Empire, Vijayanagara Empire, Mughal Empire, Delhi Sultanate, Maratha Confederacy, Sikh Khalsa, Khmer Empire, Majapahit Empire, Srivijaya, Pagan Kingdom (Burma), Champa Kingdom, Pallava Kingdom, Malacca Sultanate
+    Mauryan Empire, Gupta Empire, Chola Empire, Vijayanagara Empire, Mughal Empire, Delhi Sultanate,
+    Maratha Confederacy, Sikh Khalsa, Khmer Empire, Majapahit Empire, Srivijaya, Pagan Kingdom (Burma)
 
   EAST ASIA:
-    Qin Dynasty, Han Dynasty, Tang Dynasty, Song Dynasty, Ming Dynasty, Qing Dynasty, Yamato Japan, Sengoku Samurai Japan, Tokugawa Japan, Meiji Japan, Joseon Korea, Silla Kingdom, Jurchen Jin, Imperial Japan (WWII era)
+    Qin Dynasty, Han Dynasty, Tang Dynasty, Song Dynasty, Ming Dynasty, Qing Dynasty,
+    Sengoku Samurai Japan, Tokugawa Japan, Meiji Japan, Imperial Japan (WWII), Joseon Korea
 
   OCEANIA / PACIFIC:
-    Māori warriors (Aotearoa), Tonga maritime kingdom, Hawaiian Kingdom, Polynesian navigators
+    Māori warriors, Polynesian navigators, Hawaiian Kingdom, Tonga maritime kingdom
 
-VARIETY RULES — MANDATORY per game:
-  * NEVER reuse any civilization listed in usedSubjects — the prompt provides this list
-  * Span at least 4 different world regions across 5 rounds (Africa, Americas, Asia, Europe, Middle East, Steppe)
-  * Span at least 3 different time periods (ancient, medieval, early modern, modern)
-  * NEVER default to Rome vs Greece, Mongols vs Europeans, Vikings vs Saxons as the go-to matchups
-  * Must include at least 1 African or Americas civilization per game
-  * Must include at least 1 Asian civilization per game
-  * Must include at least 1 matchup that is genuinely counterintuitive or surprising
+VARIETY RULES — per game:
+  * NEVER reuse any civilization listed in usedSubjects
+  * NEVER use the same civilization twice in one game
+  * Do NOT pair Rome vs Greece or Vikings vs Saxons as a standalone matchup — they generate low surprise
+  * Must include at least 1 civilization from outside Europe and North America per game
+  * Must include at least 1 matchup most TikTok viewers would NOT predict correctly
   * Later rounds (4–5) must be more provocative and comment-worthy than earlier rounds
-  * ZERO all-European games — maximum 2 European civilizations across all 5 rounds combined
 
-HIGH-ENGAGEMENT MATCHUP EXAMPLES — use as inspiration. Generate equally bold, unexpected pairings:
-  Sparta vs Samurai Japan | Mali Empire vs Portuguese Empire | Aztecs vs Mongols
-  Byzantines vs Ottoman Empire | Vikings vs Polynesian warriors | Kingdom of Benin vs Carthage
-  Qin Dynasty vs Roman Republic | Assyrians vs Achaemenid Persia | Mamluks vs Crusaders
-  Inca vs Spanish Conquistadors | Venice vs Ottoman Empire | Zulu Kingdom vs British Empire
-  Tang Dynasty vs Abbasid Caliphate | Hittites vs Ancient Egypt | Timurids vs Delhi Sultanate
-  Khmer Empire vs Majapahit | Celts vs Roman legions | Aksumites vs Umayyad Caliphate
-  Tokugawa Japan vs Joseon Korea | Kingdom of Kongo vs Portugal | Han Dynasty vs Xiongnu
-  Teotihuacan vs Maya | Safavids vs Mughals | Golden Horde vs Kievan Rus
-  Maratha Confederacy vs Mughal Empire | Chimú vs Inca | Sikh Khalsa vs East India Company
-  Comanche cavalry vs Apache raiders | Māori vs British colonists | Songhai vs Mali Empire
+HIGH-ENGAGEMENT MATCHUP EXAMPLES — KNOWN vs SURPRISING formula in action:
+  Romans vs Mali Empire | Vikings vs Khmer Empire | Mongols vs Kingdom of Benin
+  Samurai vs Aztecs | Sparta vs Achaemenid Persia | Ottoman Empire vs Venice
+  British Empire vs Zulu Kingdom | Rome vs Carthage | Byzantines vs Abbasid Caliphate
+  Qin Dynasty vs Greek phalanx | Vikings vs Polynesian warriors | Crusaders vs Mamluks
+  Aztecs vs Mongols | Inca vs Spanish Conquistadors | Tang Dynasty vs Abbasid Caliphate
+  Hittites vs Ancient Egypt | Zulu Kingdom vs British Empire | Celts vs Roman legions
+  Mongols vs Ottoman Empire | Macedon vs Persian Empire | Han Dynasty vs Xiongnu
+  Sikh Khalsa vs East India Company | Māori vs British colonists | Maratha vs Mughal Empire
+  Safavids vs Ottoman Empire | Mali Empire vs Portugal | Khmer Empire vs Sengoku Japan
 
-QUESTION field — choose the MOST engaging phrasing for each specific matchup. ROTATE across rounds:
-  * Real conflicts: "Who wins this historical clash?"
-  * Cross-era: "Who wins in an all-out war at their peak?"
-  * Dominance: "Who was the more feared military force?"
-  * Influence: "Who changed history more?"
-  * Technology: "Who had the bigger military advantage?"
-  * Legacy: "Who left a more lasting mark on the world?"
-  * Trade/Power: "Who was the more dominant civilization?"
-  Use only ONE question per round — pick whichever creates the most debate for THAT specific pairing.
+QUESTION field — choose the most viral phrasing for each specific pairing. ROTATE across rounds:
+  "Who wins in an all-out war?"  |  "Who had the stronger military?"  |  "Who was more feared?"
+  "Who changed history more?"   |  "Who had better warriors?"         |  "Who would dominate?"
+  "Who had the bigger empire?"  |  "Who wins this real historical clash?"
+  Pick the ONE question that best fits the pairing and creates maximum debate.
 
 ROUND slide content must include:
-  * "side_a": exact civilization name (e.g. "Zulu Kingdom", "Abbasid Caliphate", "Khmer Empire", "Maratha Confederacy")
+  * "side_a": exact civilization name (e.g. "Roman Empire", "Zulu Kingdom", "Khmer Empire")
   * "side_b": exact civilization name
   * "question": the matchup question chosen for this round
 
 IMAGE PROMPT for the round slide — write a cinematic split composition for each round:
-  image_prompt: A dramatic cinematic faceoff — one side shows [CIVILIZATION A's signature imagery: warriors, architecture, weapons, or landscape], the opposite side shows [CIVILIZATION B's signature imagery]. Strong color contrast, epic atmosphere. No text, no labels.
-  - Each civilization MUST have visually distinct imagery — NO generic dark templates
-  - Use their actual architecture, warrior attire, weapons, ships, or cultural landscapes
-  - Create visual contrast between the two sides (e.g. desert vs jungle, iron vs bronze, steppe vs ocean)
+  image_prompt: A dramatic cinematic faceoff — left side shows [CIVILIZATION A's signature imagery: warriors, architecture, weapons, or landscape], right side shows [CIVILIZATION B's signature imagery]. Strong color contrast between the two sides, epic atmosphere. No text, no labels, no maps.
+  - Each civilization MUST have visually distinct imagery — use their actual warrior attire, weapons, architecture
+  - Create strong visual contrast (desert vs jungle, steel vs obsidian, steppe vs ocean, etc.)
+  - Do NOT use generic dark medieval castles or identical temple backgrounds for every round
 
 REVEAL slide:
   - Win percentages based on military power, technology, numbers, tactics, terrain, logistics, historical outcomes
-  - Vary the winner — do NOT always give victory to the most famous civilization
-  - fun_fact: 1–2 punchy sentences on the single KEY deciding factor — something most people would NOT expect`,
+  - Vary the winner — the famous civilization should NOT always win (that's boring and kills engagement)
+  - fun_fact: 1–2 punchy sentences on the KEY deciding factor — something most people would NOT expect`,
     },
 
     'guess-the-person': {
