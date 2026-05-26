@@ -241,46 +241,57 @@ FORMAT: GUESS THE COUNTRY FROM THE MAP
     'guess-the-empire': {
       revealType: 'difficulty',
       instructions: `
-FORMAT: GUESS THE EMPIRE (OR DEFUNCT STATE)
-- 5 rounds featuring historical empires, ancient civilisations, dynasties, caliphates, tribal confederations, maritime empires, or modern countries that no longer exist
+FORMAT: HISTORICAL CIVILIZATIONS — GUESS THE CIVILIZATION
+- 5 rounds featuring historical civilizations from ANY era and region: empires, kingdoms, dynasties, caliphates, city-states, republics, sultanates, khanates, tribal confederations, cultures, and extinct nations
+- Do NOT limit subjects to literal "empires" — kingdoms, dynasties, city-states, and civilizations are equally valid
+- correct_answer = the civilization's name (e.g. "Khmer Empire", "Tang Dynasty", "Venetian Republic", "Carthage", "Minoan Civilization", "Teotihuacan", "Vijayanagara Empire", "Kingdom of Kongo")
 - ALL 5 rounds use the SAME difficulty_tier — do NOT escalate. Set every round's difficulty_tier to: "${difficulty === 'easy' ? 'easy' : difficulty === 'hard' ? 'hard' : 'medium'}"
 
 SUBJECT SELECTION for this difficulty:
 ${difficulty === 'easy'
-  ? `  * Famous empires any engaged adult knows — spread across continents and eras\n  * Pool: Roman, Mongol, Ottoman, Egyptian, British, Byzantine, Aztec, Inca, Ming Dynasty, Persian/Achaemenid, Soviet Union, Macedonian/Alexander, Mauryan, Viking/Norse, Qin Dynasty\n  * NEVER pick more than 1 European empire per game — diversify globally`
+  ? `  * Well-known civilizations any engaged adult recognizes — vary by region and era, NOT just famous European empires
+  * Pool: Roman Empire, Ancient Egypt, Aztec Civilization, Inca Empire, Mongol Empire, Ottoman Empire, Ming Dynasty, Byzantine Empire, Maya Civilization, Viking/Norse, Macedonian Empire (Alexander), Achaemenid Persia, Han Dynasty, British Empire, Qin Dynasty, Soviet Union, Mali Empire, Mauryan Empire
+  * MANDATORY: No more than 1 European civilization per game — include Africa, Asia, and the Americas`
   : difficulty === 'hard'
-  ? `  * Specialist-knowledge empires — lesser-known kingdoms, short-lived states, regional powers\n  * Pool: Srivijaya, Majapahit, Sailendra, Khmer, Timurid, Ilkhanate, Seleucid, Fatimid, Almohad, Kanem-Bornu, Chimú, Toltec, Moche, Scythian, Aksumite, Nubian/Kush, Gupta, Maratha, Sikh Empire, Zand Dynasty, Rashtrakuta, Chola, Pallava, Chalukya, Pagan Kingdom\n  * Must span at least 3 different continents`
-  : `  * Moderately known empires — familiar to history enthusiasts, not obvious to casual viewers\n  * Pool: Mughal, Umayyad, Abbasid, Safavid, Mali, Songhai, Austro-Hungarian, Khmer, Akkadian, Babylonian, Hittite, Assyrian, Carthaginian, Nabataean, Kingdom of Kongo, Zulu Kingdom, Benin Kingdom, Maratha, Tokugawa Japan, Timurid, Fatimid Caliphate, Aksumite, Holy Roman Empire, Frankish Empire, Seleucid, Chola Empire\n  * Vary the era and region across all 5 rounds`}
+  ? `  * Obscure civilizations — lesser-known kingdoms, pre-classical cultures, short-lived states, and regional powers few people know
+  * Pool: Olmec Civilization, Minoan Civilization, Moche Culture, Toltec Civilization, Chimú Empire, Mississippian Culture, Zapotec Civilization, Muisca Confederation, Teotihuacan, Wari Empire, Parthian Empire, Seljuk Sultanate, Ilkhanate, Golden Horde, Khazar Khaganate, Pagan Kingdom, Champa Kingdom, Sogdian Civilization, Palmyra, Urartu, Kanem-Bornu, Swahili City-States, Luba Kingdom, Vijayanagara Empire, Rashtrakuta Dynasty, Pallava Kingdom, Chalukya Dynasty, Gupta Empire, Joseon Dynasty, Goryeo Dynasty, Silla Kingdom, Yamato Japan, Scythians, Delhi Sultanate, Fatimid Caliphate, Almohad Caliphate, Ayyubid Sultanate
+  * Must span at least 4 different world regions`
+  : `  * Moderately known civilizations — familiar to history enthusiasts but not always mainstream
+  * Pool: Mughal Empire, Umayyad Caliphate, Abbasid Caliphate, Safavid Persia, Mali Empire, Songhai Empire, Aksumite Kingdom, Khmer Empire, Majapahit Empire, Srivijaya, Kingdom of Kongo, Benin Kingdom, Venetian Republic, Carthage, Hittite Empire, Assyrian Empire, Babylonian Empire, Chola Empire, Tokugawa Shogunate, Timurid Empire, Golden Horde, Kingdom of Kush, Phoenicia, Athens (Delian League), Sparta, Holy Roman Empire, Frankish Empire, Austro-Hungarian Empire, Zulu Kingdom, Nubian Kingdom, Nabataean Kingdom, Maratha Confederacy
+  * Vary era and region across all 5 rounds — no two from the same continent or era`}
 
-EXPANDED SUBJECT POOL — draw from ALL of these. Rotate globally, do NOT default to European or Roman-centric content:
-  * Ancient/classical: Roman, Persian/Achaemenid, Egyptian, Greek/Macedonian, Qin/Han/Tang/Ming, Mauryan, Gupta, Chola, Carthaginian, Hittite, Assyrian, Babylonian/Akkadian, Sumerian, Scythian, Nubian/Kush, Aksumite, Nabataean
-  * Medieval Asian: Mongol, Mughal, Ottoman, Khmer, Majapahit, Srivijaya, Sailendra, Timurid, Ilkhanate, Delhi Sultanate, Vijayanagara, Tokugawa Japan, Pagan Kingdom, Chola, Rashtrakuta, Song/Yuan Dynasty, Jurchen Jin
-  * Medieval Islamic: Umayyad, Abbasid, Fatimid, Safavid, Almohad, Mamluk, Ayyubid, Ghaznavid, Hafsid, Zengid
-  * African empires: Mali, Songhai, Aksumite, Nubian/Kush, Kingdom of Kongo, Benin Kingdom, Kanem-Bornu, Zulu Kingdom, Dahomey, Great Zimbabwe, Swahili Coast city-states
-  * Americas: Aztec/Triple Alliance, Inca, Maya, Chimú, Toltec, Moche, Mississippian, Zapotec, Mixtec, Muisca
-  * European empires: Byzantine, Holy Roman Empire, Frankish Empire (Charlemagne), Viking/Norse, British, Spanish, Portuguese, Austro-Hungarian, Napoleonic France, Tsarist Russia
-  * Colonial/modern: British, Spanish, Portuguese, Dutch, French, Ottoman (modern era), East Germany, Yugoslavia, Confederate States, Soviet Union
-  * Maritime: Srivijaya, Majapahit, Venetian Republic, Genoese Republic, Polynesian chiefdoms, Chola maritime empire
+EXPANDED SUBJECT POOL — draw freely from ALL of these. Always rotate globally. Never default to the same famous 10:
+  * Bronze Age / Ancient Near East: Sumer, Akkadian Empire, Old Babylonian Kingdom, Neo-Babylonian Empire, Assyrian Empire, Hittite Empire, Urartu, Phoenicia, Kingdom of Judah, Kingdom of Israel, Nabataean Kingdom, Palmyra, Elam, Mitanni
+  * Classical Mediterranean: Roman Empire, Athens (Delian League), Sparta, Carthage, Macedon/Alexander, Ptolemaic Egypt, Seleucid Empire, Minoan Civilization, Mycenaean Greece, Etruscans, Parthian Empire, Pergamon
+  * Ancient Africa: Ancient Egypt, Kingdom of Kush/Meroe, Aksumite Kingdom, Garamantes
+  * Ancient South/East Asia: Mauryan Empire, Gupta Empire, Qin Dynasty, Han Dynasty, Zhou Dynasty, Achaemenid Persia, Yamato Japan, Silla Kingdom, Three Kingdoms Korea
+  * Medieval Islamic World: Umayyad Caliphate, Abbasid Caliphate, Fatimid Caliphate, Almohad Caliphate, Mamluk Sultanate, Ayyubid Sultanate, Seljuk Sultanate, Ghaznavid Empire, Delhi Sultanate, Safavid Persia, Timurid Empire, Ilkhanate, Golden Horde, Malacca Sultanate
+  * Medieval Asia: Mongol Empire, Tang Dynasty, Song Dynasty, Ming Dynasty, Khmer Empire, Majapahit Empire, Srivijaya, Pagan Kingdom, Champa Kingdom, Vijayanagara Empire, Chola Empire, Pallava Kingdom, Joseon Dynasty, Goryeo Dynasty, Tokugawa Shogunate
+  * Medieval Europe & Steppe: Byzantine Empire, Holy Roman Empire, Frankish Empire, Viking/Norse, Kievan Rus, Avar Khaganate, Khazar Khaganate, Bulgarian Empire, Serbian Empire
+  * Africa (all eras): Mali Empire, Songhai Empire, Kingdom of Kongo, Benin Kingdom, Kanem-Bornu, Zulu Kingdom, Great Zimbabwe, Dahomey Kingdom, Swahili City-States, Luba Kingdom, Ashanti Confederation
+  * The Americas: Olmec Civilization, Teotihuacan, Maya Civilization, Aztec/Triple Alliance, Inca Empire, Moche Culture, Toltec Civilization, Chimú Empire, Zapotec Civilization, Mississippian Culture, Muisca Confederation, Wari Empire
+  * Maritime & City-States: Venetian Republic, Genoese Republic, Carthage, Phoenicia, Srivijaya, Majapahit, Hanseatic League, Ragusa (Dubrovnik), Malacca Sultanate
+  * Modern defunct: British Empire, Spanish Empire, Austro-Hungarian Empire, Ottoman Empire (modern), Soviet Union, Napoleonic France, East Germany, Yugoslavia
 
 QUESTION FIELD — SHORT, PUNCHY, MAX 12 WORDS. Built for TikTok instant readability:
-- Describe the empire WITHOUT naming it — geographic, cultural, or era hints only
-- Lead with "Which empire…", "Which civilization…", "Which power…", or "Which kingdom…"
+- Describe the civilization WITHOUT naming it — geographic, architectural, cultural, or temporal clues only
+- Vary the lead: "Which empire…", "Which civilization…", "Which kingdom…", "Which dynasty…", "Which caliphate…", "Which republic…", "Which power…", "Which culture…"
 - GOOD examples (7–12 words, instantly readable):
-  * "Which empire ruled the Silk Road at its peak?"
-  * "Which civilization built Machu Picchu in the Andes?"
-  * "Which empire once surrounded the entire Mediterranean Sea?"
-  * "Which kingdom dominated West Africa's gold and salt trade?"
-  * "Which empire stretched from Iberia to the Philippines?"
-  * "Which power built the largest contiguous land empire ever?"
+  * "Which civilization carved colossal stone heads from the jungle?"
+  * "Which maritime republic controlled Mediterranean trade for 500 years?"
   * "Which caliphate united Arabia, Persia, Egypt, and Spain?"
-  * "Which civilization built Angkor Wat deep in the jungle?"
-  * "Which superpower collapsed in 1991?"
-  * "Which empire built an 8,000-km road network in the jungle?"
-  * "Which maritime empire controlled the spice trade for centuries?"
-  * "Which kingdom ruled Sub-Saharan Africa's richest gold reserves?"
+  * "Which dynasty built the Grand Canal and linked all of China?"
+  * "Which civilization built Machu Picchu high in the cloud forest?"
+  * "Which kingdom dominated West Africa's gold and salt trade?"
+  * "Which empire once surrounded the entire Mediterranean Sea?"
+  * "Which bronze-age civilization built the palace of Knossos?"
+  * "Which steppe civilization threatened both Rome and China?"
+  * "Which city-state pioneered democracy in the ancient world?"
+  * "Which sultanate controlled every ship entering the Indian Ocean?"
+  * "Which empire built 25,000 miles of roads without the wheel?"
 - BAD (too long, too wordy — NEVER write these):
   * "Which empire, renowned for its pyramids and elaborate hieroglyphic writing system, dominated the Nile valley?"
-  * "Which federation of six republics dissolved following a series of devastating civil wars during the 1990s?"
+  * "Which federation of six republics dissolved following a series of devastating civil wars?"
 
 CRITICAL — IMAGE PROMPTS: Every round slide content must include TWO completely separate fields:
 
@@ -290,14 +301,14 @@ CRITICAL — IMAGE PROMPTS: Every round slide content must include TWO completel
     * Round 1 style: cinematic wide shot of architecture or landscape at dramatic lighting
     * Round 2 style: close-up artifact or cultural object with museum-quality lighting
     * Round 3 style: cinematic environmental scene — soldiers, ruins at dawn, jungle temple, steppe horizon
-    * Round 4 style: ancient manuscript or relief carving detail, rich texture and dark background
+    * Round 4 style: ancient manuscript, textile, or relief carving detail, rich texture and dark background
     * Round 5 style: documentary photograph aesthetic — natural light, real location feel
   - Dark, rich, cinematic aesthetic throughout — absolutely NO bright stock photography look
   - MUST NOT depict any map, territory outline, border, region, or cartographic element
 
 "map_prompt" — TERRITORY MAP image (ONLY for Territory Map selection):
-  - Dark historical atlas showing the empire's actual geographic territory
-  - Be geographically specific — describe the exact regions covered, NOT a generic "Europe" or "Mediterranean" view
+  - Dark historical atlas showing the civilization's actual geographic territory
+  - Be geographically specific — describe the exact regions covered, NOT a generic "Mediterranean" or "Asia" view
   - Style: deep navy background, translucent gold or warm amber wash over territory, fine cartographic lines, no text
   - Vary the map aesthetic across rounds: some dark navy atlas, some aged vellum, some tactical military style
 
@@ -305,7 +316,7 @@ CRITICAL — IMAGE PROMPTS: Every round slide content must include TWO completel
 - fun_fact: ONE punchy sentence, MAX 15 words. A surprising or impressive fact only.
   * GOOD: "At its peak, controlled 24 million km² — the largest empire ever."
   * GOOD: "Built 50,000 miles of paved roads across three continents."
-  * GOOD: "Controlled over 40% of the world's GDP at its height."
+  * GOOD: "Their merchant ships reached every major port in the medieval world."
   * BAD: Multi-sentence explanations, generic dates without context`,
     },
 

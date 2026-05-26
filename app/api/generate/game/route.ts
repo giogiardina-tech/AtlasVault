@@ -7,9 +7,9 @@ import { scrambleAnswer, validateScramble } from '@/lib/scramble';
 
 export const maxDuration = 60;
 
-// ─── Empire prompt builders ───────────────────────────────────────────────────
+// ─── Historical civilization prompt builders ──────────────────────────────────
 // Called server-side after LLM generation. Never rely on the LLM to produce
-// image prompts for Empire mode — it consistently omits or mis-formats them.
+// image prompts for this mode — it consistently omits or mis-formats them.
 
 // Visual style palettes — rotated by round number to prevent visual repetition
 const ICONIC_STYLES = [
@@ -118,7 +118,102 @@ function empireIconicPrompt(empire: string, roundNum = 1): string {
     return `Himeji Castle white tenshu rising above cherry blossoms, feudal Japan, ${style}`;
   if (e.includes('aztec triple') || e.includes('triple alliance'))
     return `Tenochtitlan aerial reconstruction — massive stepped pyramid at centre of lake city, ${style}`;
-  return `Ancient monument or architectural marvel associated with the ${empire}, dramatic atmosphere, ${style}`;
+  // ── Extended civilization pool ─────────────────────────────────────────────
+  if (e.includes('olmec'))
+    return `Giant Olmec colossal basalt head in jungle clearing, moss-covered stone, dramatic raking side light, ${style}`;
+  if (e.includes('minoan'))
+    return `Knossos palace fresco — leaping dolphins over azure waves or bull-leaping scene, ancient mineral pigments, ${style}`;
+  if (e.includes('mycenae') || e.includes('mycenaean'))
+    return `Lion Gate at Mycenae — massive carved limestone lintel and stone citadel walls, ${style}`;
+  if (e.includes('phoenic'))
+    return `Phoenician purple dye workshop — murex shells, rich crimson cloth, Levantine harbour backdrop, ${style}`;
+  if (e.includes('venetian') || (e.includes('venice') && !e.includes('genoese')))
+    return `Doge's Palace Gothic arcade reflected in the Grand Canal at pre-dawn, deep indigo water, gondola silhouette, ${style}`;
+  if (e.includes('genoe') || e.includes('genoese'))
+    return `Genoese merchant ship in a medieval harbour, striped red-and-white flag, Mediterranean trading post, ${style}`;
+  if (e.includes('ragusa') || e.includes('dubrovnik'))
+    return `Dubrovnik old city walls from sea level at golden hour, limestone towers, Adriatic backdrop, ${style}`;
+  if (e.includes('sparta') || e.includes('spartan'))
+    return `Spartan bronze Corinthian helmet and lambda shield close-up, dark background, dramatic raking light, ${style}`;
+  if (e.includes('athen') || e.includes('delian'))
+    return `Parthenon columns at dusk on the Acropolis, warm golden light, long shadows, Athens skyline, ${style}`;
+  if (e.includes('palmyra') || e.includes('zenobia'))
+    return `Palmyra colonnade and triumphal arch silhouette against deep blue Syrian desert sky, ancient columns, ${style}`;
+  if (e.includes('urartu'))
+    return `Urartu fortress walls of Van on the Armenian plateau — massive stone blocks, Lake Van horizon, ${style}`;
+  if (e.includes('golden horde'))
+    return `Mongol ger camp on the open Eurasian steppe, circular felt tents, vast horse herd at horizon, dramatic sky, ${style}`;
+  if (e.includes('ilkhanat') || e.includes('ilkhan'))
+    return `Timurid-era turquoise tilework dome in Persia — cobalt and gold geometric mosaic, Ilkhanate heritage, ${style}`;
+  if (e.includes('khazar'))
+    return `Steppe Khazar jewelry hoard — silver and gold torques, coins, and pendants on dark velvet, ${style}`;
+  if (e.includes('parthian'))
+    return `Mounted Parthian cataphract in full lamellar armour shooting backwards — the "Parthian shot", desert light, ${style}`;
+  if (e.includes('seljuk') || e.includes('seljuq'))
+    return `Seljuk muqarnas stone portal — intricate honeycomb carving at Divriği or Konya, golden hour, ${style}`;
+  if (e.includes('ghaznavid') || e.includes('ghaznav'))
+    return `Ghazni minaret — ornate geometric brickwork tower rising from Afghan plain, ancient Islamic architecture, ${style}`;
+  if (e.includes('mamluk'))
+    return `Mamluk carved stone gateway in Cairo — massive stalactite portal, intricate geometric relief, ${style}`;
+  if (e.includes('ayyubid'))
+    return `Citadel of Saladin overlooking Cairo — massive crusader-era fortress on limestone ridge, ${style}`;
+  if (e.includes('pagan') || e.includes('bagan'))
+    return `Bagan plains at sunrise — thousands of pagodas stretching to the horizon, hot air balloon above, Myanmar, ${style}`;
+  if (e.includes('champa'))
+    return `My Son Cham temple tower in jungle mist — ancient brick sanctuary rising from Vietnamese rainforest, ${style}`;
+  if (e.includes('pallava'))
+    return `Mahabalipuram Shore Temple at sunrise — stone temple on rocks above crashing Indian Ocean waves, ${style}`;
+  if (e.includes('vijayanagara') || e.includes('hampi'))
+    return `Hampi stone chariot in Vittala Temple courtyard, Deccan granite boulders, dramatic raking light, ${style}`;
+  if (e.includes('gupta'))
+    return `Ajanta cave fresco — elaborately dressed Gupta-era court scene painted deep in rock face, vivid ancient pigments, ${style}`;
+  if (e.includes('rashtrakuta') || e.includes('chalukya'))
+    return `Ellora Kailasa Temple cut into cliff face — rock-hewn monolith, Deccan plateau, dramatic shadow, ${style}`;
+  if (e.includes('yamato'))
+    return `Great Buddha of Nara — massive bronze Daibutsu seated in ancient wooden hall, dim candlelight, ${style}`;
+  if (e.includes('joseon'))
+    return `Gyeongbokgung Palace main gate at dusk — colourful dancheong paintwork, Seoul mountain backdrop, ${style}`;
+  if (e.includes('goryeo'))
+    return `Goryeo celadon glazed pottery — jade-green inlaid crane design, dark velvet, museum lighting, ${style}`;
+  if (e.includes('silla') || e.includes('three kingdoms'))
+    return `Silla gold crown — elaborate gilded antler-branch crown with jade magatama, museum close-up, ${style}`;
+  if (e.includes('malacca') || e.includes('melaka'))
+    return `Malacca Strait historical spice port — wooden dhow vessels in tropical harbour, golden hour, ${style}`;
+  if (e.includes('teotihuacan'))
+    return `Avenue of the Dead at dawn — Pyramid of the Sun rising from morning mist, Teotihuacan, ${style}`;
+  if (e.includes('zapotec'))
+    return `Monte Albán hilltop plaza at dawn — carved stone danzante reliefs, Oaxacan highland view, ${style}`;
+  if (e.includes('toltec'))
+    return `Tula Warrior Columns — massive stone Toltec warrior figures atop pyramid, dramatic storm sky, ${style}`;
+  if (e.includes('chimú') || e.includes('chimu'))
+    return `Chan Chan adobe citadel walls with carved geometric wave relief, Peruvian coastal desert, ${style}`;
+  if (e.includes('moche'))
+    return `Moche portrait ceramic vessel — intricate terracotta face jar with vivid applied pigments, dark background, ${style}`;
+  if (e.includes('wari'))
+    return `Ancient Wari tapestry textile — vivid geometric interlocked figures in Andean wool weave, ${style}`;
+  if (e.includes('mississipp'))
+    return `Cahokia Monks Mound at dawn mist — vast pre-Columbian earthwork rising from Mississippi floodplain, ${style}`;
+  if (e.includes('muisca'))
+    return `El Dorado gold figurine — Muisca tunjo votive gold figure, dark velvet background, dramatic museum light, ${style}`;
+  if (e.includes('judah') || e.includes('judea') || e.includes('judaean'))
+    return `Jerusalem ancient city walls at golden hour — limestone blocks, olive trees, Judean hills silhouette, ${style}`;
+  if (e.includes('scythian') || e.includes('saka'))
+    return `Scythian gold pectoral — intricate animal-style goldwork with stag and griffin, dark velvet, ${style}`;
+  if (e.includes('kanem') || e.includes('bornu'))
+    return `Trans-Saharan caravan at dusk — camels silhouetted against orange desert horizon, ancient trade route, ${style}`;
+  if (e.includes('dahomey'))
+    return `Fon appliqué royal tapestry — Dahomey warrior king with symbols in vivid coloured fabric, dark background, ${style}`;
+  if (e.includes('zimbabwe') && !e.includes('great zim') || e.includes('great zimbabwe'))
+    return `Great Zimbabwe granite tower at dawn — massive dry stone walls rising from mist, ancient enclosure, ${style}`;
+  if (e.includes('swahili') || e.includes('kilwa'))
+    return `Kilwa Kisiwani stone ruins on the Indian Ocean coast — coral-stone columns, baobab trees, East Africa, ${style}`;
+  if (e.includes('ashanti') || e.includes('asante'))
+    return `Kente cloth close-up — bold geometric gold, black, and red Ashanti silk weave, dramatic light, ${style}`;
+  if (e.includes('luba'))
+    return `Luba chief's ceremonial stool — carved wooden throne with caryatid figure, Congo basin, dark background, ${style}`;
+  if (e.includes('mauryan') && !e.includes('mongol'))
+    return `Ashoka pillar capital — four back-to-back stone lions atop polished sandstone column, Indian museum, ${style}`;
+  return `Ancient monument or cultural artifact associated with the ${empire}, dark cinematic atmosphere, ${style}`;
 }
 
 const MAP_STYLES = [
@@ -217,6 +312,99 @@ function empireTerritoryPrompt(empire: string, roundNum = 1): string {
     return `Historical atlas — Carthaginian territory covering North Africa, Iberia, Sardinia, and Sicily, ${mapStyle}`;
   if (e.includes('maratha'))
     return `Historical atlas — Maratha Confederacy territory across the Indian subcontinent from Maharashtra to Delhi, ${mapStyle}`;
+  // ── Extended civilization pool ─────────────────────────────────────────────
+  if (e.includes('olmec'))
+    return `Historical atlas — Olmec heartland along the Gulf Coast of Mexico — La Venta, San Lorenzo, and Tres Zapotes region, ${mapStyle}`;
+  if (e.includes('minoan'))
+    return `Historical atlas — Minoan territory centered on Crete and the Aegean islands — eastern Mediterranean trading network, ${mapStyle}`;
+  if (e.includes('mycenae') || e.includes('mycenaean'))
+    return `Historical atlas — Mycenaean Greece — palace kingdoms across the Peloponnese, Attica, and Aegean islands, ${mapStyle}`;
+  if (e.includes('phoenic'))
+    return `Historical atlas — Phoenician city-states and colonies along the Levant coast, with trade routes across the Mediterranean to Carthage and Iberia, ${mapStyle}`;
+  if (e.includes('venetian') || (e.includes('venice') && !e.includes('genoese')))
+    return `Historical atlas — Venetian Republic territory — northeastern Italy, Adriatic coast, and eastern Mediterranean trading ports and islands, ${mapStyle}`;
+  if (e.includes('genoe') || e.includes('genoese'))
+    return `Historical atlas — Genoese Republic trading network — Ligurian coast, Black Sea colonies, and Mediterranean port settlements, ${mapStyle}`;
+  if (e.includes('sparta') || e.includes('spartan'))
+    return `Historical atlas — Spartan territory — the Peloponnese heartland, Laconia, Messenia, and Peloponnesian League allies, ${mapStyle}`;
+  if (e.includes('athen') || e.includes('delian'))
+    return `Historical atlas — Athenian Delian League — Attica, Aegean islands, and coastal allies from the Black Sea to Ionia, ${mapStyle}`;
+  if (e.includes('palmyra') || e.includes('zenobia'))
+    return `Historical atlas — Palmyrene territory at peak — Syria, Egypt, Anatolia, and the Levant under Queen Zenobia, ${mapStyle}`;
+  if (e.includes('urartu'))
+    return `Historical atlas — Urartu territory in the Armenian Highlands — Lake Van basin, eastern Anatolia, and the Caucasus, ${mapStyle}`;
+  if (e.includes('golden horde'))
+    return `Historical atlas — Golden Horde territory — western Russian steppe, Ukraine, Crimea, Kazakhstan, and the Caucasus, ${mapStyle}`;
+  if (e.includes('ilkhanat') || e.includes('ilkhan'))
+    return `Historical atlas — Ilkhanate territory covering Persia, Iraq, Anatolia, and the Caucasus, ${mapStyle}`;
+  if (e.includes('khazar'))
+    return `Historical atlas — Khazar Khaganate territory — Pontic steppe, lower Volga, Caucasus, and Crimea, ${mapStyle}`;
+  if (e.includes('parthian'))
+    return `Historical atlas — Parthian Empire territory covering Persia, Mesopotamia, and parts of Central Asia — modern Iran and Iraq, ${mapStyle}`;
+  if (e.includes('seljuk') || e.includes('seljuq'))
+    return `Historical atlas — Seljuk Sultanate territory spanning Anatolia, the Levant, Persia, and Central Asia at peak, ${mapStyle}`;
+  if (e.includes('ghaznavid') || e.includes('ghaznav'))
+    return `Historical atlas — Ghaznavid territory covering Afghanistan, Khorasan, and the northwestern Indian subcontinent, ${mapStyle}`;
+  if (e.includes('mamluk'))
+    return `Historical atlas — Mamluk Sultanate territory — Egypt, the Levant, and the Hejaz, ${mapStyle}`;
+  if (e.includes('ayyubid'))
+    return `Historical atlas — Ayyubid territory covering Egypt, the Levant, Yemen, and parts of Mesopotamia, ${mapStyle}`;
+  if (e.includes('pagan') || e.includes('bagan'))
+    return `Historical atlas — Pagan Kingdom territory covering most of mainland Burma (Myanmar), from the Irrawaddy delta to the Shan Hills, ${mapStyle}`;
+  if (e.includes('champa'))
+    return `Historical atlas — Champa Kingdom territory along the central Vietnamese coastline from Quảng Bình to Bình Thuận, ${mapStyle}`;
+  if (e.includes('pallava'))
+    return `Historical atlas — Pallava Kingdom territory in South India — Tamil Nadu, Andhra Pradesh, and Sri Lanka, ${mapStyle}`;
+  if (e.includes('vijayanagara') || e.includes('hampi'))
+    return `Historical atlas — Vijayanagara Empire territory covering the southern Deccan — Karnataka, Andhra Pradesh, Tamil Nadu, ${mapStyle}`;
+  if (e.includes('gupta'))
+    return `Historical atlas — Gupta Empire territory across northern and central India — from the Indus to Bengal, ${mapStyle}`;
+  if (e.includes('rashtrakuta') || e.includes('chalukya'))
+    return `Historical atlas — Rashtrakuta/Chalukya territory across the Deccan plateau — western and central India, ${mapStyle}`;
+  if (e.includes('yamato'))
+    return `Historical atlas — Yamato Japan — the Japanese home islands centered on the Kinai region and Yamato province, ${mapStyle}`;
+  if (e.includes('joseon'))
+    return `Historical atlas — Joseon Dynasty territory — the Korean peninsula from the Yalu River to the southern coast, ${mapStyle}`;
+  if (e.includes('goryeo'))
+    return `Historical atlas — Goryeo Dynasty territory — the Korean peninsula and relations with Manchuria, ${mapStyle}`;
+  if (e.includes('silla') || e.includes('three kingdoms'))
+    return `Historical atlas — Unified Silla territory — the Korean peninsula south of the Taedong River, ${mapStyle}`;
+  if (e.includes('malacca') || e.includes('melaka'))
+    return `Historical atlas — Malacca Sultanate territory controlling the Strait of Malacca — Malay Peninsula and Sumatra straits, ${mapStyle}`;
+  if (e.includes('teotihuacan'))
+    return `Historical atlas — Teotihuacan influence zone — Valley of Mexico with trade networks reaching Maya lowlands and Oaxaca, ${mapStyle}`;
+  if (e.includes('zapotec'))
+    return `Historical atlas — Zapotec territory in the Oaxaca Valley, Monte Albán highlands, and Pacific Coast of southern Mexico, ${mapStyle}`;
+  if (e.includes('toltec'))
+    return `Historical atlas — Toltec territory centered on Tula in Hidalgo, Mexico, with trade networks across Mesoamerica, ${mapStyle}`;
+  if (e.includes('chimú') || e.includes('chimu'))
+    return `Historical atlas — Chimú Empire territory along the Peruvian coast — the northern desert coast from Tumbes to Lima, ${mapStyle}`;
+  if (e.includes('moche'))
+    return `Historical atlas — Moche Culture territory along the northern Peruvian coastal valleys, ${mapStyle}`;
+  if (e.includes('wari'))
+    return `Historical atlas — Wari Empire territory across the central Andes — modern Peru highlands from Cuzco to Cajamarca, ${mapStyle}`;
+  if (e.includes('mississipp'))
+    return `Historical atlas — Mississippian Culture chiefdoms — the Mississippi River valley and southeastern North America, ${mapStyle}`;
+  if (e.includes('muisca'))
+    return `Historical atlas — Muisca Confederation territory — the eastern Andes highlands of Colombia, Lake Guatavita region, ${mapStyle}`;
+  if (e.includes('judah') || e.includes('judea') || e.includes('judaean'))
+    return `Historical atlas — Kingdom of Judah territory — Judean highlands, Jerusalem, and the Levant south of Samaria, ${mapStyle}`;
+  if (e.includes('scythian') || e.includes('saka'))
+    return `Historical atlas — Scythian territory across the Eurasian steppe — Black Sea coast through Kazakhstan to Siberia, ${mapStyle}`;
+  if (e.includes('kanem') || e.includes('bornu'))
+    return `Historical atlas — Kanem-Bornu territory around Lake Chad — modern Chad, Niger, and northeastern Nigeria, ${mapStyle}`;
+  if (e.includes('dahomey'))
+    return `Historical atlas — Dahomey Kingdom territory in coastal West Africa — modern Benin and western Nigeria, ${mapStyle}`;
+  if (e.includes('zimbabwe') && !e.includes('great zim') || e.includes('great zimbabwe'))
+    return `Historical atlas — Great Zimbabwe territory — the Zimbabwe Plateau and southeastern Africa, ${mapStyle}`;
+  if (e.includes('swahili') || e.includes('kilwa'))
+    return `Historical atlas — Swahili Coast city-states — East African coast from Mogadishu to Mozambique, with Indian Ocean trade routes, ${mapStyle}`;
+  if (e.includes('ashanti') || e.includes('asante'))
+    return `Historical atlas — Ashanti Confederation territory in West Africa — modern Ghana's forest belt and gold-producing region, ${mapStyle}`;
+  if (e.includes('luba'))
+    return `Historical atlas — Luba Kingdom territory in the Congo Basin — modern Katanga province, Democratic Republic of Congo, ${mapStyle}`;
+  if (e.includes('mauryan') && !e.includes('mongol'))
+    return `Historical atlas — Mauryan Empire territory covering nearly the entire Indian subcontinent from the Himalayas to the Deccan, ${mapStyle}`;
   return `Historical atlas — territory of the ${empire} at its peak extent, surrounding regions deep charcoal, ${mapStyle}`;
 }
 
@@ -315,20 +503,19 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // For Empire mode: build reliable feature_prompt and map_prompt from the empire name.
-  // The LLM frequently omits image_prompt or returns it as an object — do not rely on it.
-  // Instead, derive the empire name from the paired reveal slide and build prompts here.
+  // For Historical Civilizations mode: build reliable feature_prompt and map_prompt from the
+  // civilization name. The LLM frequently omits image_prompt — always derive it server-side.
   if (format_type === 'guess-the-empire') {
-    const empireByRound = new Map<number, string>();
+    const civByRound = new Map<number, string>();
     for (const slide of generated.slides) {
       if (slide.slide_type === 'reveal' && slide.content.correct_answer && slide.content.round_number != null) {
-        empireByRound.set(slide.content.round_number as number, slide.content.correct_answer as string);
+        civByRound.set(slide.content.round_number as number, slide.content.correct_answer as string);
       }
     }
     for (const slide of generated.slides) {
       if (slide.slide_type !== 'round') continue;
       const rn = slide.content.round_number as number;
-      const empireName = empireByRound.get(rn) ?? 'this historical empire';
+      const empireName = civByRound.get(rn) ?? 'this historical civilization';
       const fp = empireIconicPrompt(empireName, rn);
       const mp = empireTerritoryPrompt(empireName, rn);
       slide.content.feature_prompt = fp;
