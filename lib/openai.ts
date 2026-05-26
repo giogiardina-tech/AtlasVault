@@ -429,45 +429,86 @@ FORMAT: WHO WAS MORE FAMOUS? — FAME BATTLE
     'civilization-fight': {
       revealType: 'fight',
       instructions: `
-FORMAT: CIVILIZATION FIGHT — WHO WOULD WIN?
-- 5 rounds, each pitting two armies, states, nations, or civilizations against each other at their respective peaks
-- Matchups can be historical conflicts OR cross-era hypotheticals — make it clear in the question which type it is
-- NO difficulty field — omit "difficulty" from round slide content entirely
+FORMAT: CIVILIZATION FIGHT — ULTIMATE HISTORICAL BATTLES
+- 5 rounds, each pitting two distinct civilizations, armies, cultures, or kingdoms against each other at their historical peak
+- Matchups can be real historical conflicts OR compelling cross-era hypotheticals — both are valid
+- The audience votes in comments — matchups MUST be debatable, not obvious blowouts
+- NO difficulty field — omit entirely from round slide content
 
-MATCHUP POOL — draw from ALL of these categories across 5 rounds. Do NOT default to European or ancient-only matchups:
-  Ancient:           Roman Empire, Han Dynasty, Achaemenid Persian Empire, Macedonian Empire, Carthage, Ancient Egypt, Hittites, Assyrian Empire, Mauryan Empire, Xiongnu, Scythians, Spartans, Athenians, Ptolemaic Egypt, Seleucid Empire
-  Medieval:          Byzantine Empire, Abbasid Caliphate, Mongol Empire, Viking raiders, Samurai clans (feudal Japan), Crusader states, Holy Roman Empire, Song Dynasty, Delhi Sultanate, Mali Empire, Kingdom of Kongo, Aztec Empire, Inca Empire, Khmer Empire
-  Early Modern:      Ottoman Empire, Safavid Empire, Mughal Empire, Ming Dynasty, Spanish Empire, British Empire (colonial era), Napoleonic France, Kingdom of Prussia, Zulu Kingdom, Maratha Confederacy, Tokugawa Japan, Qing Dynasty
-  Modern:            USA, USSR/Soviet Union, Nazi Germany, Imperial Japan, British Empire (WWI/WWII), France under Napoleon III, Imperial Russia, Confederate States, Union Army, German Empire (WWI), Austro-Hungarian Empire, Meiji Japan
-  Contemporary:      Modern United States military, Modern China (PLA), NATO alliance, Russia (modern), Israel Defence Forces, North Korea, Modern Turkey
-  Indigenous/Pre-Columbian: Aztec Triple Alliance, Inca Empire, Maya city-states, Iroquois Confederacy, Mississippian culture, Mapuche warriors, Apache Nation
-  Nomadic/Tribal:    Mongol horde, Scythians, Huns, Xiongnu, Berber tribes, Sikh Khalsa, Zulu impis, Sioux warriors, Comanche raiders
-  City-States:       Sparta, Athens, Carthage, Venice, Genoa, Singapore (modern)
-  Empires (any era): any empire listed above, plus Timurid Empire, Sasanian Empire, Gupta Empire, Aksumite Empire, Ethiopian Empire
+CIVILIZATION POOL — draw from ALL of these. usedSubjects lists civilizations already used recently — NEVER repeat them:
 
-VARIETY RULES — for each game of 5 rounds:
-  * Spread across at least 3 different eras (ancient, medieval, modern, etc.)
-  * Spread across at least 3 different world regions (not all European)
-  * Include at least one cross-era hypothetical matchup (e.g. Mongols vs. Napoleonic France)
-  * Include at least one matchup involving Asia, Africa, or the Americas
-  * Include at least one matchup that is genuinely close and debatable — not a blowout
-  * Include at least one matchup that is surprising or counterintuitive
-  * Later rounds (4–5) should be more unexpected and comment-worthy than earlier ones
-  * NEVER use the same civilization twice in one game
-  * AVOID defaulting to Roman vs Greek, Roman vs anyone, or all-European matchups
+  AFRICA:
+    Mali Empire, Songhai Empire, Kingdom of Kongo, Benin Kingdom, Aksumite Kingdom, Kingdom of Kush/Meroe, Zulu Kingdom, Dahomey Kingdom, Carthage, Kanem-Bornu, Ashanti Confederation, Nubian Kingdom, Almohad Caliphate, Fatimid Caliphate, Swahili City-States (Kilwa), Great Zimbabwe, Garamantes, Kingdom of Numidia
 
-QUESTION field: choose the most fitting phrasing for each matchup:
-  * Historical conflicts: "Who wins this real war?"
-  * Cross-era hypotheticals: "Who wins in an all-out war at their peak?"
-  * Strength comparisons: "Who was the stronger military power?"
-  * Choose the most engaging phrasing — not always the same question every round
+  THE AMERICAS:
+    Aztec Triple Alliance, Inca Empire, Maya city-states, Olmec Civilization, Chimú Empire, Toltec Civilization, Moche warriors, Zapotec Civilization, Mississippian Culture, Muisca Confederation, Wari Empire, Iroquois Confederacy, Mapuche warriors, Apache raiders, Comanche cavalry, Sioux warriors, Cherokee Nation
+
+  ANCIENT NEAR EAST / MIDDLE EAST:
+    Achaemenid Persia, Sassanid Persia, Parthian Empire, Assyrian Empire, Babylonian Empire, Hittite Empire, Umayyad Caliphate, Abbasid Caliphate, Ayyubid Sultanate, Mamluk Sultanate, Seljuk Sultanate, Nabataean Kingdom, Safavid Persia, Ottoman Empire, Timurid Empire, Ghaznavid Empire, Crusader States, Palmyra
+
+  EUROPE:
+    Roman Republic, Roman Empire, Byzantine Empire, Macedonian Empire (Alexander), Sparta, Athens, Vikings/Norse, Franks (Charlemagne), Holy Roman Empire, Austro-Hungarian Empire, Napoleonic France, Tsarist Russia, Soviet Union, British Empire, Spanish Empire, Portuguese Empire, Normans, Celts, Visigoths
+
+  CENTRAL ASIA / STEPPE:
+    Mongol Empire, Golden Horde, Ilkhanate, Timurid Empire, Huns, Scythians, Xiongnu, Göktürks, Khazar Khaganate, Saka Kingdom
+
+  SOUTH / SOUTHEAST ASIA:
+    Mauryan Empire, Gupta Empire, Chola Empire, Vijayanagara Empire, Mughal Empire, Delhi Sultanate, Maratha Confederacy, Sikh Khalsa, Khmer Empire, Majapahit Empire, Srivijaya, Pagan Kingdom (Burma), Champa Kingdom, Pallava Kingdom, Malacca Sultanate
+
+  EAST ASIA:
+    Qin Dynasty, Han Dynasty, Tang Dynasty, Song Dynasty, Ming Dynasty, Qing Dynasty, Yamato Japan, Sengoku Samurai Japan, Tokugawa Japan, Meiji Japan, Joseon Korea, Silla Kingdom, Jurchen Jin, Imperial Japan (WWII era)
+
+  OCEANIA / PACIFIC:
+    Māori warriors (Aotearoa), Tonga maritime kingdom, Hawaiian Kingdom, Polynesian navigators
+
+VARIETY RULES — MANDATORY per game:
+  * NEVER reuse any civilization listed in usedSubjects — the prompt provides this list
+  * Span at least 4 different world regions across 5 rounds (Africa, Americas, Asia, Europe, Middle East, Steppe)
+  * Span at least 3 different time periods (ancient, medieval, early modern, modern)
+  * NEVER default to Rome vs Greece, Mongols vs Europeans, Vikings vs Saxons as the go-to matchups
+  * Must include at least 1 African or Americas civilization per game
+  * Must include at least 1 Asian civilization per game
+  * Must include at least 1 matchup that is genuinely counterintuitive or surprising
+  * Later rounds (4–5) must be more provocative and comment-worthy than earlier rounds
+  * ZERO all-European games — maximum 2 European civilizations across all 5 rounds combined
+
+HIGH-ENGAGEMENT MATCHUP EXAMPLES — use as inspiration. Generate equally bold, unexpected pairings:
+  Sparta vs Samurai Japan | Mali Empire vs Portuguese Empire | Aztecs vs Mongols
+  Byzantines vs Ottoman Empire | Vikings vs Polynesian warriors | Kingdom of Benin vs Carthage
+  Qin Dynasty vs Roman Republic | Assyrians vs Achaemenid Persia | Mamluks vs Crusaders
+  Inca vs Spanish Conquistadors | Venice vs Ottoman Empire | Zulu Kingdom vs British Empire
+  Tang Dynasty vs Abbasid Caliphate | Hittites vs Ancient Egypt | Timurids vs Delhi Sultanate
+  Khmer Empire vs Majapahit | Celts vs Roman legions | Aksumites vs Umayyad Caliphate
+  Tokugawa Japan vs Joseon Korea | Kingdom of Kongo vs Portugal | Han Dynasty vs Xiongnu
+  Teotihuacan vs Maya | Safavids vs Mughals | Golden Horde vs Kievan Rus
+  Maratha Confederacy vs Mughal Empire | Chimú vs Inca | Sikh Khalsa vs East India Company
+  Comanche cavalry vs Apache raiders | Māori vs British colonists | Songhai vs Mali Empire
+
+QUESTION field — choose the MOST engaging phrasing for each specific matchup. ROTATE across rounds:
+  * Real conflicts: "Who wins this historical clash?"
+  * Cross-era: "Who wins in an all-out war at their peak?"
+  * Dominance: "Who was the more feared military force?"
+  * Influence: "Who changed history more?"
+  * Technology: "Who had the bigger military advantage?"
+  * Legacy: "Who left a more lasting mark on the world?"
+  * Trade/Power: "Who was the more dominant civilization?"
+  Use only ONE question per round — pick whichever creates the most debate for THAT specific pairing.
 
 ROUND slide content must include:
-  * "side_a": full name (e.g. "Mongol Empire", "United States", "Zulu Kingdom")
-  * "side_b": full name
-  * "question": the matchup question for this round (see QUESTION field above)
+  * "side_a": exact civilization name (e.g. "Zulu Kingdom", "Abbasid Caliphate", "Khmer Empire", "Maratha Confederacy")
+  * "side_b": exact civilization name
+  * "question": the matchup question chosen for this round
 
-REVEAL slide: win percentages based on military strength, numbers, technology, logistics, terrain, and historical/strategic context. fun_fact: 1–2 punchy sentences explaining the key deciding factor — something most people would not have considered.`,
+IMAGE PROMPT for the round slide — write a cinematic split composition for each round:
+  image_prompt: A dramatic cinematic faceoff — one side shows [CIVILIZATION A's signature imagery: warriors, architecture, weapons, or landscape], the opposite side shows [CIVILIZATION B's signature imagery]. Strong color contrast, epic atmosphere. No text, no labels.
+  - Each civilization MUST have visually distinct imagery — NO generic dark templates
+  - Use their actual architecture, warrior attire, weapons, ships, or cultural landscapes
+  - Create visual contrast between the two sides (e.g. desert vs jungle, iron vs bronze, steppe vs ocean)
+
+REVEAL slide:
+  - Win percentages based on military power, technology, numbers, tactics, terrain, logistics, historical outcomes
+  - Vary the winner — do NOT always give victory to the most famous civilization
+  - fun_fact: 1–2 punchy sentences on the single KEY deciding factor — something most people would NOT expect`,
     },
 
     'guess-the-person': {

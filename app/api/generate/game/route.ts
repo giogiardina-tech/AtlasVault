@@ -435,6 +435,9 @@ export async function POST(req: NextRequest) {
         if (c.correct_order) {
           c.correct_order.forEach((item: { event: string }) => usedSubjects.push(item.event));
         }
+        // Fight and fame-battle: track both sides so they aren't reused in future games
+        if (c.side_a) usedSubjects.push(c.side_a);
+        if (c.side_b) usedSubjects.push(c.side_b);
       }
       if (s.slide_type === 'round') {
         // Bordering-country: featured country is in the question text
